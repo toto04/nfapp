@@ -40,7 +40,6 @@ class Home extends Component<NavigationProps> {
 
 let Nav = createDrawerNavigator({
   Home,
-  Menu
 }, {
   initialRouteName: 'Home',
   contentComponent: Menu

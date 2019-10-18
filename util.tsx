@@ -20,3 +20,7 @@ export class StatusBarBackground extends Component {
         )
     }
 }
+
+export let commonStyles = {
+    mainColor: '#ff7923'
+}
