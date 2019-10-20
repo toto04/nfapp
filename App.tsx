@@ -48,7 +48,12 @@ let Container = createAppContainer(Nav)
 export default class App extends Component {
   render() {
     return (
-      <SafeAreaView style={{flex: 1, backgroundColor: commonStyles.backgroundColor}}>
+      <SafeAreaView style={{
+        flex: 1,
+        backgroundColor: commonStyles.backgroundColor,
+        paddingTop: Platform.OS == 'android' ? StatusBar.currentHeight : 0
+      }}>
+        <StatusBar barStyle='light-content' backgroundColor={commonStyles.backgroundColor} />
         <Container />
       </SafeAreaView>
     );
