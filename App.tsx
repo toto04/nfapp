@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, StatusBar, Platform, Button } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, Platform, Button, SafeAreaView } from 'react-native';
 import { createAppContainer, NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation'
 import { createDrawerNavigator } from 'react-navigation-drawer'
 import Menu from "./Menu";
-import { NavigationProps, StatusBarBackground } from './util'
+import { NavigationProps, commonStyles } from './util'
 
 class Header extends Component<NavigationProps> {
   render() {
     return (
       <View style={styles.header}>
         <View style={styles.menuButton} onTouchStart={() => this.props.navigation.openDrawer()}>
-          <View style={{ width: 40, height: 4, backgroundColor: '#ff7923' }} />
-          <View style={{ width: 20, height: 4, backgroundColor: '#ff7923' }} />
-          <View style={{ width: 30, height: 4, backgroundColor: '#ff7923' }} />
+          <View style={{ width: 33, height: 3, backgroundColor: '#ff7923' }} />
+          <View style={{ width: 17, height: 3, backgroundColor: '#ff7923' }} />
+          <View style={{ width: 25, height: 3, backgroundColor: '#ff7923' }} />
         </View>
         <Text style={{
           color: '#ff7923',
-          fontSize: 40
+          fontSize: 35
         }}>NFApp</Text>
       </View>
     )
@@ -24,13 +24,12 @@ class Header extends Component<NavigationProps> {
 }
 
 class Home extends Component<NavigationProps> {
-  componentDidMount () {
+  componentDidMount() {
     this.props.children
   }
   render() {
     return (
       <View style={styles.container}>
-        <StatusBarBackground />
         <Header {...this.props} />
         <Text>Questa pagina è completamente inutile!</Text>
       </View>
@@ -49,7 +48,9 @@ let Container = createAppContainer(Nav)
 export default class App extends Component {
   render() {
     return (
-      <Container />
+      <SafeAreaView style={{flex: 1, backgroundColor: commonStyles.backgroundColor}}>
+        <Container />
+      </SafeAreaView>
     );
   }
 }
@@ -68,6 +69,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1e1b20',
   },
   menuButton: {
+    padding: 5,
     height: 50,
     width: 50,
     justifyContent: 'space-evenly',

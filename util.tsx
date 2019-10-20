@@ -7,20 +7,7 @@ export interface NavigationProps {
     navigation: NavigationScreenProp<NavigationState, NavigationParams>
 }
 
-export class StatusBarBackground extends Component {
-    render() {
-        return (
-            <View style={{
-                height: Platform.OS == 'ios' ? 18 : 0,
-                backgroundColor: '#1e1b20',
-                alignSelf: 'stretch',
-              }}>
-                <StatusBar backgroundColor={'#1e1b20'} barStyle={'light-content'} />
-            </View>
-        )
-    }
-}
-
 export let commonStyles = {
-    mainColor: '#ff7923'
+    mainColor: '#ff7923',
+    backgroundColor: '#1e1b20'
 }
