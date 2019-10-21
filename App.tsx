@@ -10,9 +10,9 @@ class Header extends Component<NavigationProps> {
     return (
       <View style={styles.header}>
         <View style={styles.menuButton} onTouchStart={() => this.props.navigation.openDrawer()}>
-          <View style={{ width: 33, height: 3, backgroundColor: '#ff7923' }} />
-          <View style={{ width: 17, height: 3, backgroundColor: '#ff7923' }} />
-          <View style={{ width: 25, height: 3, backgroundColor: '#ff7923' }} />
+          <View style={{ width: 33, height: 3, backgroundColor: commonStyles.mainColor }} />
+          <View style={{ width: 17, height: 3, backgroundColor: commonStyles.mainColor }} />
+          <View style={{ width: 25, height: 3, backgroundColor: commonStyles.mainColor }} />
         </View>
         <Text style={{
           color: '#ff7923',
@@ -23,15 +23,23 @@ class Header extends Component<NavigationProps> {
   }
 }
 
-class Home extends Component<NavigationProps> {
-  componentDidMount() {
-    this.props.children
+class Home extends Component<NavigationProps, {res: string}> {
+  constructor(Props) {
+    super(Props)
+    this.state = { res: 'Aspetta...' }
+    console.log(this.state.res)
+    fetch('http://172.20.10.7:2001/').then(async res => {
+      const t = await res.text()
+      this.setState({ res: t })
+      console.log(this.state.res)
+    })
   }
+
   render() {
     return (
       <View style={styles.container}>
         <Header {...this.props} />
-        <Text>Questa pagina è completamente inutile!</Text>
+        <Text>{this.state.res}</Text>
       </View>
     )
   }
