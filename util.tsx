@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { } from 'react-navigation-drawer'
 import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation'
 import { View, StatusBar, Platform, StyleSheet, Text } from 'react-native'
+import env from './env'
 
 export class Header extends Component<NavigationProps & {title: string}> {
     render() {
@@ -25,14 +26,16 @@ export interface NavigationProps {
     navigation: NavigationScreenProp<NavigationState, NavigationParams>
 }
 
-export let commonStyles = {
+export const commonStyles = {
     mainColor: '#ff7923',
     backgroundColor: '#1e1b20'
 }
 
+export const serverUrl = env.API_HOST
+
 const styles = StyleSheet.create({
     header: {
-        height: 50,
+        height: 64,
         flexDirection: 'row',
         alignSelf: 'stretch',
         alignItems: 'center',
@@ -41,7 +44,7 @@ const styles = StyleSheet.create({
     menuButton: {
         padding: 5,
         height: 50,
-        width: 50,
+        width: 64,
         justifyContent: 'space-evenly',
         alignItems: 'center'
       }
