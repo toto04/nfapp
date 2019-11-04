@@ -3,14 +3,15 @@ import { StyleSheet, Text, View, StatusBar, Platform, Button, SafeAreaView } fro
 import { createAppContainer, NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation'
 import { createDrawerNavigator } from 'react-navigation-drawer'
 import Menu from "./Menu";
-import { NavigationProps, commonStyles, Header } from './util'
+import Social from "./pages/Social";
+import { NavigationProps, commonStyles, Header, serverUrl } from './util'
 
 class Home extends Component<NavigationProps, {res: string}> {
   constructor(Props) {
     super(Props)
     this.state = { res: 'Aspetta...' }
     console.log(this.state.res)
-    fetch('http://172.20.10.7:2001/').then(async res => {
+    fetch(serverUrl).then(async res => {
       const t = await res.text()
       this.setState({ res: t })
       console.log(this.state.res)
@@ -29,6 +30,7 @@ class Home extends Component<NavigationProps, {res: string}> {
 
 let Nav = createDrawerNavigator({
   Home,
+  Social
 }, {
   initialRouteName: 'Home',
   contentComponent: Menu

@@ -52,10 +52,6 @@ export default class Menu extends Component<NavigationProps & DrawerContentCompo
     }
 }
 
-function test() {
-    console.log('press')
-}
-
 let styles = StyleSheet.create({
     menuItem: {
         color: 'white',
