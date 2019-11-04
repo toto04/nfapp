@@ -20,7 +20,7 @@ class Social extends Component<NavigationProps> {
         return (
             <View style={{ backgroundColor: '#fff', flex: 1 }}>
                 <Header {...this.props} title='Social' />
-                <Button title="ciao" onPress={() => {
+                <Button title="Login" onPress={() => {
                     this.props.navigation.navigate('login')
                 }}></Button>
             </View>
