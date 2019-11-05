@@ -4,15 +4,29 @@ import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-n
 import { View, StatusBar, Platform, StyleSheet, Text } from 'react-native'
 import env from './env'
 
-export class Header extends Component<NavigationProps & {title: string}> {
+export class Header extends Component<NavigationProps & { title: string, downButton?: boolean }> {
     render() {
-        return (
-            <View style={styles.header}>
-                <View style={styles.menuButton} onTouchStart={() => this.props.navigation.openDrawer()}>
+        let button = (
+            <View style={styles.menuButton} onTouchStart={() => this.props.navigation.openDrawer()}>
+                <View style={{ width: 33, height: 3, backgroundColor: commonStyles.mainColor }} />
+                <View style={{ width: 17, height: 3, backgroundColor: commonStyles.mainColor }} />
+                <View style={{ width: 25, height: 3, backgroundColor: commonStyles.mainColor }} />
+            </View>
+        )
+
+        if (this.props.downButton) {
+            button = (
+                <View style={styles.menuButton} onTouchStart={() => this.props.navigation.goBack()}>
                     <View style={{ width: 33, height: 3, backgroundColor: commonStyles.mainColor }} />
                     <View style={{ width: 17, height: 3, backgroundColor: commonStyles.mainColor }} />
                     <View style={{ width: 25, height: 3, backgroundColor: commonStyles.mainColor }} />
                 </View>
+            )
+        }
+
+        return (
+            <View style={styles.header}>
+                {button}
                 <Text style={{
                     color: '#ff7923',
                     fontSize: 35
@@ -47,5 +61,5 @@ const styles = StyleSheet.create({
         width: 64,
         justifyContent: 'space-evenly',
         alignItems: 'center'
-      }
+    }
 })
