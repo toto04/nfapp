@@ -4,22 +4,29 @@ import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-n
 import { View, StatusBar, Platform, StyleSheet, Text } from 'react-native'
 import env from './env'
 
-export class Header extends Component<NavigationProps & { title: string, downButton?: boolean }> {
+export class Header extends Component<NavigationProps & { title: string, downButton?: boolean, backButton?: boolean }> {
     render() {
-        let button = (
-            <View style={styles.menuButton} onTouchStart={() => this.props.navigation.openDrawer()}>
-                <View style={{ width: 33, height: 3, backgroundColor: commonStyles.mainColor }} />
-                <View style={{ width: 17, height: 3, backgroundColor: commonStyles.mainColor }} />
-                <View style={{ width: 25, height: 3, backgroundColor: commonStyles.mainColor }} />
-            </View>
-        )
-
-        if (this.props.downButton) {
+        let button: JSX.Element
+        if (this.props.backButton) {
             button = (
-                <View style={styles.menuButton} onTouchStart={() => this.props.navigation.goBack()}>
-                    <View style={{ width: 33, height: 3, backgroundColor: commonStyles.mainColor }} />
-                    <View style={{ width: 17, height: 3, backgroundColor: commonStyles.mainColor }} />
-                    <View style={{ width: 25, height: 3, backgroundColor: commonStyles.mainColor }} />
+                <View style={[styles.menuButton, { justifyContent: 'center' }]} onTouchStart={() => this.props.navigation.goBack()}>
+                    <View style={[styles.menuButtonBar, { transform: [{ rotate: '-45deg' }, { translateY: -6.5 }] }]} />
+                    <View style={[styles.menuButtonBar, { transform: [{ rotate: '45deg' }, { translateY: 6.5 }] }]} />
+                </View>
+            )
+        } else if (this.props.downButton) {
+            button = (
+                <View style={[styles.menuButton, { flexDirection: 'row', justifyContent: 'center' }]} onTouchStart={() => this.props.navigation.goBack()}>
+                    <View style={[styles.menuButtonBar, { transform: [{ rotate: '45deg' }, { translateX: 5.5 }] }]} />
+                    <View style={[styles.menuButtonBar, { transform: [{ rotate: '-45deg' }, { translateX: -5.5 }] }]} />
+                </View>
+            )
+        } else {
+            button = (
+                <View style={styles.menuButton} onTouchStart={() => this.props.navigation.openDrawer()}>
+                    <View style={[styles.menuButtonBar, { width: 33 }]} />
+                    <View style={[styles.menuButtonBar, { width: 17 }]} />
+                    <View style={[styles.menuButtonBar, { width: 25 }]} />
                 </View>
             )
         }
@@ -56,10 +63,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#1e1b20',
     },
     menuButton: {
-        padding: 5,
+        padding: 6,
         height: 50,
         width: 64,
         justifyContent: 'space-evenly',
         alignItems: 'center'
+    },
+    menuButtonBar: {
+        width: 20,
+        height: 3,
+        backgroundColor: commonStyles.mainColor,
+        borderRadius: 3,
     }
 })
