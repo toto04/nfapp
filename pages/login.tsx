@@ -1,9 +1,8 @@
 import React, { Component, } from 'react'
-import { View, Button, StyleSheet, TouchableOpacity, Text, Picker } from 'react-native';
-import { NavigationProps, Header, serverUrl, commonStyles } from '../util'
+import { View, Button, StyleSheet, TouchableOpacity, Text, Picker, Modal } from 'react-native';
+import { NavigationProps, Page, serverUrl, commonStyles } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
-import { withNavigationFocus, NavigationFocusInjectedProps } from 'react-navigation';
 
 interface signupStates {
     usr?: string,
@@ -14,24 +13,35 @@ interface signupStates {
     cls: string
 }
 
+enum Classes {
+    '3ASA',
+    '4ASA',
+    '5ASA'
+}
+
 class Signup extends Component<NavigationProps, signupStates> {
     constructor(props) {
         super(props)
         this.state = {
-            cls: ''
+            cls: Classes[0]
         }
     }
 
     render() {
+        let classItems: JSX.Element[] = []
+        for (let i = 0; i < Object.keys(Classes).length / 2; i++) {
+            classItems.push(<Picker.Item key={i} label={Classes[i]} value={Classes[i]} />)
+        }
+
         return (
-            <ScrollView style={{ backgroundColor: '#fff', flex: 1 }}>
-                <Header {...this.props} title='registrati' backButton />
+            <Page {...this.props} title='registrati' backButton>
                 <TextInput
                     style={styles.input}
                     placeholder='user'
                     onChangeText={(usr) => { this.setState({ usr }) }}
                     autoCompleteType='username'
                     textContentType='username'
+                    autoCapitalize='none'
                 />
                 <TextInput
                     style={styles.input}
@@ -39,6 +49,7 @@ class Signup extends Component<NavigationProps, signupStates> {
                     onChangeText={(pwd) => { this.setState({ pwd }) }}
                     autoCompleteType='password'
                     textContentType='newPassword'
+                    autoCapitalize='none'
                     secureTextEntry
                 />
                 <TextInput
@@ -47,6 +58,7 @@ class Signup extends Component<NavigationProps, signupStates> {
                     onChangeText={(pwd) => { this.setState({ pwd }) }}
                     autoCompleteType='password'
                     textContentType='password'
+                    autoCapitalize='none'
                     secureTextEntry
                 />
                 <TextInput
@@ -55,6 +67,7 @@ class Signup extends Component<NavigationProps, signupStates> {
                     onChangeText={(email) => { this.setState({ email }) }}
                     autoCompleteType='email'
                     textContentType='emailAddress'
+                    autoCapitalize='none'
                 />
                 <TextInput
                     style={styles.input}
@@ -62,6 +75,7 @@ class Signup extends Component<NavigationProps, signupStates> {
                     onChangeText={(fstName) => { this.setState({ fstName }) }}
                     autoCompleteType='name'
                     textContentType='name'
+                    autoCapitalize='words'
                 />
                 <TextInput
                     style={styles.input}
@@ -69,16 +83,16 @@ class Signup extends Component<NavigationProps, signupStates> {
                     onChangeText={(lstName) => { this.setState({ lstName }) }}
                     autoCompleteType='name'
                     textContentType='familyName'
+                    autoCapitalize='words'
                 />
                 <Picker
+                    mode={'dialog'}
                     selectedValue={this.state.cls}
                     onValueChange={(cls, idx) => {
                         this.setState({ cls })
                     }}
                 >
-                    <Picker.Item label='3ASA' value='3ASA' />
-                    <Picker.Item label='4ASA' value='4ASA' />
-                    <Picker.Item label='5ASA' value='5ASA' />
+                    {classItems}
                 </Picker>
                 <TouchableOpacity style={styles.button} onPress={() => {
                     fetch(serverUrl + '/api/signup', {
@@ -101,7 +115,7 @@ class Signup extends Component<NavigationProps, signupStates> {
                 }}>
                     <Text style={{ color: '#fff', fontSize: 20 }}>Registrati</Text>
                 </TouchableOpacity>
-            </ScrollView>
+            </Page>
         )
     }
 }
@@ -117,8 +131,7 @@ class Login extends Component<NavigationProps, { usr: string, pwd: string, edita
 
     render() {
         return (
-            <ScrollView style={{ backgroundColor: '#fff', flex: 1 }}>
-                <Header {...this.props} title='log in' downButton />
+            <Page {...this.props} title='log in' downButton={'Social'}>
                 <TextInput
                     style={styles.input}
                     editable={this.state.editable}
@@ -156,7 +169,7 @@ class Login extends Component<NavigationProps, { usr: string, pwd: string, edita
                     this.props.navigation.navigate('Signup')
                     this.setState({ editable: false })
                 }} />
-            </ScrollView>
+            </Page>
         )
     }
 }

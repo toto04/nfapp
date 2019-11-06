@@ -1,10 +1,30 @@
 import React, { Component } from 'react'
 import { } from 'react-navigation-drawer'
 import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation'
-import { View, StatusBar, Platform, StyleSheet, Text } from 'react-native'
+import { View, StatusBar, Platform, StyleSheet, Text, StyleProp, ViewStyle } from 'react-native'
 import env from './env'
+import { ScrollView } from 'react-native-gesture-handler'
 
-export class Header extends Component<NavigationProps & { title: string, downButton?: boolean, backButton?: boolean }> {
+interface HeaderProps {
+    title: string,
+    downButton?: boolean | string,
+    backButton?: boolean
+}
+
+export class Page extends Component<NavigationProps & HeaderProps> {
+    render() {
+        return (
+            <View style={{ flex: 1, backgroundColor: '#fff' }}>
+                <Header {...this.props} />
+                <ScrollView style={{ flex: 1 }} {...this.props}>
+                    {this.props.children}
+                </ScrollView>
+            </View>
+        )
+    }
+}
+
+class Header extends Component<NavigationProps & HeaderProps> {
     render() {
         let button: JSX.Element
         if (this.props.backButton) {
@@ -15,8 +35,12 @@ export class Header extends Component<NavigationProps & { title: string, downBut
                 </View>
             )
         } else if (this.props.downButton) {
+            let route = typeof this.props.downButton == 'string' ? this.props.downButton : undefined
+            let action: () => any
+            if (route) action = () => this.props.navigation.navigate(route)
+            else action = () => this.props.navigation.goBack()
             button = (
-                <View style={[styles.menuButton, { flexDirection: 'row', justifyContent: 'center' }]} onTouchStart={() => this.props.navigation.goBack()}>
+                <View style={[styles.menuButton, { flexDirection: 'row', justifyContent: 'center' }]} onTouchStart={action}>
                     <View style={[styles.menuButtonBar, { transform: [{ rotate: '45deg' }, { translateX: 5.5 }] }]} />
                     <View style={[styles.menuButtonBar, { transform: [{ rotate: '-45deg' }, { translateX: -5.5 }] }]} />
                 </View>

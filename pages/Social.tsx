@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View, Button } from 'react-native';
-import { NavigationProps, Header, commonStyles } from '../util'
+import { NavigationProps, commonStyles, Page } from '../util'
 import { createStackNavigator, NavigationStackOptions } from 'react-navigation-stack'
 import login from './login'
 
@@ -18,12 +18,11 @@ class Social extends Component<NavigationProps> {
     }
     render() {
         return (
-            <View style={{ backgroundColor: '#fff', flex: 1 }}>
-                <Header {...this.props} title='Social' />
+            <Page {...this.props} title='Social'>
                 <Button title="Login" onPress={() => {
                     this.props.navigation.navigate('login')
                 }}></Button>
-            </View>
+            </Page>
         )
     }
 }

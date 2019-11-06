@@ -4,26 +4,25 @@ import { createAppContainer, NavigationScreenProp, NavigationState, NavigationPa
 import { createDrawerNavigator } from 'react-navigation-drawer'
 import Menu from "./Menu";
 import Social from "./pages/Social";
-import { NavigationProps, commonStyles, Header, serverUrl } from './util'
+import { NavigationProps, commonStyles, serverUrl, Page } from './util'
 
 class Home extends Component<NavigationProps, {res: string}> {
-  constructor(Props) {
-    super(Props)
+  constructor(props) {
+    super(props)
     this.state = { res: 'Aspetta...' }
     console.log(this.state.res)
-    fetch(serverUrl).then(async res => {
-      const t = await res.text()
-      this.setState({ res: t })
-      console.log(this.state.res)
-    })
+    // fetch(serverUrl).then(async res => {
+    //   const t = await res.text()
+    //   this.setState({ res: t })
+    //   console.log(this.state.res)
+    // })
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <Header {...this.props} title='NFApp' />
+      <Page {...this.props} title='NFapp'>
         <Text>{this.state.res}</Text>
-      </View>
+      </Page>
     )
   }
 }
