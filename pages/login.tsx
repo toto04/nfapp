@@ -1,5 +1,5 @@
 import React, { Component, } from 'react'
-import { View, Button, StyleSheet, TouchableOpacity, Text, Picker, Modal } from 'react-native';
+import { View, Button, StyleSheet, TouchableOpacity, Text, Picker, Modal, ActionSheetIOS } from 'react-native';
 import { NavigationProps, Page, serverUrl, commonStyles } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -131,7 +131,7 @@ class Login extends Component<NavigationProps, { usr: string, pwd: string, edita
 
     render() {
         return (
-            <Page {...this.props} title='log in' downButton={'Social'}>
+            <Page {...this.props} title='log in' downButton>
                 <TextInput
                     style={styles.input}
                     editable={this.state.editable}

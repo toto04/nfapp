@@ -4,23 +4,25 @@ import { createAppContainer, NavigationScreenProp, NavigationState, NavigationPa
 import { createDrawerNavigator } from 'react-navigation-drawer'
 import Menu from "./Menu";
 import Social from "./pages/Social";
+import Login from './pages/login'
 import { NavigationProps, commonStyles, serverUrl, Page } from './util'
+import { createStackNavigator } from 'react-navigation-stack';
 
-class Home extends Component<NavigationProps, {res: string}> {
+class Home extends Component<NavigationProps, { res: string }> {
   constructor(props) {
     super(props)
     this.state = { res: 'Aspetta...' }
     console.log(this.state.res)
-    // fetch(serverUrl).then(async res => {
-    //   const t = await res.text()
-    //   this.setState({ res: t })
-    //   console.log(this.state.res)
-    // })
+    fetch(serverUrl).then(async res => {
+      const t = await res.text()
+      this.setState({ res: t })
+      console.log(this.state.res)
+    })
   }
 
   render() {
     return (
-      <Page {...this.props} title='NFapp'>
+      <Page {...this.props} title='NFApp'>
         <Text>{this.state.res}</Text>
       </Page>
     )
@@ -34,7 +36,16 @@ let Nav = createDrawerNavigator({
   initialRouteName: 'Home',
   contentComponent: Menu
 })
-let Container = createAppContainer(Nav)
+
+let loginNav = createStackNavigator({
+  Nav,
+  Login
+}, {
+  initialRouteName: 'Nav',
+  mode: 'modal',
+  headerMode: 'none'
+})
+let Container = createAppContainer(loginNav)
 
 export default class App extends Component {
   render() {

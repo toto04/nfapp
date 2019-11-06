@@ -1,8 +1,37 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Image, Linking, Platform } from "react-native";
+import { View, Text, StyleSheet, Image, Linking, Platform, ImageBackground } from "react-native";
 import { DrawerContentComponentProps } from "react-navigation-drawer";
 import { NavigationProps, commonStyles } from './util'
-import { TouchableHighlight } from "react-native-gesture-handler";
+import { TouchableHighlight, ScrollView } from "react-native-gesture-handler";
+
+class ProfileTab extends Component<NavigationProps> {
+    render() {
+        return (
+            <TouchableHighlight onPress={() => {
+                this.props.navigation.navigate('Login')
+            }}>
+                <View style={{
+                    height: 150,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingTop: 10
+                }}>
+                    <Image
+                        source={require('./assets/default-avatar.png')}
+                        style={{
+                            width: 80,
+                            height: 80,
+                            borderRadius: 40,
+                            overflow: 'hidden'
+                        }}
+                    />
+                    <Text style={{ marginTop: 5, color: '#fff', fontSize: 17 }}>Tommaso Morganti</Text>
+                    <Text style={{ marginTop: 5, color: '#ccc' }}>@toto04</Text>
+                </View>
+            </TouchableHighlight>
+        )
+    }
+}
 
 export default class Menu extends Component<NavigationProps & DrawerContentComponentProps> {
     render() {
@@ -10,17 +39,10 @@ export default class Menu extends Component<NavigationProps & DrawerContentCompo
             <View style={{
                 flex: 1,
                 backgroundColor: commonStyles.backgroundColor,
-                alignItems: 'stretch',
-                paddingTop: 20
+                alignItems: 'stretch'
             }}>
-                <View>
-                    {/* <View style={{
-                        height: 3,
-                        backgroundColor: commonStyles.mainColor,
-                        margin: 15,
-                        width: 200,
-                        alignSelf: 'center'
-                    }} /> */}
+                <ProfileTab {...this.props} />
+                <ScrollView>
                     <Text style={styles.menuItem} onPress={() => {
                         if (this.props.navigation.navigate('Home')) this.props.navigation.closeDrawer()
                     }}>Home</Text>
@@ -46,7 +68,7 @@ export default class Menu extends Component<NavigationProps & DrawerContentCompo
                     </View>
                     <Text style={[styles.menuItem, { fontSize: 12, marginBottom: 0 }]}>© 2019 peer to peer</Text>
                     <Text style={[styles.menuItem, { fontSize: 12, marginTop: 0 }]}>by Tommaso Morganti</Text>
-                </View>
+                </ScrollView>
             </View>
         )
     }

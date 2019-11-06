@@ -24,7 +24,7 @@ export class Page extends Component<NavigationProps & HeaderProps> {
     }
 }
 
-class Header extends Component<NavigationProps & HeaderProps> {
+export class Header extends Component<NavigationProps & HeaderProps> {
     render() {
         let button: JSX.Element
         if (this.props.backButton) {

@@ -4,7 +4,7 @@ import { NavigationProps, commonStyles, Page } from '../util'
 import { createStackNavigator, NavigationStackOptions } from 'react-navigation-stack'
 import login from './login'
 
-class Social extends Component<NavigationProps> {
+export default class Social extends Component<NavigationProps> {
     static navigationOptions: NavigationStackOptions = {
         title: 'Social',
         headerStyle: {
@@ -20,20 +20,9 @@ class Social extends Component<NavigationProps> {
         return (
             <Page {...this.props} title='Social'>
                 <Button title="Login" onPress={() => {
-                    this.props.navigation.navigate('login')
+                    this.props.navigation.navigate('Login')
                 }}></Button>
             </Page>
         )
     }
 }
-
-export default createStackNavigator(
-    {
-        Social,
-        login
-    },
-    {
-        mode: 'modal',
-        headerMode: 'none'
-    }
-)
