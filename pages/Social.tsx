@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { View, Button } from 'react-native';
 import { NavigationProps, commonStyles, Page } from '../util'
-import { createStackNavigator, NavigationStackOptions } from 'react-navigation-stack'
-import login from './login'
+import { NavigationStackOptions } from 'react-navigation-stack'
 
 export default class Social extends Component<NavigationProps> {
     static navigationOptions: NavigationStackOptions = {

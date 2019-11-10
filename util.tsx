@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { } from 'react-navigation-drawer'
 import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation'
-import { View, StatusBar, Platform, StyleSheet, Text, StyleProp, ViewStyle } from 'react-native'
+import { View, StatusBar, Platform, StyleSheet, Text, StyleProp, ViewStyle, AsyncStorage } from 'react-native'
 import env from './env'
 import { ScrollView } from 'react-native-gesture-handler'
 
@@ -11,7 +11,7 @@ interface HeaderProps {
     backButton?: boolean
 }
 
-export class Page extends Component<NavigationProps & HeaderProps> {
+export class Page extends Component<NavigationProps & HeaderProps & { style?: StyleProp<ViewStyle> }> {
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -24,7 +24,7 @@ export class Page extends Component<NavigationProps & HeaderProps> {
     }
 }
 
-export class Header extends Component<NavigationProps & HeaderProps> {
+class Header extends Component<NavigationProps & HeaderProps> {
     render() {
         let button: JSX.Element
         if (this.props.backButton) {

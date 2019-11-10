@@ -13,11 +13,9 @@ interface signupStates {
     cls: string
 }
 
-enum Classes {
-    '3ASA',
-    '4ASA',
-    '5ASA'
-}
+let Classes = [
+    '1AS', '2AS', '3AS', '4AS', '5AS', '5BS', '1ASA', '1BSA', '2ASA', '3ASA', '4ASA', '5ASA', '1AL', '1BL', '2AL', '2BL', '3AL', '3BL', '4AL', '4BL', '4CL', '5AL', '5BL', '1ASU', '2ASU', '1AA', '1BA', '2AA', '2BA', '2CA', '3AA', '3AF', '3AG', '4AA', '4AF', '4AG', '5AA', '5AF', '5AG'
+]
 
 class Signup extends Component<NavigationProps, signupStates> {
     constructor(props) {
@@ -29,7 +27,7 @@ class Signup extends Component<NavigationProps, signupStates> {
 
     render() {
         let classItems: JSX.Element[] = []
-        for (let i = 0; i < Object.keys(Classes).length / 2; i++) {
+        for (let i = 0; i < Classes.length; i++) {
             classItems.push(<Picker.Item key={i} label={Classes[i]} value={Classes[i]} />)
         }
 

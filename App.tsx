@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, StatusBar, Platform, Button, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, Platform, Button, SafeAreaView, AsyncStorage } from 'react-native';
 import { createAppContainer, NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation'
 import { createDrawerNavigator } from 'react-navigation-drawer'
 import Menu from "./Menu";
@@ -7,17 +7,18 @@ import Social from "./pages/Social";
 import Login from './pages/login'
 import { NavigationProps, commonStyles, serverUrl, Page } from './util'
 import { createStackNavigator } from 'react-navigation-stack';
+import Profile from './pages/Profile';
 
 class Home extends Component<NavigationProps, { res: string }> {
   constructor(props) {
     super(props)
     this.state = { res: 'Aspetta...' }
     console.log(this.state.res)
-    fetch(serverUrl).then(async res => {
-      const t = await res.text()
-      this.setState({ res: t })
-      console.log(this.state.res)
-    })
+    // fetch(serverUrl).then(async res => {
+    //   const t = await res.text()
+    //   this.setState({ res: t })
+    //   console.log(this.state.res)
+    // })
   }
 
   render() {
@@ -39,7 +40,7 @@ let Nav = createDrawerNavigator({
 
 let loginNav = createStackNavigator({
   Nav,
-  Login
+  Login: Profile
 }, {
   initialRouteName: 'Nav',
   mode: 'modal',
@@ -61,11 +62,3 @@ export default class App extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-  }
-});
