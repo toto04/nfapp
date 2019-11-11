@@ -8,6 +8,9 @@ import Login from './pages/login'
 import { NavigationProps, commonStyles, serverUrl, Page } from './util'
 import { createStackNavigator } from 'react-navigation-stack';
 import Profile from './pages/Profile';
+import login2 from './pages/login2'
+import { Provider } from 'react-redux';
+import store from './redux/index';
 
 class Home extends Component<NavigationProps, { res: string }> {
   constructor(props) {
@@ -40,7 +43,7 @@ let Nav = createDrawerNavigator({
 
 let loginNav = createStackNavigator({
   Nav,
-  Login: Profile
+  Login: login2
 }, {
   initialRouteName: 'Nav',
   mode: 'modal',
@@ -51,14 +54,16 @@ let Container = createAppContainer(loginNav)
 export default class App extends Component {
   render() {
     return (
-      <SafeAreaView style={{
-        flex: 1,
-        backgroundColor: commonStyles.backgroundColor,
-        paddingTop: Platform.OS == 'android' ? StatusBar.currentHeight : 0
-      }}>
-        <StatusBar barStyle='light-content' backgroundColor={commonStyles.backgroundColor} />
-        <Container />
-      </SafeAreaView>
+      <Provider store={store}>
+        <SafeAreaView style={{
+          flex: 1,
+          backgroundColor: commonStyles.backgroundColor,
+          paddingTop: Platform.OS == 'android' ? StatusBar.currentHeight : 0
+        }}>
+          <StatusBar barStyle='light-content' backgroundColor={commonStyles.backgroundColor} />
+          <Container />
+        </SafeAreaView>
+      </Provider>
     );
   }
 }

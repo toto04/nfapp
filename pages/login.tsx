@@ -4,7 +4,7 @@ import { NavigationProps, Page, serverUrl, commonStyles } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
 
-interface signupStates {
+interface signupState {
     usr?: string,
     pwd?: string,
     email?: string,
@@ -17,7 +17,7 @@ let Classes = [
     '1AS', '2AS', '3AS', '4AS', '5AS', '5BS', '1ASA', '1BSA', '2ASA', '3ASA', '4ASA', '5ASA', '1AL', '1BL', '2AL', '2BL', '3AL', '3BL', '4AL', '4BL', '4CL', '5AL', '5BL', '1ASU', '2ASU', '1AA', '1BA', '2AA', '2BA', '2CA', '3AA', '3AF', '3AG', '4AA', '4AF', '4AG', '5AA', '5AF', '5AG'
 ]
 
-class Signup extends Component<NavigationProps, signupStates> {
+class Signup extends Component<NavigationProps, signupState> {
     constructor(props) {
         super(props)
         this.state = {
