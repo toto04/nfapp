@@ -3,6 +3,10 @@ import { View, Button, StyleSheet, TouchableOpacity, Text, Picker, Modal, Action
 import { NavigationProps, Page, serverUrl, commonStyles } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
+import Profile from './Profile'
+import { connect } from 'react-redux';
+import { login, LoginState } from '../redux';
+import { createAppContainer, NavigationActions } from 'react-navigation';
 
 interface signupState {
     usr?: string,
@@ -118,7 +122,10 @@ class Signup extends Component<NavigationProps, signupState> {
     }
 }
 
-class Login extends Component<NavigationProps, { usr: string, pwd: string, editable: boolean }> {
+class Login extends Component<
+    NavigationProps & { login: (username: string, password: string, firstName: string, lastName: string) => void },
+    { usr: string, pwd: string, editable: boolean }
+    > {
     constructor(props) {
         super(props)
         this.state = { usr: '', pwd: '', editable: true }
@@ -157,8 +164,12 @@ class Login extends Component<NavigationProps, { usr: string, pwd: string, edita
                                 pwd: this.state.pwd
                             })
                         }).then(async res => {
-                            let { logged } = await res.json()
-                            alert(logged ? 'Loggato!' : 'Elia smettila')
+                            let { logged, username, password, firstName, lastName } = await res.json()
+                            if (logged) {
+                                this.props.login(username, password, firstName, lastName)
+                                this.props.navigation.dispatch(NavigationActions.back())
+                            }
+                            alert(logged ? 'Login effettuato!' : 'Elia smettila')
                         })
                     }}>
                     <Text style={{ color: '#fff', fontSize: 20 }}>Log in</Text>
@@ -172,12 +183,28 @@ class Login extends Component<NavigationProps, { usr: string, pwd: string, edita
     }
 }
 
-export default createStackNavigator({
-    Login,
+let connectedLogin = connect(null, (dispatch) => {
+    return {
+        login: (username: string, password: string, firstName: string, lastName: string) => dispatch(login(username, password, firstName, lastName))
+    }
+})(Login)
+
+let LoginStack = createStackNavigator({
+    connectedLogin,
     Signup
 }, {
     headerMode: 'none'
 })
+let LoginStackContainer = createAppContainer(LoginStack)
+
+class LoginSessionHandler extends Component<NavigationProps & { loggedIn: boolean }> {
+    static router = LoginStack.router // linea magica che risolve i problemi, non so cosa fa ma non toccare
+    render() {
+        return this.props.loggedIn ? <Profile navigation={this.props.navigation} /> : <LoginStack navigation={this.props.navigation} />
+    }
+}
+
+export default connect((state: LoginState) => { return { loggedIn: state.username != undefined } })(LoginSessionHandler)
 
 const styles = StyleSheet.create({
     input: {

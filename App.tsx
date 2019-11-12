@@ -7,10 +7,8 @@ import Social from "./pages/Social";
 import Login from './pages/login'
 import { NavigationProps, commonStyles, serverUrl, Page } from './util'
 import { createStackNavigator } from 'react-navigation-stack';
-import Profile from './pages/Profile';
-import login2 from './pages/login2'
 import { Provider } from 'react-redux';
-import store from './redux/index';
+import store, { login, logout } from './redux/index';
 
 class Home extends Component<NavigationProps, { res: string }> {
   constructor(props) {
@@ -43,7 +41,7 @@ let Nav = createDrawerNavigator({
 
 let loginNav = createStackNavigator({
   Nav,
-  Login: login2
+  Login
 }, {
   initialRouteName: 'Nav',
   mode: 'modal',
@@ -52,9 +50,29 @@ let loginNav = createStackNavigator({
 let Container = createAppContainer(loginNav)
 
 export default class App extends Component {
+  constructor(props) {
+    super(props)
+    AsyncStorage.getItem('logInfo').then(async info => {
+      if (!info) return
+      let obj = JSON.parse(info)
+      let res = await fetch(serverUrl + '/api/login', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          usr: obj.username,
+          pwd: obj.password
+        })
+      })
+      let { logged, username, password, firstName, lastName } = await res.json()
+      if (logged) store.dispatch(login(username, password, firstName, lastName))
+      else store.dispatch(logout())
+    })
+  }
   render() {
     return (
-      <Provider store={store}>
+      <Provider store={store} >
         <SafeAreaView style={{
           flex: 1,
           backgroundColor: commonStyles.backgroundColor,
