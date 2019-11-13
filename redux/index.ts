@@ -1,6 +1,9 @@
 import { Action, createStore, Reducer } from 'redux'
 import { AsyncStorage } from 'react-native'
 
+/**
+ * Global state, defines what the Redux store holds
+ */
 export type LoginState = {
     username: string,
     password: string,
@@ -12,10 +15,23 @@ export type LoginState = {
     firstName?: undefined,
     lastName?: undefined
 }
+/**
+ * A Redux action that has the LoginState as payload
+ */
 interface LoginAction extends Action<string> {
     payload?: LoginState
 }
 
+/**
+ * This action allows an already authenticated user to maintain the access across the app,
+ * configuring the store with his LoginState
+ * 
+ * Also syncs data with the local storage to maintain access between sessions
+ * @param username user's username
+ * @param password user's password
+ * @param firstName user's fisrt name
+ * @param lastName user's last name
+ */
 export function login(username: string, password: string, firstName: string, lastName: string): LoginAction {
     AsyncStorage.setItem('logInfo', JSON.stringify({username, password}))
     return {
@@ -29,6 +45,9 @@ export function login(username: string, password: string, firstName: string, las
     }
 }
 
+/**
+ * This action clears the store removing the user's LoginState, removing also the data from the local storage
+ */
 export function logout(): LoginAction {
     AsyncStorage.removeItem('logInfo')
     return {
@@ -56,4 +75,7 @@ let loginReducer: Reducer<LoginState, LoginAction> = (state = defaultState, acti
     }
 }
 
+/**
+ * Global store that maintains the user's LoginState across the app
+ */
 export default createStore(loginReducer)

@@ -183,27 +183,29 @@ class Login extends Component<
     }
 }
 
+/** Login screen connected to store */
 let connectedLogin = connect(null, (dispatch) => {
     return {
         login: (username: string, password: string, firstName: string, lastName: string) => dispatch(login(username, password, firstName, lastName))
     }
 })(Login)
 
+/** Stack navigator that allows to the sign up screen from the login screen */
 let LoginStack = createStackNavigator({
     connectedLogin,
     Signup
 }, {
     headerMode: 'none'
 })
-let LoginStackContainer = createAppContainer(LoginStack)
 
+/** this component is used to switch between the Profile and the Login stack nav depending on the user's LoginState */
 class LoginSessionHandler extends Component<NavigationProps & { loggedIn: boolean }> {
     static router = LoginStack.router // linea magica che risolve i problemi, non so cosa fa ma non toccare
     render() {
         return this.props.loggedIn ? <Profile navigation={this.props.navigation} /> : <LoginStack navigation={this.props.navigation} />
     }
 }
-
+/** LoginSessionHandler connected to the store */
 export default connect((state: LoginState) => { return { loggedIn: state.username != undefined } })(LoginSessionHandler)
 
 const styles = StyleSheet.create({

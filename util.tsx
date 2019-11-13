@@ -11,6 +11,9 @@ interface HeaderProps {
     backButton?: boolean
 }
 
+/**
+ * Page component, with an Header, navigation buttons and a
+ */
 export class Page extends Component<NavigationProps & HeaderProps & { style?: StyleProp<ViewStyle> }> {
     render() {
         return (
@@ -24,6 +27,11 @@ export class Page extends Component<NavigationProps & HeaderProps & { style?: St
     }
 }
 
+/**
+ * Header component, represents the header
+ * 
+ * refer to the *HeaderProps* interface
+ */
 class Header extends Component<NavigationProps & HeaderProps> {
     render() {
         let button: JSX.Element
@@ -63,15 +71,23 @@ class Header extends Component<NavigationProps & HeaderProps> {
     }
 }
 
+/**
+ * Defines the standard *navigation* prop common to all components that 
+ * somehow make use of the navigation (all *Page* components)
+ */
 export interface NavigationProps {
     navigation: NavigationScreenProp<NavigationState, NavigationParams>
 }
 
+/**
+ * Plain JS object containing common style properties
+ */
 export const commonStyles = {
     mainColor: '#ff7923',
     backgroundColor: '#1e1b20'
 }
 
+/** backend server's URL */
 export const serverUrl = env.API_HOST
 
 const styles = StyleSheet.create({

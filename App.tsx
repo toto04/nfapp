@@ -31,6 +31,9 @@ class Home extends Component<NavigationProps, { res: string }> {
   }
 }
 
+/**
+ * The app global Drawer Navigator (side menu)
+ */
 let Nav = createDrawerNavigator({
   Home,
   Social
@@ -39,6 +42,10 @@ let Nav = createDrawerNavigator({
   contentComponent: Menu
 })
 
+/** 
+ * This stack navigator contains the login screen and the rest of the app,
+ * allowing login to be made from everywere in the app
+ */
 let loginNav = createStackNavigator({
   Nav,
   Login
@@ -47,12 +54,19 @@ let loginNav = createStackNavigator({
   mode: 'modal',
   headerMode: 'none'
 })
-let Container = createAppContainer(loginNav)
+let RootNavContainer = createAppContainer(loginNav)
 
+/**
+ * Global App container, renders the Redux Store Provider allowing global store
+ * Then margins the SafeAreaView granting the app to be contained, and lastly
+ * renders the Root navigation container, which contains all the screens
+ */
 export default class App extends Component {
   constructor(props) {
     super(props)
     AsyncStorage.getItem('logInfo').then(async info => {
+      // get the session from the local storage, if present automatically
+      // reauthenticate the user
       if (!info) return
       let obj = JSON.parse(info)
       let res = await fetch(serverUrl + '/api/login', {
@@ -79,7 +93,7 @@ export default class App extends Component {
           paddingTop: Platform.OS == 'android' ? StatusBar.currentHeight : 0
         }}>
           <StatusBar barStyle='light-content' backgroundColor={commonStyles.backgroundColor} />
-          <Container />
+          <RootNavContainer />
         </SafeAreaView>
       </Provider>
     );
