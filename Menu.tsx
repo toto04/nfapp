@@ -3,9 +3,16 @@ import { View, Text, StyleSheet, Image, Linking, Platform, ImageBackground } fro
 import { DrawerContentComponentProps } from "react-navigation-drawer";
 import { NavigationProps, commonStyles } from './util'
 import { TouchableHighlight, ScrollView } from "react-native-gesture-handler";
+import { connect } from "react-redux";
+import { LoginState } from "./redux";
 
-class ProfileTab extends Component<NavigationProps> {
+/**
+ * The menu's upper profile tab, show basic info about the logged in user, allows login
+ */
+class ProfileTab extends Component<NavigationProps & { username: string, firstName: string, lastName: string }> {
     render() {
+        let name = this.props.username ? this.props.firstName + ' ' + this.props.lastName : 'Login'
+        let usr = this.props.username ? '@' + this.props.username : ''
         return (
             <TouchableHighlight onPress={() => {
                 this.props.navigation.navigate('Login')
@@ -25,14 +32,19 @@ class ProfileTab extends Component<NavigationProps> {
                             overflow: 'hidden'
                         }}
                     />
-                    <Text style={{ marginTop: 5, color: '#fff', fontSize: 17 }}>Tommaso Morganti</Text>
-                    <Text style={{ marginTop: 5, color: '#ccc' }}>@toto04</Text>
+                    <Text style={{ marginTop: 5, color: '#fff', fontSize: 17 }}>{name}</Text>
+                    <Text style={{ marginTop: 5, color: '#ccc' }}>{usr}</Text>
                 </View>
             </TouchableHighlight>
         )
     }
 }
+/** ProfileTab but connected to the Redux store */
+let ConnectedProfileTab = connect((state: LoginState) => { return { username: state.username, firstName: state.firstName, lastName: state.lastName } })(ProfileTab)
 
+/**
+ * Drawer Menu component, it's literally the left side menu
+ */
 export default class Menu extends Component<NavigationProps & DrawerContentComponentProps> {
     render() {
         return (
@@ -41,7 +53,7 @@ export default class Menu extends Component<NavigationProps & DrawerContentCompo
                 backgroundColor: commonStyles.backgroundColor,
                 alignItems: 'stretch'
             }}>
-                <ProfileTab {...this.props} />
+                <ConnectedProfileTab {...this.props} />
                 <ScrollView>
                     <Text style={styles.menuItem} onPress={() => {
                         if (this.props.navigation.navigate('Home')) this.props.navigation.closeDrawer()
@@ -62,8 +74,8 @@ export default class Menu extends Component<NavigationProps & DrawerContentCompo
                         <TouchableHighlight onPress={() => console.log('fb')}><Image source={require('./assets/facebook.png')} style={styles.icon} /></TouchableHighlight>
                         <TouchableHighlight onPress={async () => {
                             let inst = await Linking.canOpenURL('instagram://')
-                            if (inst) Linking.openURL('instagram://user?username=peertopeer.nf')
-                            else Linking.openURL('https://instagram.com/peertopeer.nf?igshid=1kbmcukf7ke3h')
+                            if (inst) Linking.openURL('instagram://user?username=liceonerviferrari')
+                            else Linking.openURL('https://www.instagram.com/liceonerviferrari/')
                         }}><Image source={require('./assets/instagram.png')} style={styles.icon} /></TouchableHighlight>
                     </View>
                     <Text style={[styles.menuItem, { fontSize: 12, marginBottom: 0 }]}>© 2019 peer to peer</Text>

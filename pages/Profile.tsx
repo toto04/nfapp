@@ -6,7 +6,7 @@ import { TouchableHighlight } from 'react-native-gesture-handler';
 export default class Profile extends Component<NavigationProps> {
     render() {
         return (
-            <Page {...this.props} title='profilo'>
+            <Page {...this.props} title='profilo' downButton>
                 <View style={{
                     alignItems: 'center',
                     justifyContent: 'center',
