@@ -4,6 +4,7 @@ import { createAppContainer, NavigationScreenProp, NavigationState, NavigationPa
 import { createDrawerNavigator } from 'react-navigation-drawer'
 import Menu from "./Menu";
 import Social from "./pages/Social";
+import Calendar from './pages/Calendar'
 import Login from './pages/login'
 import { NavigationProps, commonStyles, serverUrl, Page } from './util'
 import { createStackNavigator } from 'react-navigation-stack';
@@ -36,7 +37,8 @@ class Home extends Component<NavigationProps, { res: string }> {
  */
 let Nav = createDrawerNavigator({
   Home,
-  Social
+  Social,
+  Calendar
 }, {
   initialRouteName: 'Home',
   contentComponent: Menu
