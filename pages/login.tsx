@@ -5,7 +5,7 @@ import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
 import Profile from './Profile'
 import { connect } from 'react-redux';
-import { login, LoginState } from '../redux';
+import { login, LoginState } from '../redux/login';
 import { createAppContainer, NavigationActions } from 'react-navigation';
 
 interface signupState {
@@ -154,7 +154,8 @@ class Login extends Component<
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => {
-                        fetch(serverUrl + '/api/login', {
+                        let asd = 'https://google.it/'
+                        fetch(asd, {
                             method: 'post',
                             headers: {
                                 'Content-Type': 'application/json'

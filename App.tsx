@@ -9,7 +9,8 @@ import Login from './pages/login'
 import { NavigationProps, commonStyles, serverUrl, Page } from './util'
 import { createStackNavigator } from 'react-navigation-stack';
 import { Provider } from 'react-redux';
-import store, { login, logout } from './redux/index';
+import store from './redux/index';
+import { login, logout } from './redux/login'
 
 class Home extends Component<NavigationProps, { res: string }> {
   constructor(props) {

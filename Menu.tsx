@@ -4,7 +4,7 @@ import { DrawerContentComponentProps } from "react-navigation-drawer";
 import { NavigationProps, commonStyles } from './util'
 import { TouchableHighlight, ScrollView } from "react-native-gesture-handler";
 import { connect } from "react-redux";
-import { LoginState } from "./redux";
+import { LoginState } from "./redux/login";
 
 /**
  * The menu's upper profile tab, show basic info about the logged in user, allows login
