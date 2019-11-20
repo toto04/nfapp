@@ -1,6 +1,6 @@
 import React, { Component, } from 'react'
 import { View, Button, StyleSheet, TouchableOpacity, Text, Picker, Modal, ActionSheetIOS } from 'react-native';
-import { NavigationProps, Page, serverUrl, commonStyles } from '../util'
+import { NavigationProps, Page, serverUrl, commonStyles, api } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
 import Profile from './Profile'
@@ -97,19 +97,13 @@ class Signup extends Component<NavigationProps, signupState> {
                     {classItems}
                 </Picker>
                 <TouchableOpacity style={styles.button} onPress={() => {
-                    fetch(serverUrl + '/api/signup', {
-                        method: 'post',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            usr: this.state.usr,
-                            pwd: this.state.pwd,
-                            email: this.state.email,
-                            fstName: this.state.fstName,
-                            lstName: this.state.lstName,
-                            cls: this.state.cls
-                        })
+                    api.post('/api/signup', {
+                        usr: this.state.usr,
+                        pwd: this.state.pwd,
+                        email: this.state.email,
+                        fstName: this.state.fstName,
+                        lstName: this.state.lstName,
+                        cls: this.state.cls
                     }).then(async res => {
                         let { success, error } = await res.json()
                         alert(success ? 'utente creato!' : error)
@@ -122,10 +116,7 @@ class Signup extends Component<NavigationProps, signupState> {
     }
 }
 
-class Login extends Component<
-    NavigationProps & { login: (username: string, password: string, firstName: string, lastName: string) => void },
-    { usr: string, pwd: string, editable: boolean }
-    > {
+class Login extends Component<NavigationProps & { login: typeof login }, { usr: string, pwd: string, editable: boolean }> {
     constructor(props) {
         super(props)
         this.state = { usr: '', pwd: '', editable: true }
@@ -154,17 +145,7 @@ class Login extends Component<
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => {
-                        let asd = 'https://google.it/'
-                        fetch(asd, {
-                            method: 'post',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                usr: this.state.usr,
-                                pwd: this.state.pwd
-                            })
-                        }).then(async res => {
+                        api.post('/api/login', { usr: this.state.usr, pwd: this.state.pwd }).then(async res => {
                             let { logged, username, password, firstName, lastName } = await res.json()
                             if (logged) {
                                 this.props.login(username, password, firstName, lastName)
@@ -207,7 +188,7 @@ class LoginSessionHandler extends Component<NavigationProps & { loggedIn: boolea
     }
 }
 /** LoginSessionHandler connected to the store */
-export default connect((state: LoginState) => { return { loggedIn: state.username != undefined } })(LoginSessionHandler)
+export default connect((state: { login: LoginState }) => { return { loggedIn: state.login.username != undefined } })(LoginSessionHandler)
 
 const styles = StyleSheet.create({
     input: {

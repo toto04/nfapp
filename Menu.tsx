@@ -40,7 +40,7 @@ class ProfileTab extends Component<NavigationProps & { username: string, firstNa
     }
 }
 /** ProfileTab but connected to the Redux store */
-let ConnectedProfileTab = connect((state: LoginState) => { return { username: state.username, firstName: state.firstName, lastName: state.lastName } })(ProfileTab)
+let ConnectedProfileTab = connect((state: {login: LoginState}) => { return { username: state.login.username, firstName: state.login.firstName, lastName: state.login.lastName } })(ProfileTab)
 
 /**
  * Drawer Menu component, it's literally the left side menu

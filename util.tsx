@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { } from 'react-navigation-drawer'
 import { NavigationScreenProp, NavigationState, NavigationParams, NavigationActions } from 'react-navigation'
-import { View, StatusBar, Platform, StyleSheet, Text, StyleProp, ViewStyle, AsyncStorage } from 'react-native'
+import { View, StatusBar, Platform, StyleSheet, Text, StyleProp, ViewStyle, AsyncStorage, ScrollViewProps, FetchResult } from 'react-native'
 import env from './env'
 import { ScrollView } from 'react-native-gesture-handler'
 
@@ -14,7 +14,7 @@ interface HeaderProps {
 /**
  * Page component, with an Header, navigation buttons and a
  */
-export class Page extends Component<NavigationProps & HeaderProps & { style?: StyleProp<ViewStyle> }> {
+export class Page extends Component<NavigationProps & HeaderProps & ScrollViewProps> {
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -89,6 +89,18 @@ export const commonStyles = {
 
 /** backend server's URL */
 export const serverUrl = env.API_HOST
+export const api = {
+    get: (endpoint: string) => new Promise<Response>(async (resolve, reject) => {
+        fetch(env.API_HOST + endpoint).then(res => resolve(res)).catch(e => reject(e))
+    }),
+    post: (endpoint: string, body: {}) => new Promise<Response>(async (resolve, reject) => {
+        fetch(env.API_HOST + endpoint, {
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        }).then(res => resolve(res)).catch(e => reject(e))
+    })
+}
 
 const styles = StyleSheet.create({
     header: {

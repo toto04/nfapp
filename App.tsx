@@ -6,7 +6,7 @@ import Menu from "./Menu";
 import Social from "./pages/Social";
 import Calendar from './pages/Calendar'
 import Login from './pages/login'
-import { NavigationProps, commonStyles, serverUrl, Page } from './util'
+import { NavigationProps, commonStyles, Page, api } from './util'
 import { createStackNavigator } from 'react-navigation-stack';
 import { Provider } from 'react-redux';
 import store from './redux/index';
@@ -16,7 +16,6 @@ class Home extends Component<NavigationProps, { res: string }> {
   constructor(props) {
     super(props)
     this.state = { res: 'Aspetta...' }
-    console.log(this.state.res)
     // fetch(serverUrl).then(async res => {
     //   const t = await res.text()
     //   this.setState({ res: t })
@@ -72,16 +71,7 @@ export default class App extends Component {
       // reauthenticate the user
       if (!info) return
       let obj = JSON.parse(info)
-      let res = await fetch(serverUrl + '/api/login', {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          usr: obj.username,
-          pwd: obj.password
-        })
-      })
+      let res = await api.post('/api/login', { usr: obj.username, pwd: obj.password })
       let { logged, username, password, firstName, lastName } = await res.json()
       if (logged) store.dispatch(login(username, password, firstName, lastName))
       else store.dispatch(logout())

@@ -2,7 +2,7 @@
  * This file contains all the redux stuff related to login and accounts
  */
 
-import { Action, createStore, Reducer } from 'redux'
+import { Action, Reducer } from 'redux'
 import { AsyncStorage } from 'react-native'
 
 /**
