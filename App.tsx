@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, StatusBar, Platform, Button, SafeAreaView, AsyncStorage } from 'react-native';
 import { createAppContainer, NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation'
 import { createDrawerNavigator } from 'react-navigation-drawer'
+import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs'
+import IconComponent from 'react-native-vector-icons/Ionicons'
 import Menu from "./Menu";
 import Social from "./pages/Social";
 import Calendar from './pages/Calendar'
 import Login from './pages/login'
+import Profile from './pages/Profile'
 import { NavigationProps, commonStyles, Page, api } from './util'
 import { createStackNavigator } from 'react-navigation-stack';
 import { Provider } from 'react-redux';
@@ -35,13 +38,44 @@ class Home extends Component<NavigationProps, { res: string }> {
 /**
  * The app global Drawer Navigator (side menu)
  */
-let Nav = createDrawerNavigator({
+let Nav = createBottomTabNavigator({
   Home,
-  Social,
-  Calendar
+  Sondaggi: Social,
+  Calendar,
+  SchoolSharing: Home,
+  Profile
 }, {
-  initialRouteName: 'Home',
-  contentComponent: Menu
+  initialRouteName: 'Profile',
+  defaultNavigationOptions: ({ navigation }) => ({
+    tabBarIcon: ({ tintColor, focused }) => {
+      let f = focused ? '' : '-outline'
+      let iconName: string
+      switch (navigation.state.routeName) {
+        case 'Home':
+          iconName = 'ios-home'
+          break
+        case 'Sondaggi':
+          iconName = 'ios-checkmark-circle' + f
+          break
+        case 'Calendar':
+          iconName = 'ios-calendar'
+          break
+        case 'SchoolSharing':
+          iconName = 'ios-share'
+          break
+        case 'Profile':
+          iconName = 'ios-contact'
+          break
+        default:
+          break
+      }
+      return <IconComponent size={25} name={iconName} color={tintColor} />
+    },
+    tabBarLabel: () => { }
+  }),
+  tabBarComponent: props => {
+    return <BottomTabBar {...props} style={{ borderTopWidth: 0 }} activeTintColor={commonStyles.mainColor} />
+  }
 })
 
 /** 
