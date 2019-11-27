@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, StatusBar, Platform, Button, SafeAreaView, AsyncStorage } from 'react-native';
 import { createAppContainer, NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation'
-import { createDrawerNavigator } from 'react-navigation-drawer'
 import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs'
 import IconComponent from 'react-native-vector-icons/Ionicons'
-import Menu from "./Menu";
 import Surveys from './pages/Surveys'
+import SurveyAnswerPage from './pages/SurveyAnswerPage'
 import Calendar from './pages/Calendar'
 import Login from './pages/login'
 import Profile from './pages/Profile'
@@ -38,7 +37,7 @@ class Home extends Component<NavigationProps, { res: string }> {
 /**
  * The app global Drawer Navigator (side menu)
  */
-let Nav = createBottomTabNavigator({
+let HomeNav = createBottomTabNavigator({
   Home,
   Surveys,
   Calendar,
@@ -78,15 +77,25 @@ let Nav = createBottomTabNavigator({
   }
 })
 
+/**
+ * Stack navigator that contains all the detail pages
+ */
+let DetailNav = createStackNavigator({
+  HomeNav,
+  SurveyAnswerPage
+}, {
+  headerMode: 'none'
+})
+
 /** 
  * This stack navigator contains the login screen and the rest of the app,
  * allowing login to be made from everywere in the app
  */
 let loginNav = createStackNavigator({
-  Nav,
+  DetailNav,
   Login
 }, {
-  initialRouteName: 'Nav',
+  initialRouteName: 'DetailNav',
   mode: 'modal',
   headerMode: 'none'
 })

@@ -9,13 +9,15 @@ import { AsyncStorage } from 'react-native'
  * Global state, defines what the Redux store holds
  */
 export type LoginState = {
+    loggedIn: true,
     username: string,
     password: string,
     firstName?: string,
     lastName?: string
 } | {
-    username: undefined,
-    password: undefined,
+    loggedIn: false,
+    username?: undefined,
+    password?: undefined,
     firstName?: undefined,
     lastName?: undefined
 }
@@ -41,6 +43,7 @@ export function login(username: string, password: string, firstName: string, las
     return {
         type: 'LOGIN',
         payload: {
+            loggedIn: true,
             username,
             password,
             firstName,
@@ -59,11 +62,12 @@ export function logout(): LoginAction {
     }
 }
 
-const defaultState: LoginState = { username: undefined, password: undefined }
+const defaultState: LoginState = { loggedIn: false }
 export let loginReducer: Reducer<LoginState, LoginAction> = (state = defaultState, action) => {
     switch (action.type) {
         case 'LOGIN':
             return {
+                loggedIn: true,
                 username: action.payload.username,
                 password: action.payload.password,
                 firstName: action.payload.firstName,
@@ -71,8 +75,7 @@ export let loginReducer: Reducer<LoginState, LoginAction> = (state = defaultStat
             }
         case 'LOGOUT':
             return {
-                username: undefined,
-                password: undefined
+                loggedIn: false
             }
         default:
             return state
