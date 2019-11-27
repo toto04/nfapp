@@ -5,7 +5,7 @@ import { createDrawerNavigator } from 'react-navigation-drawer'
 import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs'
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import Menu from "./Menu";
-import Social from "./pages/Social";
+import Surveys from './pages/Surveys'
 import Calendar from './pages/Calendar'
 import Login from './pages/login'
 import Profile from './pages/Profile'
@@ -40,7 +40,7 @@ class Home extends Component<NavigationProps, { res: string }> {
  */
 let Nav = createBottomTabNavigator({
   Home,
-  Sondaggi: Social,
+  Surveys,
   Calendar,
   SchoolSharing: Home,
   Profile
@@ -54,7 +54,7 @@ let Nav = createBottomTabNavigator({
         case 'Home':
           iconName = 'ios-home'
           break
-        case 'Sondaggi':
+        case 'Surveys':
           iconName = 'ios-checkmark-circle' + f
           break
         case 'Calendar':
