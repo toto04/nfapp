@@ -1,47 +1,30 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, StatusBar, Platform, Button, SafeAreaView, AsyncStorage } from 'react-native';
-import { createAppContainer, NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation'
+import { StatusBar, Platform, SafeAreaView, AsyncStorage } from 'react-native';
+import { createAppContainer } from 'react-navigation'
 import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs'
 import IconComponent from 'react-native-vector-icons/Ionicons'
+import { createStackNavigator } from 'react-navigation-stack';
+import { Provider } from 'react-redux';
+
+import { commonStyles, api } from './util'
+import store from './redux/index';
+import { login, logout } from './redux/login'
+
 import Surveys from './pages/Surveys'
 import SurveyAnswerPage from './pages/SurveyAnswerPage'
 import Calendar from './pages/Calendar'
 import Login from './pages/login'
 import Profile from './pages/Profile'
-import { NavigationProps, commonStyles, Page, api } from './util'
-import { createStackNavigator } from 'react-navigation-stack';
-import { Provider } from 'react-redux';
-import store from './redux/index';
-import { login, logout } from './redux/login'
-
-class Home extends Component<NavigationProps, { res: string }> {
-  constructor(props) {
-    super(props)
-    this.state = { res: 'Aspetta...' }
-    // fetch(serverUrl).then(async res => {
-    //   const t = await res.text()
-    //   this.setState({ res: t })
-    //   console.log(this.state.res)
-    // })
-  }
-
-  render() {
-    return (
-      <Page {...this.props} title='NFApp'>
-        <Text>{this.state.res}</Text>
-      </Page>
-    )
-  }
-}
+import WIP from './pages/wip'
 
 /**
- * The app global Drawer Navigator (side menu)
+ * The app global Tab Navigator
  */
 let HomeNav = createBottomTabNavigator({
-  Home,
+  Feed: WIP,
   Surveys,
   Calendar,
-  SchoolSharing: Home,
+  SchoolSharing: WIP,
   Profile
 }, {
   initialRouteName: 'Profile',
@@ -50,7 +33,7 @@ let HomeNav = createBottomTabNavigator({
       let f = focused ? '' : '-outline'
       let iconName: string
       switch (navigation.state.routeName) {
-        case 'Home':
+        case 'Feed':
           iconName = 'ios-home'
           break
         case 'Surveys':
