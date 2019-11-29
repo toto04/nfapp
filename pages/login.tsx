@@ -1,6 +1,6 @@
 import React, { Component, } from 'react'
 import { View, Button, StyleSheet, TouchableOpacity, Text, Picker, Modal, ActionSheetIOS } from 'react-native';
-import { NavigationProps, Page, serverUrl, commonStyles, api } from '../util'
+import { NavigationProps, Page, commonStyles, api } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
 import Profile from './Profile'
