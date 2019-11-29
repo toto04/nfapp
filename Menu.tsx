@@ -4,7 +4,7 @@ import { DrawerContentComponentProps } from "react-navigation-drawer";
 import { NavigationProps, commonStyles } from './util'
 import { TouchableHighlight, ScrollView } from "react-native-gesture-handler";
 import { connect } from "react-redux";
-import { LoginState } from "./redux";
+import { LoginState } from "./redux/login";
 
 /**
  * The menu's upper profile tab, show basic info about the logged in user, allows login
@@ -40,7 +40,7 @@ class ProfileTab extends Component<NavigationProps & { username: string, firstNa
     }
 }
 /** ProfileTab but connected to the Redux store */
-let ConnectedProfileTab = connect((state: LoginState) => { return { username: state.username, firstName: state.firstName, lastName: state.lastName } })(ProfileTab)
+let ConnectedProfileTab = connect((state: {login: LoginState}) => { return { username: state.login.username, firstName: state.login.firstName, lastName: state.login.lastName } })(ProfileTab)
 
 /**
  * Drawer Menu component, it's literally the left side menu

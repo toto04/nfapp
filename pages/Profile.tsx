@@ -1,40 +1,66 @@
 import React, { Component } from 'react'
-import { Image, Text, View, Button } from 'react-native'
+import { Image, Text, View, Button, StyleSheet } from 'react-native'
 import { NavigationProps, Page, commonStyles } from '../util';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
+
+class Preview extends Component<{ title: string }> {
+    render() {
+        return (
+            <View style={{ alignSelf: 'stretch', padding: 10 }}>
+                <Text style={{ fontSize: 30, fontWeight: 'bold', marginLeft: 21 }}>{this.props.title}</Text>
+                <View style={{
+                    margin: 20,
+                    marginBottom: 0,
+                    backgroundColor: commonStyles.backgroundColor,
+                    borderRadius: 10, padding: 20,
+                    shadowOpacity: 0.2,
+                    shadowOffset: { width: 0, height: 5 },
+                    shadowRadius: 5,
+                    elevation: 5
+                }}>
+                    <Text style={{ color: 'white', fontSize: 40 }}>{'  '}</Text>
+                </View>
+            </View>
+        )
+    }
+}
 
 export default class Profile extends Component<NavigationProps> {
     render() {
         return (
-            <Page {...this.props} title='profilo' downButton>
+            <ScrollView>
                 <View style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flex: 1,
-                    backgroundColor: commonStyles.backgroundColor,
+                    alignSelf: 'stretch',
+                    flexDirection: 'row',
+                    padding: 20
                 }}>
-                    <TouchableHighlight onPress={() => {
-                        alert('ora qua dovresti poter modificare l\'immagine di porfilo, lo implementerò poi')
-                    }}>
+                    <View style={{ flex: 2 }}>
+                        <Text style={[styles.profileText, {fontWeight: 'bold'}]}>Tommaso Morganti</Text>
+                        <Text style={styles.profileText}>Scienze applicate</Text>
+                        <Text style={styles.profileText}>5ASA</Text>
+                    </View>
+                    <View style={{ flex: 1, alignItems: 'center' }}>
                         <Image
                             source={require('../assets/default-avatar.png')}
                             style={{
-                                width: 120,
-                                height: 120,
-                                borderRadius: 60,
+                                width: 100,
+                                height: 100,
+                                borderRadius: 50,
                                 overflow: 'hidden'
                             }}
                         />
-                    </TouchableHighlight>
-                    <TouchableHighlight>
-                        <Text style={{ marginTop: 5, color: '#fff', fontSize: 20 }}>Tommaso Morganti</Text>
-                    </TouchableHighlight>
-                    <Text style={{ marginTop: 5, color: '#ccc' }}>@toto04</Text>
-                    <Button title='cambia password' onPress={() => {
-                        alert('qua dovresti invece cambiare la password')
-                    }}></Button>
+                    </View>
                 </View>
-            </Page>
+                <Preview title='Appunti salvati' />
+                <Preview title='Eventi attenduti' />
+                <Preview title='Peer education' />
+            </ScrollView>
         )
     }
 }
+
+let styles = StyleSheet.create({
+    profileText: {
+        fontSize: 20
+    }
+})

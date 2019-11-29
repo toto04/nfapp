@@ -1,45 +1,73 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, StatusBar, Platform, Button, SafeAreaView, AsyncStorage } from 'react-native';
-import { createAppContainer, NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation'
-import { createDrawerNavigator } from 'react-navigation-drawer'
-import Menu from "./Menu";
-import Social from "./pages/Social";
-import Login from './pages/login'
-import { NavigationProps, commonStyles, serverUrl, Page } from './util'
+import { StatusBar, Platform, SafeAreaView, AsyncStorage } from 'react-native';
+import { createAppContainer } from 'react-navigation'
+import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs'
+import IconComponent from 'react-native-vector-icons/Ionicons'
 import { createStackNavigator } from 'react-navigation-stack';
 import { Provider } from 'react-redux';
-import store, { login, logout } from './redux/index';
 
-class Home extends Component<NavigationProps, { res: string }> {
-  constructor(props) {
-    super(props)
-    this.state = { res: 'Aspetta...' }
-    console.log(this.state.res)
-    // fetch(serverUrl).then(async res => {
-    //   const t = await res.text()
-    //   this.setState({ res: t })
-    //   console.log(this.state.res)
-    // })
-  }
+import { commonStyles, api } from './util'
+import store from './redux/index';
+import { login, logout } from './redux/login'
 
-  render() {
-    return (
-      <Page {...this.props} title='NFApp'>
-        <Text>{this.state.res}</Text>
-      </Page>
-    )
-  }
-}
+import Surveys from './pages/Surveys'
+import SurveyAnswerPage from './pages/SurveyAnswerPage'
+import Calendar from './pages/Calendar'
+import Login from './pages/login'
+import Profile from './pages/Profile'
+import WIP from './pages/wip'
 
 /**
- * The app global Drawer Navigator (side menu)
+ * The app global Tab Navigator
  */
-let Nav = createDrawerNavigator({
-  Home,
-  Social
+let HomeNav = createBottomTabNavigator({
+  Feed: WIP,
+  Surveys,
+  Calendar,
+  SchoolSharing: WIP,
+  Profile
 }, {
-  initialRouteName: 'Home',
-  contentComponent: Menu
+  initialRouteName: 'Profile',
+  defaultNavigationOptions: ({ navigation }) => ({
+    tabBarIcon: ({ tintColor, focused }) => {
+      let f = focused ? '' : '-outline'
+      let iconName: string
+      switch (navigation.state.routeName) {
+        case 'Feed':
+          iconName = 'ios-home'
+          break
+        case 'Surveys':
+          iconName = 'ios-checkmark-circle' + f
+          break
+        case 'Calendar':
+          iconName = 'ios-calendar'
+          break
+        case 'SchoolSharing':
+          iconName = 'ios-share'
+          break
+        case 'Profile':
+          iconName = 'ios-contact'
+          break
+        default:
+          break
+      }
+      return <IconComponent size={25} name={iconName} color={tintColor} />
+    },
+    tabBarLabel: () => { }
+  }),
+  tabBarComponent: props => {
+    return <BottomTabBar {...props} style={{ borderTopWidth: 0 }} activeTintColor={commonStyles.mainColor} />
+  }
+})
+
+/**
+ * Stack navigator that contains all the detail pages
+ */
+let DetailNav = createStackNavigator({
+  HomeNav,
+  SurveyAnswerPage
+}, {
+  headerMode: 'none'
 })
 
 /** 
@@ -47,10 +75,10 @@ let Nav = createDrawerNavigator({
  * allowing login to be made from everywere in the app
  */
 let loginNav = createStackNavigator({
-  Nav,
+  DetailNav,
   Login
 }, {
-  initialRouteName: 'Nav',
+  initialRouteName: 'DetailNav',
   mode: 'modal',
   headerMode: 'none'
 })
@@ -69,16 +97,7 @@ export default class App extends Component {
       // reauthenticate the user
       if (!info) return
       let obj = JSON.parse(info)
-      let res = await fetch(serverUrl + '/api/login', {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          usr: obj.username,
-          pwd: obj.password
-        })
-      })
+      let res = await api.post('/api/login', { usr: obj.username, pwd: obj.password })
       let { logged, username, password, firstName, lastName } = await res.json()
       if (logged) store.dispatch(login(username, password, firstName, lastName))
       else store.dispatch(logout())
