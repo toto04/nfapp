@@ -5,7 +5,7 @@ import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-ha
 import { connect } from 'react-redux';
 import { LoginState } from '../redux/login';
 
-class Survey extends Component<NavigationProps & { name: string, expiry: string, fields: { [key: string]: { type: string, description: string, options?: string[] } } }> {
+class Survey extends Component<NavigationProps & { name: string, expiry: string, fields: { [key: string]: { type: string, description: string, options?: string[] } }, refresh: () => void }> {
     render() {
         return (
             <View style={{
@@ -21,7 +21,8 @@ class Survey extends Component<NavigationProps & { name: string, expiry: string,
                 <TouchableOpacity onPress={() => {
                     this.props.navigation.navigate('SurveyAnswerPage', {
                         surveyName: this.props.name,
-                        surveyFields: this.props.fields
+                        surveyFields: this.props.fields,
+                        refreshSurveys: this.props.refresh
                     })
                 }}>
                     <Text style={{ color: 'white' }}>{this.props.expiry}</Text>
@@ -44,12 +45,12 @@ class SurveysPage extends Component<NavigationProps & { login: LoginState }, { s
 
     refresh() {
         this.setState({ refreshing: true })
-        api.get('/api/surveys/' /*+ this.props.login.username*/).then(async res => {
+        api.get('/api/surveys/' + this.props.login.username).then(async res => {
             let surveys = await res.json()
             let surveyElements: JSX.Element[] = []
             for (let survey of surveys) {
                 let date = new Date(survey.expiry)
-                surveyElements.push(<Survey key={surveys.indexOf(Survey)} name={survey.name} expiry={`Scadenza: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`} fields={survey.fields} navigation={this.props.navigation} />)
+                surveyElements.push(<Survey key={surveys.indexOf(Survey)} name={survey.name} expiry={`Scadenza: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`} fields={survey.fields} refresh={() => this.refresh()} navigation={this.props.navigation} />)
             }
             if (surveyElements.length == 0) { surveyElements.push(<Text key={0} style={{ color: '#999', alignSelf: 'stretch', margin: 20, textAlign: 'center', fontSize: 18 }}>Non ci sono nuovi sondaggi</Text>) }
             this.setState({ surveyElements, refreshing: false })
