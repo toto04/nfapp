@@ -88,13 +88,13 @@ export const commonStyles = {
 }
 
 /** backend server's URL */
-export const serverUrl = env.API_HOST
+let serverUrl = __DEV__ ? env.API_HOST : 'https://nfapp-server.herokuapp.com'
 export const api = {
     get: (endpoint: string) => new Promise<Response>(async (resolve, reject) => {
-        fetch(env.API_HOST + endpoint).then(res => resolve(res)).catch(e => reject(e))
+        fetch(serverUrl + endpoint).then(res => resolve(res)).catch(e => reject(e))
     }),
     post: (endpoint: string, body: {}) => new Promise<Response>(async (resolve, reject) => {
-        fetch(env.API_HOST + endpoint, {
+        fetch(serverUrl + endpoint, {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)

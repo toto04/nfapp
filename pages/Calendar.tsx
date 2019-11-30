@@ -1,6 +1,6 @@
 import { LocaleConfig, Calendar } from 'react-native-calendars'
 import React, { Component } from 'react'
-import { NavigationProps, Page, serverUrl, commonStyles, api } from '../util'
+import { NavigationProps, Page, commonStyles, api } from '../util'
 import { Text, RefreshControl, View } from 'react-native'
 LocaleConfig.locales['it'] = {
     monthNames: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
