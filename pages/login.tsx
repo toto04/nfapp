@@ -1,12 +1,11 @@
 import React, { Component, } from 'react'
-import { View, Button, StyleSheet, TouchableOpacity, Text, Picker, Modal, ActionSheetIOS } from 'react-native';
+import { Button, StyleSheet, TouchableOpacity, Text, Picker } from 'react-native';
 import { NavigationProps, Page, commonStyles, api } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
-import Profile from './Profile'
 import { connect } from 'react-redux';
-import { login, LoginState } from '../redux/login';
-import { createAppContainer, NavigationActions } from 'react-navigation';
+import { login, LoginState, logout } from '../redux/login';
+import { NavigationActions } from 'react-navigation';
 
 interface signupState {
     usr?: string,
@@ -180,11 +179,27 @@ let LoginStack = createStackNavigator({
     headerMode: 'none'
 })
 
+class LoggedInPage extends Component<NavigationProps & { logout: () => void }> {
+    render() {
+        return (
+            <Page navigation={this.props.navigation} title='login' downButton contentContainerStyle={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                flex: 1
+            }}>
+                <Text style={{ textAlign: 'center', fontSize: 26 }}>Hai già effettuato il login!</Text>
+                <Button title='logout' onPress={this.props.logout} />
+            </Page>
+        )
+    }
+}
+let ConnectedLoggedInPage = connect(null, (dispatch) => ({ logout: () => dispatch(logout()) }))(LoggedInPage)
+
 /** this component is used to switch between the Profile and the Login stack nav depending on the user's LoginState */
 class LoginSessionHandler extends Component<NavigationProps & { loggedIn: boolean }> {
     static router = LoginStack.router // linea magica che risolve i problemi, non so cosa fa ma non toccare
     render() {
-        return this.props.loggedIn ? <Profile navigation={this.props.navigation} /> : <LoginStack navigation={this.props.navigation} />
+        return this.props.loggedIn ? <ConnectedLoggedInPage navigation={this.props.navigation} /> : <LoginStack navigation={this.props.navigation} />
     }
 }
 /** LoginSessionHandler connected to the store */
