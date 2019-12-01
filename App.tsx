@@ -5,6 +5,7 @@ import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs'
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { createStackNavigator } from 'react-navigation-stack';
 import { Provider } from 'react-redux';
+import { AppLoading } from 'expo'
 
 import { commonStyles, api } from './util'
 import store from './redux/index';
@@ -89,21 +90,28 @@ let RootNavContainer = createAppContainer(loginNav)
  * Then margins the SafeAreaView granting the app to be contained, and lastly
  * renders the Root navigation container, which contains all the screens
  */
-export default class App extends Component {
+export default class App extends Component<null, { isLoading: boolean }> {
   constructor(props) {
     super(props)
-    AsyncStorage.getItem('logInfo').then(async info => {
-      // get the session from the local storage, if present automatically
-      // reauthenticate the user
-      if (!info) return
-      let obj = JSON.parse(info)
-      let res = await api.post('/api/login', { usr: obj.username, pwd: obj.password })
-      let { logged, username, password, firstName, lastName } = await res.json()
-      if (logged) store.dispatch(login(username, password, firstName, lastName))
-      else store.dispatch(logout())
-    })
+    this.state = { isLoading: true }
   }
+
+  /**
+   * get the session from the local storage, if present automatically
+   * reauthenticate the user
+   */
+  async checkLogin() {
+    let info = await AsyncStorage.getItem('logInfo')
+    if (!info) return
+    let obj = JSON.parse(info)
+    let res = await api.post('/api/login', { usr: obj.username, pwd: obj.password })
+    let { logged, username, password, firstName, lastName } = await res.json()
+    if (logged) store.dispatch(login(username, password, firstName, lastName))
+    else store.dispatch(logout())
+  }
+
   render() {
+    if (this.state.isLoading) return (<AppLoading startAsync={this.checkLogin} onFinish={() => this.setState({ isLoading: false })} />)
     return (
       <Provider store={store} >
         <SafeAreaView style={{
