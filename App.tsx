@@ -11,6 +11,7 @@ import { commonStyles, api } from './util'
 import store from './redux/index';
 import { login, logout } from './redux/login'
 
+import Feed from './pages/Feed'
 import Surveys from './pages/Surveys'
 import SurveyAnswerPage from './pages/SurveyAnswerPage'
 import Calendar from './pages/Calendar'
@@ -22,7 +23,7 @@ import WIP from './pages/wip'
  * The app global Tab Navigator
  */
 let HomeNav = createBottomTabNavigator({
-  Feed: WIP,
+  Feed,
   Surveys,
   Calendar,
   SchoolSharing: WIP,
