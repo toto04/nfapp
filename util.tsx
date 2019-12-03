@@ -37,7 +37,7 @@ class Header extends Component<NavigationProps & HeaderProps> {
         let button: JSX.Element
         if (this.props.backButton) {
             button = (
-                <View style={[styles.menuButton, { justifyContent: 'center' }]} onTouchStart={() => this.props.navigation.goBack()}>
+                <View style={[styles.menuButton, { justifyContent: 'center' }]} onTouchStart={() => this.props.navigation.dispatch(NavigationActions.back())}>
                     <View style={[styles.menuButtonBar, { transform: [{ rotate: '-45deg' }, { translateY: -6.5 }] }]} />
                     <View style={[styles.menuButtonBar, { transform: [{ rotate: '45deg' }, { translateY: 6.5 }] }]} />
                 </View>

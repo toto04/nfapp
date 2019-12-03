@@ -89,6 +89,7 @@ class CheckboxField extends Component<OptionsProps, { checks: boolean[] }> {
             let i = this.props.options.indexOf(option)
             optionElements.push(
                 <CheckBox
+                    key={i}
                     onClick={() => {
                         this.setState({
                             checks: this.state.checks.map((v, j) => { return (j == i) ? !v : v })

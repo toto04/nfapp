@@ -12,6 +12,7 @@ import store from './redux/index';
 import { login, logout } from './redux/login'
 
 import Feed from './pages/Feed'
+import PostDetailPage from './pages/PostDetailPage'
 import Surveys from './pages/Surveys'
 import SurveyAnswerPage from './pages/SurveyAnswerPage'
 import Calendar from './pages/Calendar'
@@ -67,7 +68,8 @@ let HomeNav = createBottomTabNavigator({
  */
 let DetailNav = createStackNavigator({
   HomeNav,
-  SurveyAnswerPage
+  SurveyAnswerPage,
+  PostDetailPage
 }, {
   headerMode: 'none'
 })
