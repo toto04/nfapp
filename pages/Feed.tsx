@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Text, RefreshControl, View, Image } from 'react-native'
 import { NavigationProps, api, commonStyles } from '../util';
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
+import IconComponent from 'react-native-vector-icons/Ionicons'
 
 export interface Post {
     author: string,
@@ -22,32 +23,37 @@ class PostComponent extends Component<NavigationProps & { postObject: Post }> {
             resizeMode: 'cover'
         }} source={{ uri: this.props.postObject.image }} /> : undefined
         return (
-            <View style={{
-                marginTop: 15,
-                shadowOpacity: 0.2,
-                shadowOffset: { width: 0, height: 5 },
-                shadowRadius: 5,
-                elevation: 5
-            }}>
-                <TouchableHighlight
-                    onPress={() => {
-                        this.props.navigation.navigate('PostDetailPage', { postObject: this.props.postObject })
-                    }}
-                    style={{
-                        borderRadius: 10,
-                        overflow: 'hidden'
-                    }}
-                >
-                    <View
-                        style={{ backgroundColor: commonStyles.backgroundColor }}>
-                        <View style={{ margin: 15 }}>
-                            <Text style={{ color: '#aaa', fontSize: 12 }}>{'@' + this.props.postObject.author + ' - ' + this.props.postObject.time}</Text>
-                            <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>{this.props.postObject.title}</Text>
-                            {body}
+            <View style={{ marginTop: 15 }}>
+                <View style={{
+                    shadowOpacity: 0.2,
+                    shadowOffset: { width: 0, height: 5 },
+                    shadowRadius: 5,
+                    elevation: 5
+                }}>
+                    <TouchableHighlight
+                        onPress={() => {
+                            this.props.navigation.navigate('PostDetailPage', { postObject: this.props.postObject })
+                        }}
+                        style={{
+                            borderRadius: 10,
+                            overflow: 'hidden'
+                        }}
+                    >
+                        <View
+                            style={{ backgroundColor: commonStyles.backgroundColor }}>
+                            <View style={{ margin: 15 }}>
+                                <Text style={{ color: '#aaa', fontSize: 12 }}>{'@' + this.props.postObject.author + ' - ' + this.props.postObject.time}</Text>
+                                <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>{this.props.postObject.title}</Text>
+                                {body}
+                            </View>
+                            {image}
                         </View>
-                        {image}
-                    </View>
-                </TouchableHighlight>
+                    </TouchableHighlight>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                    <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} name='ios-text' />
+                    <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} name='ios-heart-empty' />
+                </View>
             </View>
         )
     }
