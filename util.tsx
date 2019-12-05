@@ -3,6 +3,7 @@ import { } from 'react-navigation-drawer'
 import { NavigationScreenProp, NavigationState, NavigationParams, NavigationActions } from 'react-navigation'
 import { View, StatusBar, Platform, StyleSheet, Text, StyleProp, ViewStyle, AsyncStorage, ScrollViewProps, FetchResult } from 'react-native'
 import env from './env'
+import store from './redux'
 import { ScrollView } from 'react-native-gesture-handler'
 
 interface HeaderProps {
@@ -91,12 +92,20 @@ export const commonStyles = {
 let serverUrl = __DEV__ ? env.API_HOST : 'https://nfapp-server.herokuapp.com'
 export const api = {
     get: (endpoint: string) => new Promise<Response>(async (resolve, reject) => {
-        fetch(serverUrl + endpoint).then(res => resolve(res)).catch(e => reject(e))
+        let log = store.getState().login
+        let headers = log.loggedIn ? { 'x-nfapp-username': log.username, 'x-nfapp-password': log.password } : {}
+        fetch(serverUrl + endpoint, { headers }).then(res => resolve(res)).catch(e => reject(e))
     }),
     post: (endpoint: string, body: {}) => new Promise<Response>(async (resolve, reject) => {
+        let log = store.getState().login
+        let headers = log.loggedIn ? {
+            'x-nfapp-username': log.username,
+            'x-nfapp-password': log.password,
+            'Content-Type': 'application/json'
+        } : { 'Content-Type': 'application/json' }
         fetch(serverUrl + endpoint, {
             method: 'post',
-            headers: { 'Content-Type': 'application/json' },
+            headers,
             body: JSON.stringify(body)
         }).then(res => resolve(res)).catch(e => reject(e))
     })

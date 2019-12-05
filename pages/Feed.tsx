@@ -3,16 +3,25 @@ import { Text, RefreshControl, View, Image } from 'react-native'
 import { NavigationProps, api, commonStyles } from '../util';
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import IconComponent from 'react-native-vector-icons/Ionicons'
+import { connect } from 'react-redux';
+import { LoginState } from '../redux/login';
 
 export interface Post {
+    id: number,
     author: string,
     title: string,
     body?: string,
     image?: string,
-    time: string
+    time: string,
+    liked?: boolean
 }
 
-class PostComponent extends Component<NavigationProps & { postObject: Post }> {
+class PostComponent extends Component<NavigationProps & { postObject: Post, login: LoginState }, { liked?: boolean }> {
+    constructor(props) {
+        super(props)
+        this.state = {}
+    }
+
     render() {
         let body = this.props.postObject.body ? <Text style={{ color: '#bbb', fontSize: 14 }} numberOfLines={4}>{this.props.postObject.body}</Text> : undefined
         let image = this.props.postObject.image ? <Image style={{
@@ -22,6 +31,22 @@ class PostComponent extends Component<NavigationProps & { postObject: Post }> {
             borderBottomLeftRadius: 10,
             resizeMode: 'cover'
         }} source={{ uri: this.props.postObject.image }} /> : undefined
+
+        let liked = this.props.postObject.liked
+        if (this.state.liked != undefined) liked = this.state.liked
+        let onLike = this.props.login.loggedIn ? () => {
+            const url = '/api/' + (liked ? 'dislike/' : 'like/') + this.props.postObject.id
+            console.log(url)
+            this.setState({ liked: !liked })
+            api.post(url, {}).then(async res => {
+                let r = await res.json()
+                if (r.success) this.setState({ liked: !liked })
+            })
+        } : () => this.props.navigation.navigate('Login')
+        let like = liked ?
+            <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} onPress={onLike} name='ios-heart' color='red' /> :
+            <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} onPress={onLike} name='ios-heart-empty' />
+
         return (
             <View style={{ marginTop: 15 }}>
                 <View style={{
@@ -52,12 +77,14 @@ class PostComponent extends Component<NavigationProps & { postObject: Post }> {
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                     <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} name='ios-text' />
-                    <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} name='ios-heart-empty' />
+                    {like}
                 </View>
             </View>
         )
     }
 }
+
+let ConnectedPostComponent = connect((state: { login: LoginState }) => ({ login: state.login }))(PostComponent)
 
 export default class FeedPage extends Component<NavigationProps, { posts: JSX.Element[], refreshing: boolean }> {
     constructor(props) {
@@ -73,11 +100,12 @@ export default class FeedPage extends Component<NavigationProps, { posts: JSX.El
     refresh() {
         this.setState({ refreshing: true })
         api.get('/api/posts').then(async res => {
-            let posts: (Post & { id: number })[] = await res.json()
+            let posts: Post[] = await res.json()
             let els = []
-            for (const post of posts) {
+            for (let post of posts) {
+                post.time = formatDate(post.time)
                 els.push(
-                    <PostComponent
+                    <ConnectedPostComponent
                         key={post.id}
                         navigation={this.props.navigation}
                         postObject={post}
@@ -99,4 +127,20 @@ export default class FeedPage extends Component<NavigationProps, { posts: JSX.El
             </ScrollView>
         )
     }
+}
+
+function formatDate(inputDate: string) {
+    let date = new Date(inputDate)
+    let dd = date.getDate() + ''
+    if (dd.length == 1) dd = '0' + dd
+    let MM = date.getMonth() + 1 + ''
+    if (MM.length == 1) MM = '0' + MM
+    let yyyy = date.getFullYear()
+
+    let hh = date.getHours() + ''
+    if (hh.length == 1) hh = '0' + hh
+    let mm = date.getMinutes() + ''
+    if (mm.length == 1) mm = '0' + mm
+
+    return `${dd}/${MM}/${yyyy} ${hh}:${mm}`
 }

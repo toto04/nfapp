@@ -203,7 +203,7 @@ class LoginSessionHandler extends Component<NavigationProps & { loggedIn: boolea
     }
 }
 /** LoginSessionHandler connected to the store */
-export default connect((state: { login: LoginState }) => { return { loggedIn: state.login.username != undefined } })(LoginSessionHandler)
+export default connect((state: { login: LoginState }) => { return { loggedIn: state.login.loggedIn } })(LoginSessionHandler)
 
 const styles = StyleSheet.create({
     input: {
