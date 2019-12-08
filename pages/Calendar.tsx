@@ -34,8 +34,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
 
     refresh() {
         this.setState({ refreshing: true })
-        api.get('/api/events').then(async res => {
-            let rows = await res.json()
+        api.get('/api/events').then(async rows => {
             let evt = {}
             for (const row of rows) {
                 evt[row.date] = row.description

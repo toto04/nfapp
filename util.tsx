@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
-import { } from 'react-navigation-drawer'
 import { NavigationScreenProp, NavigationState, NavigationParams, NavigationActions } from 'react-navigation'
-import { View, StatusBar, Platform, StyleSheet, Text, StyleProp, ViewStyle, AsyncStorage, ScrollViewProps, FetchResult } from 'react-native'
+import { View, StyleSheet, Text, ScrollViewProps, Dimensions } from 'react-native'
 import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions'
 import env from './env'
 import store from './redux'
 import { ScrollView } from 'react-native-gesture-handler'
+import Animated, { Easing } from 'react-native-reanimated'
+import { connect } from 'react-redux'
+import { ErrorState, spawnError } from './redux/error'
 
 interface HeaderProps {
     title: string,
@@ -53,13 +55,7 @@ class Header extends Component<NavigationProps & HeaderProps> {
                 </View>
             )
         } else {
-            button = (
-                <View style={styles.menuButton} onTouchStart={() => this.props.navigation.openDrawer()}>
-                    <View style={[styles.menuButtonBar, { width: 33 }]} />
-                    <View style={[styles.menuButtonBar, { width: 17 }]} />
-                    <View style={[styles.menuButtonBar, { width: 25 }]} />
-                </View>
-            )
+            button = undefined
         }
 
         return (
@@ -90,26 +86,89 @@ export const commonStyles = {
     backgroundColor: '#1e1b20'
 }
 
+class ErrorModalComponent extends Component<{ message?: string }, { y: Animated.Value<number> }> {
+    state = { message: '', y: new Animated.Value(Dimensions.get('screen').height) }
+
+    render() {
+        if (this.props.message) {
+            Animated.timing(this.state.y, { toValue: Dimensions.get('screen').height - 170, duration: 300, easing: Easing.inOut(Easing.ease) }).start(() => {
+                setTimeout(() => {
+                    Animated.timing(this.state.y, { toValue: Dimensions.get('screen').height, duration: 300, easing: Easing.inOut(Easing.ease) }).start()
+                }, 5000)
+            })
+        }
+        let a: any = [{ translateY: this.state.y }]
+        return <Animated.View
+            style={{
+                position: 'absolute',
+                transform: a,
+                zIndex: 2000,
+                margin: 20,
+                padding: 10,
+                backgroundColor: commonStyles.backgroundColor,
+                borderRadius: 10,
+                width: Dimensions.get('screen').width - 40,
+                height: 80,
+                shadowOpacity: 0.2,
+                shadowOffset: { width: 0, height: 5 },
+                shadowRadius: 5,
+                elevation: 5,
+                alignItems: 'stretch',
+                justifyContent: 'center'
+            }}
+        >
+            <Text style={{ zIndex: 2001, color: 'white', textAlign: 'center', fontSize: 15 }}>{this.props.message}</Text>
+        </Animated.View>
+    }
+}
+export let ErrorModal = connect((state: { error: ErrorState }) => ({ message: state.error.message }))(ErrorModalComponent)
+
 /** backend server's URL */
 let serverUrl = __DEV__ ? env.API_HOST : 'https://nfapp-server.herokuapp.com'
+async function parseApiResponse(res: Response, resolve: (value: any) => void) {
+    try {
+        let obj = await res.json()
+        resolve(obj)
+    } catch {
+        resolve({ success: false, error: 'could not parse json' })
+    }
+}
+function handleApiRejection(error: any, reject: (reason?: any) => void) {
+    store.dispatch(spawnError('Impossibile connettersi al server, riprova più tardi'))
+}
+function retryApiRequest(endpoint: string, options: {}, resolve: (value: any) => void) {
+    fetch(serverUrl + endpoint, options).then(res => {
+        parseApiResponse(res, resolve)
+        store.dispatch(spawnError('Connessione ristabilita'))
+    }).catch(e => setTimeout(() => retryApiRequest(endpoint, options, resolve), 5000))  // ritenta ogni 5 secondi
+}
+
 export const api = {
-    get: (endpoint: string) => new Promise<Response>(async (resolve, reject) => {
+    get: (endpoint: string) => new Promise<any>(async (resolve, reject) => {
         let log = store.getState().login
         let headers = log.loggedIn ? { 'x-nfapp-username': log.username, 'x-nfapp-password': log.password } : {}
-        fetch(serverUrl + endpoint, { headers }).then(res => resolve(res)).catch(e => reject(e))
+        let options = { headers }
+        fetch(serverUrl + endpoint, options).then(res => parseApiResponse(res, resolve)).catch(e => {
+            handleApiRejection(e, reject)
+            retryApiRequest(endpoint, options, resolve)
+        })
     }),
-    post: (endpoint: string, body: {}) => new Promise<Response>(async (resolve, reject) => {
+    post: (endpoint: string, body: {}) => new Promise<any>(async (resolve, reject) => {
         let log = store.getState().login
         let headers = log.loggedIn ? {
             'x-nfapp-username': log.username,
             'x-nfapp-password': log.password,
             'Content-Type': 'application/json'
         } : { 'Content-Type': 'application/json' }
-        fetch(serverUrl + endpoint, {
+        let options = {
             method: 'post',
             headers,
             body: JSON.stringify(body)
-        }).then(res => resolve(res)).catch(e => reject(e))
+        }
+        fetch(serverUrl + endpoint, options).then(res => parseApiResponse(res, resolve)).catch(e => {
+            handleApiRejection(e, reject)
+            retryApiRequest(endpoint, options, resolve)
+        })
     })
 }
 
@@ -122,7 +181,7 @@ export async function registerPushNotifications() {
     }
     if (s != 'granted') return
     let token = await Notifications.getExpoPushTokenAsync()
-    api.post('/api/tokentest', { token }).then(async res => console.log(await res.text()))
+    api.post('/api/tokentest', { token })
 }
 
 const styles = StyleSheet.create({

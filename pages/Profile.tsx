@@ -32,10 +32,9 @@ class Preview extends Component<{ title: string, onPress?: () => void }> {
 class ProfilePage extends Component<NavigationProps & { login: LoginState, logout: () => void }, { class: string }> {
     constructor(props) {
         super(props)
-        this.state = { class: '' }
+        this.state = { class: 'attendo server...' }
         api.get(`/api/user/${this.props.login.username}`).then(async res => {
-            let o = await res.json()
-            this.setState({ class: o.class })
+            this.setState({ class: res.class })
         })
     }
 

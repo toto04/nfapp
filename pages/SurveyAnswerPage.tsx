@@ -167,10 +167,9 @@ class SurveyAnswerPage extends Component<NavigationProps & { login: LoginState }
                     onPress={() => api.post(`/api/surveys/${surveyName}`, {
                         answers: this.state.values
                     }).then(async res => {
-                        let o = await res.json()
                         this.props.navigation.state.params.refreshSurveys()
                         this.props.navigation.goBack()
-                        alert(o.success ? 'Grazie per aver risposto!' : ('C\'è stato un errore:' + o.error))
+                        alert(res.success ? 'Grazie per aver risposto!' : ('C\'è stato un errore:' + res.error))
                     })}
                 >
                     <Text style={{ color: '#fff', fontSize: 20 }}>Send</Text>

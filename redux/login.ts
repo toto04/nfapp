@@ -39,7 +39,7 @@ interface LoginAction extends Action<string> {
  * @param lastName user's last name
  */
 export function login(username: string, password: string, firstName: string, lastName: string): LoginAction {
-    AsyncStorage.setItem('logInfo', JSON.stringify({username, password}))
+    AsyncStorage.setItem('logInfo', JSON.stringify({username, password, firstName, lastName}))
     return {
         type: 'LOGIN',
         payload: {

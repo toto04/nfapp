@@ -36,11 +36,9 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
         if (this.state.liked != undefined) liked = this.state.liked
         let onLike = this.props.login.loggedIn ? () => {
             const url = '/api/' + (liked ? 'dislike/' : 'like/') + this.props.postObject.id
-            console.log(url)
             this.setState({ liked: !liked })
             api.post(url, {}).then(async res => {
-                let r = await res.json()
-                if (r.success) this.setState({ liked: !liked })
+                if (res.success) this.setState({ liked: !liked })
             })
         } : () => this.props.navigation.navigate('Login')
         let like = liked ?
@@ -99,8 +97,7 @@ export default class FeedPage extends Component<NavigationProps, { posts: JSX.El
 
     refresh() {
         this.setState({ refreshing: true })
-        api.get('/api/posts').then(async res => {
-            let posts: Post[] = await res.json()
+        api.get('/api/posts').then(async (posts: Post[]) => {
             let els = []
             for (let post of posts) {
                 post.time = formatDate(post.time)

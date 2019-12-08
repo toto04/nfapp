@@ -45,8 +45,7 @@ class SurveysPage extends Component<NavigationProps & { login: LoginState }, { s
 
     refresh() {
         this.setState({ refreshing: true })
-        api.get('/api/surveys').then(async res => {
-            let surveys = await res.json()
+        api.get('/api/surveys').then(async surveys => {
             let surveyElements: JSX.Element[] = []
             for (let survey of surveys) {
                 let date = new Date(survey.expiry)
