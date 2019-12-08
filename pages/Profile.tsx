@@ -74,7 +74,7 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
                 </View>
                 <Button title='logout' onPress={this.props.logout} />
                 <Preview title='Appunti salvati' />
-                <Preview title='Eventi attenduti' />
+                <Preview title='Eventi attesi' />
                 <Preview title='Peer education' />
             </ScrollView>
         )

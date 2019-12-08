@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { } from 'react-navigation-drawer'
 import { NavigationScreenProp, NavigationState, NavigationParams, NavigationActions } from 'react-navigation'
 import { View, StatusBar, Platform, StyleSheet, Text, StyleProp, ViewStyle, AsyncStorage, ScrollViewProps, FetchResult } from 'react-native'
+import { Notifications } from 'expo'
+import * as Permissions from 'expo-permissions'
 import env from './env'
 import store from './redux'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -109,6 +111,18 @@ export const api = {
             body: JSON.stringify(body)
         }).then(res => resolve(res)).catch(e => reject(e))
     })
+}
+
+export async function registerPushNotifications() {
+    const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS)
+    let s = status
+    if (status != 'granted') {
+        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS)
+        s = status
+    }
+    if (s != 'granted') return
+    let token = await Notifications.getExpoPushTokenAsync()
+    api.post('/api/tokentest', { token }).then(async res => console.log(await res.text()))
 }
 
 const styles = StyleSheet.create({

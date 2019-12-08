@@ -7,7 +7,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { Provider } from 'react-redux';
 import { AppLoading } from 'expo'
 
-import { commonStyles, api } from './util'
+import { commonStyles, api, registerPushNotifications } from './util'
 import store from './redux/index';
 import { login, logout } from './redux/login'
 
@@ -97,6 +97,10 @@ export default class App extends Component<null, { isLoading: boolean }> {
   constructor(props) {
     super(props)
     this.state = { isLoading: true }
+  }
+
+  componentDidMount() {
+    registerPushNotifications()
   }
 
   /**

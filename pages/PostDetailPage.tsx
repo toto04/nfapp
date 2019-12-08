@@ -14,7 +14,7 @@ class PostDetailPage extends Component<NavigationProps, { postObject: Post, imag
         super(props)
         this.state = { postObject: this.props.navigation.state.params.postObject, imageSize: { width: 0, height: 0 } }
         this.ref = React.createRef()
-        Image.getSize(this.state.postObject.image, (w, h) => {
+        if (this.state.postObject.image) Image.getSize(this.state.postObject.image, (w, h) => {
             let width = Dimensions.get('screen').width - 40
             this.setState({ imageSize: { width: width, height: (h * width / w) } })
         }, (e) => { if (e) throw e })
@@ -30,7 +30,7 @@ class PostDetailPage extends Component<NavigationProps, { postObject: Post, imag
                 <Text style={{ color: '#666', fontSize: 14 }}>{'@' + this.state.postObject.author + ' - ' + this.state.postObject.time}</Text>
                 <Text style={{ color: 'black', fontSize: 35, fontWeight: 'bold', marginBottom: 10 }}>{this.state.postObject.title}</Text>
                 <Text style={{ color: 'black', fontSize: 18 }}>{this.state.postObject.body}</Text>
-                <TouchableHighlight
+                {this.state.postObject.image ? <TouchableHighlight
                     style={{ marginTop: 20 }}
                     onPress={() => this.props.navigation.navigate('ImageModal', { imageURL: this.state.postObject.image })}
                 >
@@ -41,7 +41,7 @@ class PostDetailPage extends Component<NavigationProps, { postObject: Post, imag
                         }}
                         source={{ uri: this.state.postObject.image }}
                     />
-                </TouchableHighlight>
+                </TouchableHighlight> : undefined}
             </Page>
         )
     }

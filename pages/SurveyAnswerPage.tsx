@@ -165,8 +165,6 @@ class SurveyAnswerPage extends Component<NavigationProps & { login: LoginState }
                         borderRadius: 3
                     }}
                     onPress={() => api.post(`/api/surveys/${surveyName}`, {
-                        username: this.props.login.username,
-                        password: this.props.login.password,
                         answers: this.state.values
                     }).then(async res => {
                         let o = await res.json()
