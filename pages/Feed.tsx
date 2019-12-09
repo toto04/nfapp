@@ -5,6 +5,7 @@ import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { connect } from 'react-redux';
 import { LoginState } from '../redux/login';
+import { getStatusBarHeight } from 'react-native-safe-area-view';
 
 export interface Post {
     id: number,
@@ -74,7 +75,6 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
                     </TouchableHighlight>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-                    <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} name='ios-text' />
                     {like}
                 </View>
             </View>
@@ -116,6 +116,7 @@ export default class FeedPage extends Component<NavigationProps, { posts: JSX.El
     render() {
         return (
             <ScrollView
+                style={{ paddingTop: getStatusBarHeight() }}
                 contentContainerStyle={{ margin: 20, paddingBottom: 50 }}
                 refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()} tintColor={'black'} />}
             >

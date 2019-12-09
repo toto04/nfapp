@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { NavigationProps, Page, commonStyles, api } from '../util'
 import { Text, RefreshControl, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
+import { getStatusBarHeight } from 'react-native-safe-area-view'
 LocaleConfig.locales['it'] = {
     monthNames: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
     monthNamesShort: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
@@ -71,7 +72,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                 refreshControl={
                     <RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()} tintColor={'white'} />
                 }
-                style={{ backgroundColor: commonStyles.backgroundColor, flex: 1 }}
+                style={{ backgroundColor: commonStyles.backgroundColor, flex: 1, paddingTop: getStatusBarHeight() }}
                 contentContainerStyle={{ flexGrow: 1 }}
                 contentInset={{ bottom: -eventPaddingOffset }}
                 stickyHeaderIndices={[0]}
@@ -81,7 +82,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                     <Calendar
                         theme={{
                             calendarBackground: commonStyles.backgroundColor,
-                            textSectionTitleColor: '#ee6913',
+                            textSectionTitleColor: commonStyles.mainColor,
                             todayTextColor: commonStyles.mainColor,
                             dayTextColor: 'white',
                             textDisabledColor: '#777',
@@ -95,7 +96,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                         onDayPress={(day) => { this.setState({ selectedDate: day.dateString }) }}
                     />
                 </View>
-                <View style={{ padding: 10, backgroundColor: '#fff', flex: 1, paddingBottom: eventPaddingOffset + 20, borderRadius: 10, zIndex: 1000 }}>
+                <View style={{ padding: 10, backgroundColor: '#fff', flex: 1, paddingBottom: eventPaddingOffset + 60, borderRadius: 10, zIndex: 1000 }}>
                     <Text style={{ fontSize: 40, fontWeight: 'bold' }}>Eventi:</Text>
                     {todayEventComponents.length != 0 ? todayEventComponents : <Text style={{ alignSelf: 'center', fontSize: 25, color: '#aaa', margin: 20 }}>Nessun evento</Text>}
                 </View>

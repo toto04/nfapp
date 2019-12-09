@@ -9,6 +9,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import Animated, { Easing } from 'react-native-reanimated'
 import { connect } from 'react-redux'
 import { ErrorState, spawnError } from './redux/error'
+import { getStatusBarHeight } from 'react-native-safe-area-view'
 
 interface HeaderProps {
     title: string,
@@ -82,7 +83,7 @@ export interface NavigationProps {
  * Plain JS object containing common style properties
  */
 export const commonStyles = {
-    mainColor: '#ff7923',
+    mainColor: '#ff9000',
     backgroundColor: '#1e1b20'
 }
 
@@ -186,7 +187,8 @@ export async function registerPushNotifications() {
 
 const styles = StyleSheet.create({
     header: {
-        height: 64,
+        paddingTop: getStatusBarHeight(),
+        height: 64 + getStatusBarHeight(),
         flexDirection: 'row',
         alignSelf: 'stretch',
         alignItems: 'center',

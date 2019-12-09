@@ -4,6 +4,7 @@ import { NavigationProps, Page, commonStyles, api } from '../util';
 import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
 import { LoginState, logout } from '../redux/login';
 import { Connect, connect } from 'react-redux';
+import { getStatusBarHeight } from 'react-native-safe-area-view';
 
 class Preview extends Component<{ title: string, onPress?: () => void }> {
     render() {
@@ -40,18 +41,13 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
 
     render() {
         return (
-            <ScrollView stickyHeaderIndices={[0]} contentInset={{ top: -300 }}>
+            <ScrollView stickyHeaderIndices={[0]} contentInset={{ top: -300 }} style={{ paddingTop: getStatusBarHeight() }}>
                 <View style={{
                     padding: 20,
                     paddingTop: 320,
                     marginBottom: 20,
-                    backgroundColor: commonStyles.backgroundColor,
                     // borderBottomLeftRadius: 10,
                     // borderBottomRightRadius: 10,
-                    shadowOpacity: 0.2,
-                    shadowOffset: { width: 0, height: 5 },
-                    shadowRadius: 5,
-                    elevation: 5
                 }}>
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ flex: 2 }}>
@@ -104,7 +100,7 @@ export default connect((state: { login: LoginState }) => ({ login: state.login }
 let styles = StyleSheet.create({
     profileText: {
         alignSelf: 'flex-start',
-        color: 'white',
+        color: 'black',
         fontSize: 20
     }
 })

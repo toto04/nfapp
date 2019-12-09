@@ -122,16 +122,10 @@ export default class App extends Component<null, { isLoading: boolean }> {
     render() {
         if (this.state.isLoading) return (<AppLoading startAsync={this.checkLogin} onFinish={() => this.setState({ isLoading: false })} />)
         return (
-            <Provider store={store} >
-                <SafeAreaView style={{
-                    flex: 1,
-                    backgroundColor: commonStyles.backgroundColor,
-                    paddingTop: Platform.OS == 'android' ? StatusBar.currentHeight : 0,
-                }}>
-                    <ErrorModal />
-                    <StatusBar barStyle='light-content' backgroundColor={commonStyles.backgroundColor} />
-                    <RootNavContainer />
-                </SafeAreaView>
+            <Provider store={store}>
+                <ErrorModal />
+                <StatusBar barStyle='dark-content' backgroundColor={commonStyles.backgroundColor} />
+                <RootNavContainer />
             </Provider>
         );
     }
