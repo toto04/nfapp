@@ -41,13 +41,10 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
 
     render() {
         return (
-            <ScrollView stickyHeaderIndices={[0]} contentInset={{ top: -300 }} style={{ paddingTop: getStatusBarHeight() }}>
+            <ScrollView style={{ paddingTop: getStatusBarHeight() }}>
                 <View style={{
                     padding: 20,
-                    paddingTop: 320,
-                    marginBottom: 20,
-                    // borderBottomLeftRadius: 10,
-                    // borderBottomRightRadius: 10,
+                    marginBottom: 20
                 }}>
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ flex: 2 }}>
