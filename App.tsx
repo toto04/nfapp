@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { StatusBar, Platform, SafeAreaView, AsyncStorage, View } from 'react-native';
-import { createAppContainer } from 'react-navigation'
+import { createAppContainer, NavigationContainerComponent, NavigationActions } from 'react-navigation'
 import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs'
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { createStackNavigator } from 'react-navigation-stack';
 import { Provider } from 'react-redux';
-import { AppLoading } from 'expo'
+import { AppLoading, Notifications } from 'expo'
 
-import { commonStyles, api, registerPushNotifications, ErrorModal } from './util'
+import { commonStyles, api, registerPushNotifications, ErrorModal, formatDate } from './util'
 import store from './redux/index';
 import { login, logout } from './redux/login'
 
-import Feed from './pages/Feed'
+import Feed, { Post } from './pages/Feed'
 import PostDetailPage from './pages/PostDetailPage'
 import Surveys from './pages/Surveys'
 import SurveyAnswerPage from './pages/SurveyAnswerPage'
@@ -19,6 +19,7 @@ import Calendar from './pages/Calendar'
 import Login from './pages/login'
 import Profile from './pages/Profile'
 import WIP from './pages/wip'
+import { Notification } from 'expo/build/Notifications/Notifications.types';
 
 /**
  * The app global Tab Navigator
@@ -87,6 +88,7 @@ let loginNav = createStackNavigator({
     headerMode: 'none'
 })
 let RootNavContainer = createAppContainer(loginNav)
+let rootNavRef: NavigationContainerComponent
 
 /**
  * Global App container, renders the Redux Store Provider allowing global store
@@ -101,6 +103,7 @@ export default class App extends Component<null, { isLoading: boolean }> {
 
     componentDidMount() {
         registerPushNotifications()
+        Notifications.addListener(handleNotifications)
     }
 
     /**
@@ -125,8 +128,25 @@ export default class App extends Component<null, { isLoading: boolean }> {
             <Provider store={store}>
                 <ErrorModal />
                 <StatusBar barStyle='dark-content' backgroundColor={commonStyles.backgroundColor} />
-                <RootNavContainer />
+                <RootNavContainer ref={navigatorRef => { rootNavRef = navigatorRef }} />
             </Provider>
         );
+    }
+}
+
+async function handleNotifications(notification: Notification) {
+    if (notification.origin != 'selected') return
+    switch (notification.data.type) {
+        case 'newPost':
+            let res: Post | { success: false } = await api.get('/api/post/' + notification.data.postID)
+            let post = res as Post
+            if (post.id) {
+                post.time = formatDate(post.time)
+                rootNavRef.dispatch(NavigationActions.navigate({
+                    routeName: 'PostDetailPage',
+                    params: { postObject: res }
+                }))
+            }
+            break
     }
 }

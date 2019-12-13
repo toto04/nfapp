@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Text, RefreshControl, View, Image } from 'react-native'
-import { NavigationProps, api, commonStyles } from '../util';
+import { NavigationProps, api, commonStyles, formatDate } from '../util';
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { connect } from 'react-redux';
@@ -125,20 +125,4 @@ export default class FeedPage extends Component<NavigationProps, { posts: JSX.El
             </ScrollView>
         )
     }
-}
-
-function formatDate(inputDate: string) {
-    let date = new Date(inputDate)
-    let dd = date.getDate() + ''
-    if (dd.length == 1) dd = '0' + dd
-    let MM = date.getMonth() + 1 + ''
-    if (MM.length == 1) MM = '0' + MM
-    let yyyy = date.getFullYear()
-
-    let hh = date.getHours() + ''
-    if (hh.length == 1) hh = '0' + hh
-    let mm = date.getMinutes() + ''
-    if (mm.length == 1) mm = '0' + mm
-
-    return `${dd}/${MM}/${yyyy} ${hh}:${mm}`
 }
