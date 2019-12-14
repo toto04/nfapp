@@ -148,5 +148,10 @@ async function handleNotifications(notification: Notification) {
                 }))
             }
             break
+        case 'newSurvey':
+            rootNavRef.dispatch(NavigationActions.navigate({
+                routeName: 'Surveys'
+            }))
+            break
     }
 }

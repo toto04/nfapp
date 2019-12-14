@@ -201,7 +201,7 @@ export async function registerPushNotifications() {
     }
     if (s != 'granted') return
     let token = await Notifications.getExpoPushTokenAsync()
-    api.post('/api/tokentest', { token })
+    api.post('/api/registertoken', { token })
 }
 
 const styles = StyleSheet.create({
