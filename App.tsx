@@ -18,7 +18,7 @@ import SurveyAnswerPage from './pages/SurveyAnswerPage'
 import Calendar from './pages/Calendar'
 import Login from './pages/login'
 import Profile from './pages/Profile'
-import WIP from './pages/wip'
+import SchoolSharing from './pages/SchoolSharing'
 import { Notification } from 'expo/build/Notifications/Notifications.types';
 
 /**
@@ -28,7 +28,7 @@ let HomeNav = createBottomTabNavigator({
     Feed,
     Surveys,
     Calendar,
-    SchoolSharing: WIP,
+    SchoolSharing,
     Profile
 }, {
     initialRouteName: 'Profile',
