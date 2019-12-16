@@ -2,6 +2,7 @@
   "expo": {
     "name": "nfapp",
     "slug": "nfapp",
+    "scheme": "nfapp",
     "privacy": "public",
     "sdkVersion": "35.0.0",
     "platforms": [
@@ -24,7 +25,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.tommasomorganti.nfapp",
+      "supportsTablet": false
     }
   }
 }

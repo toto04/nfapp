@@ -165,14 +165,11 @@ class SurveyAnswerPage extends Component<NavigationProps & { login: LoginState }
                         borderRadius: 3
                     }}
                     onPress={() => api.post(`/api/surveys/${surveyName}`, {
-                        username: this.props.login.username,
-                        password: this.props.login.password,
                         answers: this.state.values
                     }).then(async res => {
-                        let o = await res.json()
                         this.props.navigation.state.params.refreshSurveys()
                         this.props.navigation.goBack()
-                        alert(o.success ? 'Grazie per aver risposto!' : ('C\'è stato un errore:' + o.error))
+                        alert(res.success ? 'Grazie per aver risposto!' : ('C\'è stato un errore:' + res.error))
                     })}
                 >
                     <Text style={{ color: '#fff', fontSize: 20 }}>Send</Text>

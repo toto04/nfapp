@@ -4,6 +4,7 @@ import { NavigationProps, Page, commonStyles, api } from '../util';
 import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
 import { LoginState, logout } from '../redux/login';
 import { Connect, connect } from 'react-redux';
+import { getStatusBarHeight } from 'react-native-safe-area-view';
 
 class Preview extends Component<{ title: string, onPress?: () => void }> {
     render() {
@@ -32,27 +33,18 @@ class Preview extends Component<{ title: string, onPress?: () => void }> {
 class ProfilePage extends Component<NavigationProps & { login: LoginState, logout: () => void }, { class: string }> {
     constructor(props) {
         super(props)
-        this.state = { class: '' }
+        this.state = { class: 'attendo server...' }
         api.get(`/api/user/${this.props.login.username}`).then(async res => {
-            let o = await res.json()
-            this.setState({ class: o.class })
+            this.setState({ class: res.class })
         })
     }
 
     render() {
         return (
-            <ScrollView stickyHeaderIndices={[0]} contentInset={{ top: -300 }}>
+            <ScrollView style={{ paddingTop: getStatusBarHeight() }}>
                 <View style={{
                     padding: 20,
-                    paddingTop: 320,
-                    marginBottom: 20,
-                    backgroundColor: commonStyles.backgroundColor,
-                    // borderBottomLeftRadius: 10,
-                    // borderBottomRightRadius: 10,
-                    shadowOpacity: 0.2,
-                    shadowOffset: { width: 0, height: 5 },
-                    shadowRadius: 5,
-                    elevation: 5
+                    marginBottom: 20
                 }}>
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ flex: 2 }}>
@@ -72,8 +64,9 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
                         </View>
                     </View>
                 </View>
+                <Button title='logout' onPress={this.props.logout} />
                 <Preview title='Appunti salvati' />
-                <Preview title='Eventi attenduti' />
+                <Preview title='Eventi attesi' />
                 <Preview title='Peer education' />
             </ScrollView>
         )
@@ -104,7 +97,7 @@ export default connect((state: { login: LoginState }) => ({ login: state.login }
 let styles = StyleSheet.create({
     profileText: {
         alignSelf: 'flex-start',
-        color: 'white',
+        color: 'black',
         fontSize: 20
     }
 })

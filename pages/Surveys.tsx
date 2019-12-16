@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { Text, View, Button, StyleSheet, Modal, Vibration, RefreshControl } from 'react-native'
+import { Text, View, Button, RefreshControl } from 'react-native'
 import { NavigationProps, commonStyles, api } from "../util";
-import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { LoginState } from '../redux/login';
+import { getStatusBarHeight } from 'react-native-safe-area-view';
 
 class Survey extends Component<NavigationProps & { name: string, expiry: string, fields: { [key: string]: { type: string, description: string, options?: string[] } }, refresh: () => void }> {
     render() {
@@ -45,8 +46,7 @@ class SurveysPage extends Component<NavigationProps & { login: LoginState }, { s
 
     refresh() {
         this.setState({ refreshing: true })
-        api.get('/api/surveys/' + this.props.login.username).then(async res => {
-            let surveys = await res.json()
+        api.get('/api/surveys').then(async surveys => {
             let surveyElements: JSX.Element[] = []
             for (let survey of surveys) {
                 let date = new Date(survey.expiry)
@@ -64,6 +64,7 @@ class SurveysPage extends Component<NavigationProps & { login: LoginState }, { s
                 refreshControl={
                     <RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()} tintColor={'black'} />
                 }
+                style={{ paddingTop: getStatusBarHeight() }}
             >
                 <Text style={{ fontWeight: 'bold', fontSize: 40 }}>Sondaggi</Text>
                 {this.props.login.loggedIn ? this.state.surveyElements : <Button title='Login' onPress={() => {

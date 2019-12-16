@@ -104,7 +104,7 @@ class Signup extends Component<NavigationProps, signupState> {
                         lstName: this.state.lstName,
                         cls: this.state.cls
                     }).then(async res => {
-                        let { success, error } = await res.json()
+                        let { success, error } = res
                         alert(success ? 'utente creato!' : error)
                     })
                 }}>
@@ -144,8 +144,9 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => {
-                        api.post('/api/login', { usr: this.state.usr, pwd: this.state.pwd }).then(async res => {
-                            let { logged, username, password, firstName, lastName } = await res.json()
+                        let password = this.state.pwd
+                        api.post('/api/login', { usr: this.state.usr, pwd: password }).then(async res => {
+                            let { logged, username, firstName, lastName } = res
                             if (logged) {
                                 this.props.login(username, password, firstName, lastName)
                                 this.props.navigation.dispatch(NavigationActions.back())
@@ -203,7 +204,7 @@ class LoginSessionHandler extends Component<NavigationProps & { loggedIn: boolea
     }
 }
 /** LoginSessionHandler connected to the store */
-export default connect((state: { login: LoginState }) => { return { loggedIn: state.login.username != undefined } })(LoginSessionHandler)
+export default connect((state: { login: LoginState }) => { return { loggedIn: state.login.loggedIn } })(LoginSessionHandler)
 
 const styles = StyleSheet.create({
     input: {

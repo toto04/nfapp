@@ -2,6 +2,8 @@ import { LocaleConfig, Calendar } from 'react-native-calendars'
 import React, { Component } from 'react'
 import { NavigationProps, Page, commonStyles, api } from '../util'
 import { Text, RefreshControl, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
+import { getStatusBarHeight } from 'react-native-safe-area-view'
 LocaleConfig.locales['it'] = {
     monthNames: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
     monthNamesShort: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
@@ -33,8 +35,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
 
     refresh() {
         this.setState({ refreshing: true })
-        api.get('/api/events').then(async res => {
-            let rows = await res.json()
+        api.get('/api/events').then(async rows => {
             let evt = {}
             for (const row of rows) {
                 evt[row.date] = row.description
@@ -65,40 +66,41 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
             )
         }
         mkDates[this.state.selectedDate] = Object.assign({ selected: true }, mkDates[this.state.selectedDate])
-        let eventPaddingOffset = 200
+        let eventPaddingOffset = 300
         return (
-            <Page
-                navigation={this.props.navigation}
-                title='calendario'
+            <ScrollView
                 refreshControl={
                     <RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()} tintColor={'white'} />
                 }
-                style={{ backgroundColor: '#22202a', flex: 1 }}
+                style={{ backgroundColor: commonStyles.backgroundColor, flex: 1, paddingTop: getStatusBarHeight() }}
                 contentContainerStyle={{ flexGrow: 1 }}
                 contentInset={{ bottom: -eventPaddingOffset }}
                 stickyHeaderIndices={[0]}
             >
-                <Calendar
-                    theme={{
-                        calendarBackground: '#22202a',
-                        textSectionTitleColor: '#ee6913',
-                        todayTextColor: commonStyles.mainColor,
-                        dayTextColor: 'white',
-                        textDisabledColor: '#777',
-                        monthTextColor: commonStyles.mainColor,
-                        dotColor: commonStyles.mainColor,
-                        selectedDayBackgroundColor: commonStyles.mainColor,
-                        arrowColor: commonStyles.mainColor,
-                    }}
-                    firstDay={1}
-                    markedDates={mkDates}
-                    onDayPress={(day) => { this.setState({ selectedDate: day.dateString }) }}
-                />
-                <View style={{ padding: 10, backgroundColor: '#fff', flex: 1, paddingBottom: eventPaddingOffset + 20, borderRadius: 10, zIndex: 1000 }}>
+                <View>
+                    <Text style={{ fontWeight: 'bold', fontSize: 40, margin: 20, marginBottom: 0, color: commonStyles.mainColor }}>Calendario</Text>
+                    <Calendar
+                        theme={{
+                            calendarBackground: commonStyles.backgroundColor,
+                            textSectionTitleColor: commonStyles.mainColor,
+                            todayTextColor: commonStyles.mainColor,
+                            dayTextColor: 'white',
+                            textDisabledColor: '#777',
+                            monthTextColor: commonStyles.mainColor,
+                            dotColor: commonStyles.mainColor,
+                            selectedDayBackgroundColor: commonStyles.mainColor,
+                            arrowColor: commonStyles.mainColor,
+                        }}
+                        firstDay={1}
+                        markedDates={mkDates}
+                        onDayPress={(day) => { this.setState({ selectedDate: day.dateString }) }}
+                    />
+                </View>
+                <View style={{ padding: 10, backgroundColor: '#fff', flex: 1, paddingBottom: eventPaddingOffset + 60, borderRadius: 10, zIndex: 1000 }}>
                     <Text style={{ fontSize: 40, fontWeight: 'bold' }}>Eventi:</Text>
                     {todayEventComponents.length != 0 ? todayEventComponents : <Text style={{ alignSelf: 'center', fontSize: 25, color: '#aaa', margin: 20 }}>Nessun evento</Text>}
                 </View>
-            </Page>
+            </ScrollView>
         )
     }
 }
