@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar, Platform, SafeAreaView, AsyncStorage, View } from 'react-native';
+import { StatusBar, Platform, SafeAreaView, AsyncStorage, View, Dimensions } from 'react-native'
 import { createAppContainer, NavigationContainerComponent, NavigationActions } from 'react-navigation'
 import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs'
 import IconComponent from 'react-native-vector-icons/Ionicons'
@@ -19,6 +19,7 @@ import Calendar from './pages/Calendar'
 import Login from './pages/login'
 import Profile from './pages/Profile'
 import SchoolSharing from './pages/SchoolSharing'
+import SubjectsDetailPage from './pages/SchoolSharing/SubjectsDetailPage'
 import { Notification } from 'expo/build/Notifications/Notifications.types';
 
 /**
@@ -60,7 +61,7 @@ let HomeNav = createBottomTabNavigator({
         tabBarLabel: () => { }
     }),
     tabBarComponent: props => {
-        return <BottomTabBar {...props} style={{ borderTopWidth: 0, height: 50 }} activeTintColor={commonStyles.mainColor} />
+        return <BottomTabBar {...props} style={{ borderTopWidth: 0, height: 50 }} activeTintColor={commonStyles.main.color} />
     }
 })
 
@@ -70,7 +71,8 @@ let HomeNav = createBottomTabNavigator({
 let DetailNav = createStackNavigator({
     HomeNav,
     SurveyAnswerPage,
-    PostDetailPage
+    PostDetailPage,
+    SubjectsDetailPage
 }, {
     headerMode: 'none'
 })
@@ -127,7 +129,7 @@ export default class App extends Component<null, { isLoading: boolean }> {
         return (
             <Provider store={store}>
                 <ErrorModal />
-                <StatusBar barStyle='dark-content' backgroundColor={commonStyles.backgroundColor} />
+                <StatusBar barStyle='dark-content' backgroundColor={commonStyles.main.backgroundColor} />
                 <RootNavContainer ref={navigatorRef => { rootNavRef = navigatorRef }} />
             </Provider>
         );
