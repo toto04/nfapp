@@ -40,7 +40,7 @@ export class Page extends Component<NavigationProps & HeaderProps & ScrollViewPr
     render() {
         return (<View style={{ flex: 1, backgroundColor: '#fff' }}>
             <Header {...this.props} />
-            <ScrollView style={{ flex: 1 }} {...this.props}>
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 50 }} {...this.props}>
                 {this.props.children}
             </ScrollView>
         </View>);

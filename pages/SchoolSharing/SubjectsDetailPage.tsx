@@ -7,14 +7,14 @@ import { connect } from 'react-redux'
 import { LoginState } from '../../redux/login'
 const { classStructure } = Class
 
-interface Context {
+export interface Context {
     field: string,
     classIndex: number
 }
 
 interface Note {
     id: number,
-    data: string,
+    images: string[],
     author: string,
     title: string,
     description: string,
@@ -34,6 +34,7 @@ class Subject extends Component<NavigationProps & { context: Context, subject: s
         refreshing: false,
         notes: []
     }
+
     refresh = async () => {
         this.setState({ refreshing: true })
         let res = await api.get(`/api/schoolsharing/notes/${this.props.context.field}/${this.props.context.classIndex}/${this.props.subject}`)
@@ -54,7 +55,10 @@ class Subject extends Component<NavigationProps & { context: Context, subject: s
                     customAction={() => this.setState({ modalVisible: false })}
                     rightButton={(this.props.login._class.field == this.props.context.field && this.props.login._class.yearIndex == this.props.context.classIndex) ? {
                         name: 'add',
-                        action: () => { console.log('aggiungi un appunto') } // TODO: nuovi appunti
+                        action: () => {
+                            this.setState({ modalVisible: false })
+                            this.props.navigation.navigate('AddNotePage', { classContext: { ...this.props.context, subject: this.props.subject } })
+                        }
                     } : undefined}
                     refreshControl={<RefreshControl
                         refreshing={this.state.refreshing}
@@ -75,7 +79,7 @@ class Subject extends Component<NavigationProps & { context: Context, subject: s
                                     style={commonStyles.shadowStyle}
                                 >
                                     <ImageBackground
-                                        source={{ uri: item.data }}
+                                        source={{ uri: item.images[0] }}
                                         style={{ height: 200 }}
                                     >
                                         <LinearGradient
@@ -88,13 +92,12 @@ class Subject extends Component<NavigationProps & { context: Context, subject: s
                                         >
                                             <Text style={{ color: 'white' }}>{item.author + ' - ' + formatDate(item.postingdate)}</Text>
                                             <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>{item.title}</Text>
-                                            <Text style={{ color: 'white' }
-                                            } numberOfLines={1}>{item.description}</Text>
+                                            <Text style={{ color: 'white' }} numberOfLines={1}>{item.description}</Text>
                                         </LinearGradient>
                                     </ImageBackground>
                                 </TouchableHighlight>
                             }
-                            ListEmptyComponent={<Text style={{ margin: 20, textAlign: 'center', fontSize: 20, color: '#777' }}>Nessuno ha ancora pubblicato appunti per questa materia, sii il primo!</Text>}
+                            ListEmptyComponent={<Text style={{ margin: 20, textAlign: 'center', fontSize: 20, color: '#777' }}>{this.state.refreshing ? 'caricamento...' : 'Nessuno ha ancora pubblicato appunti per questa materia, sii il primo!'}</Text>}
                             keyExtractor={({ id }) => id + ''}
                             refreshing={this.state.refreshing}
                             onRefresh={this.refresh}

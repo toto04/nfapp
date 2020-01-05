@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import { Text, View, Button, RefreshControl } from 'react-native'
-import { NavigationProps, commonStyles, api, ScrollableMainPage } from "../util";
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { Text, View, Button } from 'react-native'
+import { NavigationProps, commonStyles, api, ScrollableMainPage } from "../../util";
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { LoginState } from '../redux/login';
-import { getStatusBarHeight } from 'react-native-safe-area-view';
+import { LoginState } from '../../redux/login';
 
 class Survey extends Component<NavigationProps & { name: string, expiry: string, fields: { [key: string]: { type: string, description: string, options?: string[] } }, refresh: () => void }> {
     render() {

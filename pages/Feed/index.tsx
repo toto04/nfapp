@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { Text, RefreshControl, View, Image } from 'react-native'
-import { NavigationProps, api, commonStyles, formatDate, ScrollableMainPage } from '../util';
+import { NavigationProps, api, commonStyles, formatDate, ScrollableMainPage } from '../../util';
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { connect } from 'react-redux';
-import { LoginState } from '../redux/login';
+import { LoginState } from '../../redux/login';
 import { getStatusBarHeight } from 'react-native-safe-area-view';
 
 export interface Post {

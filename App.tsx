@@ -12,14 +12,15 @@ import store from './redux/index';
 import { login, logout } from './redux/login'
 
 import Feed, { Post } from './pages/Feed'
-import PostDetailPage from './pages/PostDetailPage'
+import PostDetailPage from './pages/Feed/PostDetailPage'
 import Surveys from './pages/Surveys'
-import SurveyAnswerPage from './pages/SurveyAnswerPage'
+import SurveyAnswerPage from './pages/Surveys/SurveyAnswerPage'
 import Calendar from './pages/Calendar'
 import Login from './pages/login'
 import Profile from './pages/Profile'
 import SchoolSharing from './pages/SchoolSharing'
 import SubjectsDetailPage from './pages/SchoolSharing/SubjectsDetailPage'
+import AddNotePage from './pages/SchoolSharing/AddNotePage'
 import { Notification } from 'expo/build/Notifications/Notifications.types';
 
 /**
@@ -72,7 +73,8 @@ let DetailNav = createStackNavigator({
     HomeNav,
     SurveyAnswerPage,
     PostDetailPage,
-    SubjectsDetailPage
+    SubjectsDetailPage,
+    AddNotePage
 }, {
     headerMode: 'none'
 })
@@ -106,6 +108,11 @@ export default class App extends Component<null, { isLoading: boolean }> {
     componentDidMount() {
         registerPushNotifications()
         Notifications.addListener(handleNotifications)
+    }
+
+    componentDidUpdate() {
+        // Useful for testing purposes
+        // rootNavRef.dispatch(NavigationActions.navigate({routeName: 'AddNotePage'}))
     }
 
     /**

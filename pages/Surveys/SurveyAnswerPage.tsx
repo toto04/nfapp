@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { NavigationProps, Page, commonStyles, api } from "../util";
+import { NavigationProps, Page, commonStyles, api } from "../../util";
 import { Text, View, TextInput, StyleSheet, Image } from 'react-native';
 import RadioForm from 'react-native-simple-radio-button'
 import CheckBox from 'react-native-check-box'
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { LoginState } from '../redux/login';
+import { LoginState } from '../../redux/login';
 
 interface FieldProps { description: string, onValueChange: (v: string) => void }
 interface OptionsProps extends FieldProps { options: string[] }
