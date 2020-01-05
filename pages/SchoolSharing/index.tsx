@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { Text, View } from 'react-native'
 import Accordion from 'react-native-collapsible/Accordion'
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler'
-import { NavigationProps, commonStyles, ScrollableMainPage } from '../../util';
+import { NavigationProps, commonStyles, ScrollableMainPage, Class } from '../../util';
+const { classStructure } = Class
 
 export default class SchoolSharing extends Component<NavigationProps, { activeSections: number[] }> {
     state = { activeSections: [] }
@@ -12,18 +13,11 @@ export default class SchoolSharing extends Component<NavigationProps, { activeSe
         this.renderContent.bind(this)
     }
 
-    renderContent = (section) => {
-        let data = []
-        switch (section) {
-            case 'Scienze Umane':
-                data = ['1^', '2^']
-                break
-            default:
-                data = ['1^', '2^', '3^', '4^', '5^']
-        }
+    renderContent = (field) => {
+        let data = classStructure[field].map(f => f.year)
         return <FlatList
             data={data}
-            renderItem={({ index, item }) => <TouchableOpacity onPress={() => this.props.navigation.navigate('SubjectsDetailPage', { classContext: { section, class: index } })}>
+            renderItem={({ index, item }) => <TouchableOpacity onPress={() => this.props.navigation.navigate('SubjectsDetailPage', { classContext: { field, classIndex: index } })}>
                 <Text style={{ padding: 10, fontSize: 20 }}>{`Classe ${item}`}</Text>
             </TouchableOpacity>}
             keyExtractor={item => item + ''}
@@ -31,7 +25,7 @@ export default class SchoolSharing extends Component<NavigationProps, { activeSe
     }
 
     render() {
-        let sections = ['Scientifico', 'Scienze Applicate', 'Linguistico', 'Scienze Umane', 'Artistico']
+        let fields = Object.keys(classStructure)
         return <ScrollableMainPage
             navigation={this.props.navigation}
             statusBarStyle='dark-content'
@@ -40,7 +34,7 @@ export default class SchoolSharing extends Component<NavigationProps, { activeSe
             <Text style={{ alignSelf: 'center', textAlign: 'center', color: '#777', padding: 15, fontSize: 16 }}>Condividi i tuoi appunti con altri studenti per guadagnare punti!</Text>
             <Accordion
                 activeSections={this.state.activeSections}
-                sections={sections}
+                sections={fields}
                 renderContent={this.renderContent}
                 renderHeader={(content) => <View>
                     <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'white' }}>{content}</Text>

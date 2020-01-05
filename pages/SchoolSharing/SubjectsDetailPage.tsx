@@ -1,8 +1,16 @@
 import React, { Component } from 'react'
-import { NavigationProps, Page, commonStyles, api, formatDate } from '../../util'
+import { NavigationProps, Page, commonStyles, api, formatDate, Class } from '../../util'
 import { ScrollView, TouchableHighlight, TouchableOpacity, FlatList } from 'react-native-gesture-handler'
 import { View, Text, Modal, RefreshControl, ImageBackground } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
+import { connect } from 'react-redux'
+import { LoginState } from '../../redux/login'
+const { classStructure } = Class
+
+interface Context {
+    field: string,
+    classIndex: number
+}
 
 interface Note {
     id: number,
@@ -20,7 +28,7 @@ interface SubjectState {
     notes: Note[]
 }
 
-class Subject extends Component<NavigationProps & { context: { section: string, class: number }, subject: string }, SubjectState> {
+class Subject extends Component<NavigationProps & { context: Context, subject: string, login: LoginState }, SubjectState> {
     state: SubjectState = {
         modalVisible: false,
         refreshing: false,
@@ -28,7 +36,7 @@ class Subject extends Component<NavigationProps & { context: { section: string, 
     }
     refresh = async () => {
         this.setState({ refreshing: true })
-        let res = await api.get(`/api/schoolsharing/notes/${this.props.context.section}/${this.props.context.class}/${this.props.subject}`)
+        let res = await api.get(`/api/schoolsharing/notes/${this.props.context.field}/${this.props.context.classIndex}/${this.props.subject}`)
         if (res.success === false) this.setState({ error: true })
         this.setState({ refreshing: false, notes: res })
     }
@@ -44,6 +52,10 @@ class Subject extends Component<NavigationProps & { context: { section: string, 
                     title={this.props.subject}
                     navigation={this.props.navigation}
                     customAction={() => this.setState({ modalVisible: false })}
+                    rightButton={(this.props.login._class.field == this.props.context.field && this.props.login._class.yearIndex == this.props.context.classIndex) ? {
+                        name: 'add',
+                        action: () => { console.log('aggiungi un appunto') } // TODO: nuovi appunti
+                    } : undefined}
                     refreshControl={<RefreshControl
                         refreshing={this.state.refreshing}
                         onRefresh={() => this.refresh()}
@@ -106,15 +118,17 @@ class Subject extends Component<NavigationProps & { context: { section: string, 
         </View>
     }
 }
+let ConnectedSubject = connect((state: { login: LoginState }) => ({ login: state.login }))(Subject)
 
 export default class SubjectsDetailPage extends Component<NavigationProps, {}> {
     render() {
+        let context: Context = this.props.navigation.getParam('classContext')
         let subs = []
-        for (let i = 0; i < 10; i++) subs.push(<Subject
-            key={i}
+        for (let subject of classStructure[context.field][context.classIndex].subjects) subs.push(<ConnectedSubject
+            key={subject}
             navigation={this.props.navigation}
-            subject='Matematica'
-            context={this.props.navigation.getParam('classContext')}
+            subject={subject}
+            context={context}
         />)
         return <Page
             navigation={this.props.navigation}

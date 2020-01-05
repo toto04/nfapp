@@ -115,11 +115,11 @@ export default class App extends Component<null, { isLoading: boolean }> {
     async checkLogin() {
         let info = await AsyncStorage.getItem('logInfo')
         if (!info) return
-        let { username, password, firstName, lastName } = JSON.parse(info)
-        store.dispatch(login(username, password, firstName, lastName))
+        let { username, password, classname, firstName, lastName } = JSON.parse(info)
+        store.dispatch(login(username, password, classname, firstName, lastName))
         api.post('/api/login', { usr: username, pwd: password }).then(async res => {
-            let { logged, username, firstName, lastName } = res
-            if (logged) store.dispatch(login(username, password, firstName, lastName))
+            let { logged, username, classname, firstName, lastName } = res
+            if (logged) store.dispatch(login(username, password, classname, firstName, lastName))
             else store.dispatch(logout())
         })
     }

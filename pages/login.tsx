@@ -1,6 +1,6 @@
 import React, { Component, } from 'react'
 import { Button, StyleSheet, TouchableOpacity, Text, Picker } from 'react-native';
-import { NavigationProps, Page, commonStyles, api } from '../util'
+import { NavigationProps, Page, commonStyles, api, Class } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from 'react-redux';
@@ -16,22 +16,26 @@ interface signupState {
     cls: string
 }
 
-let Classes = [
-    '1AS', '2AS', '3AS', '4AS', '5AS', '5BS', '1ASA', '1BSA', '2ASA', '3ASA', '4ASA', '5ASA', '1AL', '1BL', '2AL', '2BL', '3AL', '3BL', '4AL', '4BL', '4CL', '5AL', '5BL', '1ASU', '2ASU', '1AA', '1BA', '2AA', '2BA', '2CA', '3AA', '3AF', '3AG', '4AA', '4AF', '4AG', '5AA', '5AF', '5AG'
-]
+let classes = []
+
+for (let field in Class.classStructure) {
+    for (let year of Class.classStructure[field]) {
+        classes.push(...year.sections)
+    }
+}
 
 class Signup extends Component<NavigationProps, signupState> {
     constructor(props) {
         super(props)
         this.state = {
-            cls: Classes[0]
+            cls: classes[0]
         }
     }
 
     render() {
         let classItems: JSX.Element[] = []
-        for (let i = 0; i < Classes.length; i++) {
-            classItems.push(<Picker.Item key={i} label={Classes[i]} value={Classes[i]} />)
+        for (let i = 0; i < classes.length; i++) {
+            classItems.push(<Picker.Item key={i} label={classes[i]} value={classes[i]} />)
         }
 
         return (
@@ -146,9 +150,9 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
                     onPress={() => {
                         let password = this.state.pwd
                         api.post('/api/login', { usr: this.state.usr, pwd: password }).then(async res => {
-                            let { logged, username, firstName, lastName } = res
+                            let { logged, username, classname, firstName, lastName } = res
                             if (logged) {
-                                this.props.login(username, password, firstName, lastName)
+                                this.props.login(username, password, classname, firstName, lastName)
                                 this.props.navigation.dispatch(NavigationActions.back())
                             }
                             alert(logged ? 'Login effettuato!' : 'Elia smettila')
@@ -168,7 +172,7 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
 /** Login screen connected to store */
 let connectedLogin = connect(null, (dispatch) => {
     return {
-        login: (username: string, password: string, firstName: string, lastName: string) => dispatch(login(username, password, firstName, lastName))
+        login: (username: string, password: string, classname: string, firstName: string, lastName: string) => dispatch(login(username, password, classname, firstName, lastName))
     }
 })(Login)
 
