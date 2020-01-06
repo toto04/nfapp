@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Text, RefreshControl, View, Image } from 'react-native'
-import { NavigationProps, api, commonStyles, formatDate, ScrollableMainPage } from '../../util';
+import { NavigationProps, api, commonStyles, formatDate, ScrollableMainPage, ShadowCard } from '../../util';
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { connect } from 'react-redux';
@@ -48,11 +48,10 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
 
         return (
             <View style={{ marginTop: 15 }}>
-                <TouchableHighlight
+                <ShadowCard
                     onPress={() => {
                         this.props.navigation.navigate('PostDetailPage', { postObject: this.props.postObject })
                     }}
-                    style={commonStyles.shadowStyle}
                 >
                     <View
                         style={{ backgroundColor: commonStyles.main.backgroundColor }}>
@@ -63,7 +62,7 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
                         </View>
                         {image}
                     </View>
-                </TouchableHighlight>
+                </ShadowCard>
                 <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                     {like}
                 </View>

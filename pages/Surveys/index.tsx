@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Text, View, Button } from 'react-native'
-import { NavigationProps, commonStyles, api, ScrollableMainPage } from "../../util";
+import { NavigationProps, commonStyles, api, ScrollableMainPage, ShadowCard } from "../../util";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { LoginState } from '../../redux/login';
@@ -8,23 +8,25 @@ import { LoginState } from '../../redux/login';
 class Survey extends Component<NavigationProps & { name: string, expiry: string, fields: { [key: string]: { type: string, description: string, options?: string[] } }, refresh: () => void }> {
     render() {
         return (
-            <View style={[commonStyles.shadowStyle, {
+            <ShadowCard borderRadius={15} style={{
                 margin: 20,
                 marginBottom: 0,
-                backgroundColor: commonStyles.main.backgroundColor,
-                padding: 20
-            }]}>
-                <TouchableOpacity onPress={() => {
-                    this.props.navigation.navigate('SurveyAnswerPage', {
-                        surveyName: this.props.name,
-                        surveyFields: this.props.fields,
-                        refreshSurveys: this.props.refresh
-                    })
+
+            }} onPress={() => {
+                this.props.navigation.navigate('SurveyAnswerPage', {
+                    surveyName: this.props.name,
+                    surveyFields: this.props.fields,
+                    refreshSurveys: this.props.refresh
+                })
+            }}>
+                <View style={{
+                    backgroundColor: commonStyles.main.backgroundColor,
+                    padding: 20
                 }}>
                     <Text style={{ color: 'white' }}>{this.props.expiry}</Text>
                     <Text style={{ color: 'white', fontSize: 30 }}>{this.props.name}</Text>
-                </TouchableOpacity>
-            </View>
+                </View>
+            </ShadowCard>
         )
     }
 }

@@ -1,6 +1,6 @@
 import { LocaleConfig, Calendar } from 'react-native-calendars'
 import React, { Component } from 'react'
-import { NavigationProps, commonStyles, api, ScrollableMainPage } from '../util'
+import { NavigationProps, commonStyles, api, ScrollableMainPage, ShadowCard } from '../util'
 import { Text, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { getStatusBarHeight } from 'react-native-safe-area-view'
@@ -46,14 +46,17 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
             let date = event.date
             mkDates[date] = { marked: true }
             if (date == this.state.selectedDate) todayEventComponents.push(
-                <View key={this.state.events.indexOf(event)} style={[commonStyles.shadowStyle, {
+                <ShadowCard key={this.state.events.indexOf(event)} style={{
                     margin: 20,
                     marginBottom: 0,
-                    backgroundColor: commonStyles.main.backgroundColor,
-                    padding: 20,
-                }]}>
-                    <Text style={{ color: 'white', fontSize: 18 }}>{event.description}</Text>
-                </View>
+                }}>
+                    <View style={{
+                        backgroundColor: commonStyles.main.backgroundColor,
+                        padding: 20,
+                    }}>
+                        <Text style={{ color: 'white', fontSize: 18 }}>{event.description}</Text>
+                    </View>
+                </ShadowCard>
             )
         }
         mkDates[this.state.selectedDate] = Object.assign({ selected: true }, mkDates[this.state.selectedDate])

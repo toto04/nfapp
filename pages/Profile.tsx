@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Image, Text, View, Button, StyleSheet } from 'react-native'
-import { NavigationProps, Page, commonStyles, api, ScrollableMainPage } from '../util';
+import { NavigationProps, Page, commonStyles, api, ScrollableMainPage, ShadowCard } from '../util';
 import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
 import { LoginState, logout } from '../redux/login';
 import { Connect, connect } from 'react-redux';
@@ -11,15 +11,14 @@ class Preview extends Component<{ title: string, onPress?: () => void }> {
         return (
             <View style={{ alignSelf: 'stretch', paddingHorizontal: 10 }}>
                 <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{this.props.title}</Text>
-                <TouchableHighlight onPress={this.props.onPress}>
-                    <View style={[commonStyles.shadowStyle, {
-                        marginVertical: 20,
+                <ShadowCard onPress={this.props.onPress} style={{ marginVertical: 20 }}>
+                    <View style={{
                         backgroundColor: commonStyles.main.backgroundColor,
                         padding: 20
-                    }]}>
+                    }}>
                         <Text style={{ color: 'white', fontSize: 40 }}>{'  '}</Text>
                     </View>
-                </TouchableHighlight>
+                </ShadowCard>
             </View>
         )
     }

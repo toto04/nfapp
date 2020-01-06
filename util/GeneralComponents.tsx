@@ -1,9 +1,18 @@
 import React, { Component } from 'react';
 import { NavigationScreenProp, NavigationState, NavigationParams, NavigationActions } from 'react-navigation';
-import { View, Text, ScrollViewProps, RefreshControl, StatusBar, StatusBarStyle, StyleSheet } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, Text, ScrollViewProps, RefreshControl, StatusBar, StatusBarStyle, StyleSheet, ViewProps, GestureResponderEvent } from 'react-native';
+import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import { getStatusBarHeight } from 'react-native-safe-area-view';
 import Icon from 'react-native-vector-icons/Ionicons';
+
+/**
+ * Defines the standard *navigation* prop common to all components that
+ * somehow make use of the navigation (all *Page* components)
+ */
+export interface NavigationProps {
+    navigation: NavigationScreenProp<NavigationState, NavigationParams>;
+}
+
 
 /**
  * Plain JS object containing common style properties
@@ -12,14 +21,6 @@ export const commonStyles = StyleSheet.create({
     main: {
         color: '#ff9000',
         backgroundColor: '#1e1b20'
-    },
-    shadowStyle: {
-        borderRadius: 10,
-        overflow: 'hidden',
-        shadowOpacity: 0.2,
-        shadowOffset: { width: 0, height: 5 },
-        shadowRadius: 5,
-        elevation: 5
     }
 })
 
@@ -133,12 +134,27 @@ export class ScrollableMainPage extends Component<ScrollViewProps & NavigationPr
         </ScrollView>;
     }
 }
-/**
- * Defines the standard *navigation* prop common to all components that
- * somehow make use of the navigation (all *Page* components)
- */
-export interface NavigationProps {
-    navigation: NavigationScreenProp<NavigationState, NavigationParams>;
+
+export class ShadowCard extends Component<ViewProps & { borderRadius?: number, onPress?: (event: GestureResponderEvent) => void }> {
+    render() {
+        return <View {...this.props} style={[{
+            shadowOpacity: 0.2,
+            shadowOffset: { width: 0, height: 5 },
+            shadowRadius: 5,
+            elevation: 5
+        }, this.props.style]} >
+            <TouchableHighlight
+                onPress={this.props.onPress}
+                style={{
+                    flex: 1,
+                    borderRadius: this.props.borderRadius == undefined ? 10 : this.props.borderRadius,
+                    overflow: 'hidden'
+                }}
+            >
+                {this.props.children}
+            </TouchableHighlight>
+        </View>
+    }
 }
 
 const styles = StyleSheet.create({

@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { NavigationProps, Page, commonStyles, api, formatDate, Class } from '../../util'
+import { NavigationProps, Page, commonStyles, api, formatDate, Class, ShadowCard } from '../../util'
 import { ScrollView, TouchableHighlight, TouchableOpacity, FlatList } from 'react-native-gesture-handler'
 import { View, Text, Modal, RefreshControl, ImageBackground } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { connect } from 'react-redux'
 import { LoginState } from '../../redux/login'
+import { createStackNavigator } from 'react-navigation-stack'
 const { classStructure } = Class
 
 export interface Context {
@@ -22,92 +23,17 @@ interface Note {
 }
 
 interface SubjectState {
-    modalVisible: boolean,
     refreshing: boolean,
+    context: Context & { subject: string }
     error?: boolean,
     notes: Note[]
 }
 
-class Subject extends Component<NavigationProps & { context: Context, subject: string, login: LoginState }, SubjectState> {
-    state: SubjectState = {
-        modalVisible: false,
-        refreshing: false,
-        notes: []
-    }
-
-    refresh = async () => {
-        this.setState({ refreshing: true })
-        let res = await api.get(`/api/schoolsharing/notes/${this.props.context.field}/${this.props.context.classIndex}/${this.props.subject}`)
-        if (res.success === false) this.setState({ error: true })
-        this.setState({ refreshing: false, notes: res })
-    }
-
+class Subject extends Component<NavigationProps & { context: Context, subject: string }> {
     render() {
         return <View>
-            <Modal
-                visible={this.state.modalVisible}
-                animationType='slide'
-            >
-                <Page
-                    downButton
-                    title={this.props.subject}
-                    navigation={this.props.navigation}
-                    customAction={() => this.setState({ modalVisible: false })}
-                    rightButton={(this.props.login._class.field == this.props.context.field && this.props.login._class.yearIndex == this.props.context.classIndex) ? {
-                        name: 'add',
-                        action: () => {
-                            this.setState({ modalVisible: false })
-                            this.props.navigation.navigate('AddNotePage', { classContext: { ...this.props.context, subject: this.props.subject } })
-                        }
-                    } : undefined}
-                    refreshControl={<RefreshControl
-                        refreshing={this.state.refreshing}
-                        onRefresh={() => this.refresh()}
-                        tintColor='black'
-                        colors={['black']}
-                    />}
-                >
-                    {this.state.error ? <Text>C'è stato un errore, riprova più tardi</Text>
-                        : <FlatList
-                            data={this.state.notes}
-                            contentContainerStyle={{
-                                padding: 20,
-                                alignContent: 'stretch'
-                            }}
-                            renderItem={({ item }) =>
-                                <TouchableHighlight
-                                    style={commonStyles.shadowStyle}
-                                >
-                                    <ImageBackground
-                                        source={{ uri: item.images[0] }}
-                                        style={{ height: 200 }}
-                                    >
-                                        <LinearGradient
-                                            colors={['rgba(0, 0, 0, 0.2)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']}
-                                            style={{
-                                                flex: 1,
-                                                justifyContent: 'flex-end',
-                                                padding: 10
-                                            }}
-                                        >
-                                            <Text style={{ color: 'white' }}>{item.author + ' - ' + formatDate(item.postingdate)}</Text>
-                                            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>{item.title}</Text>
-                                            <Text style={{ color: 'white' }} numberOfLines={1}>{item.description}</Text>
-                                        </LinearGradient>
-                                    </ImageBackground>
-                                </TouchableHighlight>
-                            }
-                            ListEmptyComponent={<Text style={{ margin: 20, textAlign: 'center', fontSize: 20, color: '#777' }}>{this.state.refreshing ? 'caricamento...' : 'Nessuno ha ancora pubblicato appunti per questa materia, sii il primo!'}</Text>}
-                            keyExtractor={({ id }) => id + ''}
-                            refreshing={this.state.refreshing}
-                            onRefresh={this.refresh}
-                        />
-                    }
-                </Page>
-            </Modal>
             <TouchableOpacity onPress={async () => {
-                this.setState({ modalVisible: true })
-                this.refresh()
+                this.props.navigation.navigate('ConnectedNotesPage', { classContext: { ...this.props.context, subject: this.props.subject } })
             }}>
                 <View style={{
                     width: 100,
@@ -121,13 +47,12 @@ class Subject extends Component<NavigationProps & { context: Context, subject: s
         </View>
     }
 }
-let ConnectedSubject = connect((state: { login: LoginState }) => ({ login: state.login }))(Subject)
 
-export default class SubjectsDetailPage extends Component<NavigationProps, {}> {
+class SubjectsDetailPage extends Component<NavigationProps> {
     render() {
         let context: Context = this.props.navigation.getParam('classContext')
         let subs = []
-        for (let subject of classStructure[context.field][context.classIndex].subjects) subs.push(<ConnectedSubject
+        for (let subject of classStructure[context.field][context.classIndex].subjects) subs.push(<Subject
             key={subject}
             navigation={this.props.navigation}
             subject={subject}
@@ -147,3 +72,89 @@ export default class SubjectsDetailPage extends Component<NavigationProps, {}> {
         </Page>
     }
 }
+
+class NotePage extends Component<NavigationProps & { login: LoginState }, SubjectState> {
+    state: SubjectState = {
+        context: this.props.navigation.getParam('classContext'),
+        refreshing: false,
+        notes: []
+    }
+
+    refresh = async () => {
+        this.setState({ refreshing: true })
+        let res = await api.get(`/api/schoolsharing/notes/${this.state.context.field}/${this.state.context.classIndex}/${this.state.context.subject}`)
+        if (res.success === false) this.setState({ error: true })
+        this.setState({ refreshing: false, notes: res })
+    }
+
+    componentDidMount = () => {
+        this.refresh()
+        this.props.navigation.addListener('willFocus', this.refresh)
+    }
+
+    render() {
+        return <Page
+            downButton
+            title={this.state.context.subject}
+            navigation={this.props.navigation}
+            rightButton={(this.props.login._class.field == this.state.context.field && this.props.login._class.yearIndex == this.state.context.classIndex) ? {
+                name: 'add',
+                action: () => {
+                    this.props.navigation.navigate('AddNotePage', { classContext: this.state.context })
+                }
+            } : undefined}
+            refreshControl={<RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={() => this.refresh()}
+                tintColor='black'
+                colors={['black']}
+            />}
+        >
+            {this.state.error ? <Text>C'è stato un errore, riprova più tardi</Text>
+                : <FlatList
+                    data={this.state.notes}
+                    contentContainerStyle={{
+                        padding: 20,
+                        alignContent: 'stretch'
+                    }}
+                    renderItem={({ item }) =>
+                        <ShadowCard style={{
+                            margin: 10
+                        }}>
+                            <ImageBackground
+                                source={{ uri: item.images[0] }}
+                                style={{ height: 200 }}
+                            >
+                                <LinearGradient
+                                    colors={['rgba(0, 0, 0, 0.2)', 'rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.8)']}
+                                    style={{
+                                        flex: 1,
+                                        justifyContent: 'flex-end',
+                                        padding: 10
+                                    }}
+                                >
+                                    <Text style={{ color: 'white' }}>{item.author + ' - ' + formatDate(item.postingdate)}</Text>
+                                    <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>{item.title}</Text>
+                                    <Text style={{ color: 'white' }} numberOfLines={1}>{item.description}</Text>
+                                </LinearGradient>
+                            </ImageBackground>
+                        </ShadowCard>}
+                    ListEmptyComponent={<Text style={{ margin: 20, textAlign: 'center', fontSize: 20, color: '#777' }}>{this.state.refreshing ? 'caricamento...' : 'Nessuno ha ancora pubblicato appunti per questa materia, sii il primo!'}</Text>}
+                    keyExtractor={({ id }) => id + ''}
+                    refreshing={this.state.refreshing}
+                    onRefresh={this.refresh}
+                />
+            }
+        </Page>
+    }
+}
+
+let ConnectedNotesPage = connect((state: { login: LoginState }) => ({ login: state.login }))(NotePage)
+
+export default createStackNavigator({
+    SubjectsDetailPage,
+    ConnectedNotesPage
+}, {
+    headerMode: 'none',
+    mode: 'modal'
+})
