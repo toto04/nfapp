@@ -1,5 +1,5 @@
 import React, { Component, } from 'react'
-import { Button, StyleSheet, TouchableOpacity, Text, Picker } from 'react-native';
+import { Button, StyleSheet, TouchableOpacity, Text, Picker, Alert } from 'react-native';
 import { NavigationProps, Page, commonStyles, api, Class } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -10,6 +10,7 @@ import { NavigationActions } from 'react-navigation';
 interface signupState {
     usr?: string,
     pwd?: string,
+    confirmPwd?: string,
     email?: string,
     fstName?: string,
     lstName?: string,
@@ -38,24 +39,28 @@ class Signup extends Component<NavigationProps, signupState> {
             classItems.push(<Picker.Item key={i} label={classes[i]} value={classes[i]} />)
         }
 
+        let textReference = {}
+
         return (
             <Page {...this.props} title='registrati' backButton>
                 <TextInput
                     style={styles.input}
                     placeholder='user'
-                    onChangeText={(usr) => { this.setState({ usr }) }}
+                    onChangeText={(usr) => { this.setState({ usr }, () => console.log(this.state))}}
                     autoCompleteType='username'
                     textContentType='username'
                     autoCapitalize='none'
+                    ref={textReference['usr']}
                 />
                 <TextInput
                     style={styles.input}
                     placeholder='password'
-                    onChangeText={(pwd) => { this.setState({ pwd }) }}
+                    onChangeText={(confirmPwd) => { this.setState({ confirmPwd }) }}
                     autoCompleteType='password'
                     textContentType='newPassword'
                     autoCapitalize='none'
                     secureTextEntry
+                    ref={textReference['confirmPwd']}
                 />
                 <TextInput
                     style={styles.input}
@@ -65,6 +70,7 @@ class Signup extends Component<NavigationProps, signupState> {
                     textContentType='password'
                     autoCapitalize='none'
                     secureTextEntry
+                    ref={textReference['pwd']}
                 />
                 <TextInput
                     style={styles.input}
@@ -73,6 +79,7 @@ class Signup extends Component<NavigationProps, signupState> {
                     autoCompleteType='email'
                     textContentType='emailAddress'
                     autoCapitalize='none'
+                    ref={textReference['email']}
                 />
                 <TextInput
                     style={styles.input}
@@ -81,6 +88,7 @@ class Signup extends Component<NavigationProps, signupState> {
                     autoCompleteType='name'
                     textContentType='name'
                     autoCapitalize='words'
+                    ref={textReference['fstName']}
                 />
                 <TextInput
                     style={styles.input}
@@ -89,6 +97,7 @@ class Signup extends Component<NavigationProps, signupState> {
                     autoCompleteType='name'
                     textContentType='familyName'
                     autoCapitalize='words'
+                    ref={textReference['lstName']}
                 />
                 <Picker
                     mode={'dialog'}
@@ -99,23 +108,45 @@ class Signup extends Component<NavigationProps, signupState> {
                 >
                     {classItems}
                 </Picker>
-                <TouchableOpacity style={styles.button} onPress={() => {
-                    api.post('/api/signup', {
+                <TouchableOpacity style={styles.button} onPress={async () => {
+
+                    let completed = true
+                    for (let k in this.state) {if(!this.state[k]) completed = false}
+                    if (!completed) {
+                        Alert.alert('Form incompleto', 'Compila tutti i campi di questo form per continuare')
+                        return
+                    }
+
+                    if (this.state.pwd !== this.state.confirmPwd) {
+                        Alert.alert('Attenzione', 'Le due password devono conincidere')
+                        return
+                    }
+                    let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+                    if (!this.state.email.match(mailformat)) {
+                      Alert.alert('Attenzione', 'La mail inserita non è una mail')
+                      return
+                    }
+
+                    let res = await api.post('/api/signup', {
                         usr: this.state.usr,
                         pwd: this.state.pwd,
                         email: this.state.email,
                         fstName: this.state.fstName,
                         lstName: this.state.lstName,
                         cls: this.state.cls
-                    }).then(async res => {
-                        let { success, error } = res
-                        alert(success ? 'utente creato!' : error)
                     })
+                    
+                    let { success, error } = res
+                    alert(success ? 'utente creato!' : error)
                 }}>
                     <Text style={{ color: '#fff', fontSize: 20 }}>Registrati</Text>
                 </TouchableOpacity>
             </Page>
         )
+    }
+
+    private newMethod() {
+        console.log('mail');
     }
 }
 
