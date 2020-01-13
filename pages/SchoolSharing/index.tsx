@@ -40,12 +40,12 @@ export default class SchoolSharing extends Component<NavigationProps, { activeSe
                     <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'white' }}>{content}</Text>
                 </View>}
                 touchableProps={{
-                    style: [commonStyles.shadowStyle, {
+                    style: {
                         marginVertical: 10,
                         padding: 10,
                         borderRadius: 8,
                         backgroundColor: commonStyles.main.backgroundColor
-                    }]
+                    }
                 }}
                 onChange={(indexes) => { this.setState({ activeSections: indexes }) }}
             />

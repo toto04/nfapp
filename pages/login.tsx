@@ -148,7 +148,7 @@ class Signup extends Component<NavigationProps, signupState> {
                         }
                         let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
                         if (!this.state.email.match(mailformat)) {
-                            Alert.alert('Attenzione', 'La mail inserita non è una mail')
+                            Alert.alert('Attenzione', 'Indirizzo email non valido')
                             textReference['email'].clear()
                             return
                         }
