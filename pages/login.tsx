@@ -1,5 +1,5 @@
 import React, { Component, } from 'react'
-import { Button, StyleSheet, TouchableOpacity, Text, Picker } from 'react-native';
+import { Button, StyleSheet, TouchableOpacity, Text, Picker, Alert, TextComponent } from 'react-native';
 import { NavigationProps, Page, commonStyles, api, Class } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -10,9 +10,11 @@ import { NavigationActions } from 'react-navigation';
 interface signupState {
     usr?: string,
     pwd?: string,
+    confirmPwd?: string,
     email?: string,
     fstName?: string,
     lstName?: string,
+    phone?: string,
     cls: string
 }
 
@@ -28,7 +30,14 @@ class Signup extends Component<NavigationProps, signupState> {
     constructor(props) {
         super(props)
         this.state = {
-            cls: classes[0]
+            cls: classes[0],
+            usr: '',
+            pwd: '',
+            confirmPwd: '',
+            email: '',
+            fstName: '',
+            lstName: '',
+            phone: ''
         }
     }
 
@@ -38,8 +47,47 @@ class Signup extends Component<NavigationProps, signupState> {
             classItems.push(<Picker.Item key={i} label={classes[i]} value={classes[i]} />)
         }
 
+        let textReference: any = {}
+
         return (
             <Page {...this.props} title='registrati' backButton>
+                <TextInput
+                    style={styles.input}
+                    placeholder='Nome'
+                    onChangeText={(fstName) => { this.setState({ fstName }) }}
+                    autoCompleteType='name'
+                    textContentType='name'
+                    autoCapitalize='words'
+                    ref={r => textReference['fstName'] = r}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder='Cognome'
+                    onChangeText={(lstName) => { this.setState({ lstName }) }}
+                    autoCompleteType='name'
+                    textContentType='familyName'
+                    autoCapitalize='words'
+                    ref={r => textReference['lstName'] = r}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder='email@example.com'
+                    onChangeText={(email) => { this.setState({ email }) }}
+                    autoCompleteType='email'
+                    textContentType='emailAddress'
+                    autoCapitalize='none'
+                    ref={r => textReference['email'] = r}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder='Numero di telefono'
+                    onChangeText={(phone) => { this.setState({ phone }) }}
+                    autoCompleteType='tel'
+                    textContentType='telephoneNumber'
+                    autoCapitalize='none'
+                    ref={r => textReference['phone'] = r}
+                    keyboardType='numeric'
+                />
                 <TextInput
                     style={styles.input}
                     placeholder='user'
@@ -47,15 +95,17 @@ class Signup extends Component<NavigationProps, signupState> {
                     autoCompleteType='username'
                     textContentType='username'
                     autoCapitalize='none'
+                    ref={r => textReference['usr'] = r}
                 />
                 <TextInput
                     style={styles.input}
                     placeholder='password'
-                    onChangeText={(pwd) => { this.setState({ pwd }) }}
+                    onChangeText={(confirmPwd) => { this.setState({ confirmPwd }) }}
                     autoCompleteType='password'
                     textContentType='newPassword'
                     autoCapitalize='none'
                     secureTextEntry
+                    ref={r => textReference['confirmPwd'] = r}
                 />
                 <TextInput
                     style={styles.input}
@@ -65,30 +115,7 @@ class Signup extends Component<NavigationProps, signupState> {
                     textContentType='password'
                     autoCapitalize='none'
                     secureTextEntry
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder='email@example.com'
-                    onChangeText={(email) => { this.setState({ email }) }}
-                    autoCompleteType='email'
-                    textContentType='emailAddress'
-                    autoCapitalize='none'
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder='Nome'
-                    onChangeText={(fstName) => { this.setState({ fstName }) }}
-                    autoCompleteType='name'
-                    textContentType='name'
-                    autoCapitalize='words'
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder='Cognome'
-                    onChangeText={(lstName) => { this.setState({ lstName }) }}
-                    autoCompleteType='name'
-                    textContentType='familyName'
-                    autoCapitalize='words'
+                    ref={r => textReference['pwd'] = r}
                 />
                 <Picker
                     mode={'dialog'}
@@ -99,23 +126,61 @@ class Signup extends Component<NavigationProps, signupState> {
                 >
                     {classItems}
                 </Picker>
-                <TouchableOpacity style={styles.button} onPress={() => {
-                    api.post('/api/signup', {
+                <TouchableOpacity style={styles.button} onPress={async () => {
+
+                    let completed = true
+                    for (let k in this.state) {
+                        if (!this.state[k]) completed = false
+                    }
+                    if (!completed) {
+                        Alert.alert('Form incompleto', 'Compila tutti i campi di questo form per continuare')
+                        return
+                    } else {
+                        if (this.state.pwd !== this.state.confirmPwd) {
+                            Alert.alert('Attenzione', 'Le due password devono conincidere')
+                            textReference['pwd'].clear()
+                            textReference['confirmPwd'].clear()
+                            return
+                        }
+                        if (this.state.pwd.length < 8) {
+                            Alert.alert('Attenzione', 'La password deve avere almeno 8 caratteri')
+                            return
+                        }
+                        let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+                        if (!this.state.email.match(mailformat)) {
+                            Alert.alert('Attenzione', 'Indirizzo email non valido')
+                            textReference['email'].clear()
+                            return
+                        }
+                        let phoneformat = /^\d{10}$/
+                        if (!this.state.phone.match(phoneformat)) {
+                            Alert.alert('Attenzione', 'Insersci il numero senza prefisso o spazi: 3123456789')
+                            textReference['phone'].clear()
+                            return
+                        }
+                    }
+
+                    let res = await api.post('/api/signup', {
                         usr: this.state.usr,
                         pwd: this.state.pwd,
                         email: this.state.email,
                         fstName: this.state.fstName,
                         lstName: this.state.lstName,
+                        phone: this.state.phone,
                         cls: this.state.cls
-                    }).then(async res => {
-                        let { success, error } = res
-                        alert(success ? 'utente creato!' : error)
                     })
+
+                    let { success, error } = res
+                    alert(success ? 'utente creato!' : error)
                 }}>
                     <Text style={{ color: '#fff', fontSize: 20 }}>Registrati</Text>
                 </TouchableOpacity>
             </Page>
         )
+    }
+
+    private newMethod() {
+        console.log('mail');
     }
 }
 
