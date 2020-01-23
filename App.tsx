@@ -49,7 +49,7 @@ let HomeNav = createBottomTabNavigator({
                     iconName = 'ios-calendar'
                     break
                 case 'SchoolSharing':
-                    iconName = 'ios-share'
+                    iconName = 'ios-book'
                     break
                 case 'Profile':
                     iconName = 'ios-contact'

@@ -8,7 +8,7 @@ import { getStatusBarHeight } from 'react-native-safe-area-view'
 export * from './GeneralComponents'
 export * from './Classes'
 export * from './Api'
-import { commonStyles } from './GeneralComponents'
+import { commonStyles, ShadowCard } from './GeneralComponents'
 
 export function formatDate(inputDate: string) {
     let date = new Date(inputDate);
@@ -41,20 +41,29 @@ class ErrorModalComponent extends Component<{ message?: string }, { y: Animated.
         }
         let a: any = [{ translateY: this.state.y }]
         return <Animated.View
-            style={[{
+            style={{
                 position: 'absolute',
                 transform: a,
                 zIndex: 2000,
                 margin: 20,
                 padding: 10,
-                backgroundColor: commonStyles.main.backgroundColor,
                 width: Dimensions.get('screen').width - 40,
                 height: 80,
                 alignItems: 'stretch',
                 justifyContent: 'center'
-            }, commonStyles.shadowStyle]}
+            }}
         >
-            <Text style={{ zIndex: 2001, color: 'white', textAlign: 'center', fontSize: 15 }}>{this.props.message}</Text>
+            <ShadowCard style={{
+                zIndex: 2001,
+                backgroundColor: commonStyles.main.backgroundColor,
+            }}>
+                <Text style={{
+                    zIndex: 2002,
+                    color: 'white',
+                    textAlign: 'center',
+                    fontSize: 15
+                }}>{this.props.message}</Text>
+            </ShadowCard>
         </Animated.View>
     }
 }

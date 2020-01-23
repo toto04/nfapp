@@ -43,7 +43,7 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
             })
         } : () => this.props.navigation.navigate('Login')
         let like = liked ?
-            <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} onPress={onLike} name='ios-heart' color='red' /> :
+            <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} onPress={onLike} name='ios-heart' color={commonStyles.main.color} /> :
             <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} onPress={onLike} name='ios-heart-empty' />
 
         return (

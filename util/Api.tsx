@@ -5,7 +5,7 @@ import * as Permissions from 'expo-permissions'
 import { spawnError } from '../redux/error';
 
 /** backend server's URL */
-let serverUrl = __DEV__ ? env.API_HOST : 'https://nfapp-server.herokuapp.com';
+export let serverUrl = __DEV__ ? env.API_HOST : 'https://nfapp-server.herokuapp.com';
 async function parseApiResponse(res: Response, resolve: (value: any) => void) {
     try {
         let obj = await res.json();

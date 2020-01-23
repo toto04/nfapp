@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { NavigationProps, Page, commonStyles, api, formatDate, Class, ShadowCard } from '../../util'
+import { NavigationProps, Page, commonStyles, api, formatDate, Class, ShadowCard, serverUrl } from '../../util'
 import { ScrollView, TouchableHighlight, TouchableOpacity, FlatList } from 'react-native-gesture-handler'
 import { View, Text, Modal, RefreshControl, ImageBackground } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -122,7 +122,7 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
                             margin: 10
                         }}>
                             <ImageBackground
-                                source={{ uri: item.images[0] }}
+                                source={{ uri: serverUrl + item.images[0] }}
                                 style={{ height: 200 }}
                             >
                                 <LinearGradient
