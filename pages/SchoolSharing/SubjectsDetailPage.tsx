@@ -29,46 +29,37 @@ interface SubjectState {
     notes: Note[]
 }
 
-class Subject extends Component<NavigationProps & { context: Context, subject: string }> {
-    render() {
-        return <View>
-            <TouchableOpacity onPress={async () => {
-                this.props.navigation.navigate('ConnectedNotesPage', { classContext: { ...this.props.context, subject: this.props.subject } })
-            }}>
-                <View style={{
-                    width: 100,
-                    height: 130,
-                    marginTop: 20
-                }}>
-                    <Text style={{ height: 30, textAlignVertical: 'center', textAlign: 'center', fontSize: 15 }}>{this.props.subject}</Text>
-                    <View style={{ width: 100, height: 100, backgroundColor: commonStyles.main.backgroundColor }} />
-                </View>
-            </TouchableOpacity>
-        </View>
-    }
-}
-
 class SubjectsDetailPage extends Component<NavigationProps> {
     render() {
         let context: Context = this.props.navigation.getParam('classContext')
-        let subs = []
-        for (let subject of classStructure[context.field][context.classIndex].subjects) subs.push(<Subject
-            key={subject}
-            navigation={this.props.navigation}
-            subject={subject}
-            context={context}
-        />)
         return <Page
             navigation={this.props.navigation}
             backButton
             title='materie'
-            contentContainerStyle={{
-                justifyContent: 'space-evenly',
-                flexDirection: 'row',
-                flexWrap: 'wrap'
-            }}
         >
-            {subs}
+            <FlatList
+                data={classStructure[context.field][context.classIndex].subjects}
+                renderItem={
+                    ({ item, index }) => {
+                        return <TouchableOpacity
+                            onPress={() => {
+                                this.props.navigation.navigate('ConnectedNotesPage', { classContext: {...context, subject: item } })
+                            }}
+                            style={{
+                                padding: 8,
+                                margin: 8,
+                                marginBottom: 0,
+                                borderRadius: 5,
+                                overflow: 'hidden', 
+                                backgroundColor: `hsla(${index * 36}, 70%, 20%, 1.0)`
+                            }}
+                        >
+                            <Text style={{ fontSize: 20, color: 'white' }}>{item}</Text>
+                        </TouchableOpacity>
+                    }
+                }
+                keyExtractor={item => item}
+            />
         </Page>
     }
 }

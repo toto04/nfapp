@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
-import { Text, Image, Dimensions, ImageBackground } from 'react-native'
+import { Text, Image, Dimensions, Modal } from 'react-native'
 import Carousel from 'react-native-snap-carousel'
 import images from '../../assets/fields/images'
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler'
-import { NavigationProps, commonStyles, ScrollableMainPage, Class } from '../../util';
+import { FlatList, TouchableOpacity, TouchableHighlight } from 'react-native-gesture-handler'
+import { NavigationProps, commonStyles, ScrollableMainPage, Class, Page } from '../../util';
 const { classStructure } = Class
 
-export default class SchoolSharing extends Component<NavigationProps, { activeSections: number[] }> {
-    state = { activeSections: [] }
-
+export default class SchoolSharing extends Component<NavigationProps, { visibleSection?: string }> {
+    state = {
+        visibleSection: undefined
+    }
     constructor(props) {
         super(props)
         this.renderContent.bind(this)
@@ -41,37 +42,60 @@ export default class SchoolSharing extends Component<NavigationProps, { activeSe
             <Carousel
                 data={Object.keys(classStructure)}
                 renderItem={({ item }) => {
-                    return <Image
-                        source={images[item]}
+                    return <TouchableHighlight
                         style={{
                             width: 300,
                             height: 450,
                             borderRadius: 10,
                             overflow: 'hidden'
                         }}
-                        resizeMode={'contain'}
-                    />
+                        onPress={() => {
+                            if (this.state.visibleSection) this.setState({ visibleSection: undefined }, () => this.setState({ visibleSection: item }))
+                            else this.setState({ visibleSection: item })
+                        }}
+                    >
+                        <Image
+                            source={images[item]}
+                            style={{ width: 300, height: 450 }}
+                            resizeMode={'contain'}
+                        />
+                    </TouchableHighlight>
                 }}
                 sliderWidth={Dimensions.get('window').width}
                 itemWidth={300}
             />
-            {/* <Accordion
-                activeSections={this.state.activeSections}
-                sections={fields}
-                renderContent={this.renderContent}
-                renderHeader={(content) => <View>
-                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'white' }}>{content}</Text>
-                </View>}
-                touchableProps={{
-                    style: {
-                        marginVertical: 10,
-                        padding: 10,
-                        borderRadius: 8,
-                        backgroundColor: commonStyles.main.backgroundColor
-                    }
-                }}
-                onChange={(indexes) => { this.setState({ activeSections: indexes }) }}
-            /> */}
+            <Modal
+                visible={!!this.state.visibleSection}
+                animationType='slide'
+                onRequestClose={() => this.setState({ visibleSection: undefined })}
+            >
+                {/* TODO: questa va decisamente migliorata */}
+                <Page
+                    title={this.state.visibleSection}
+                    downButton
+                    navigation={this.props.navigation}
+                    customAction={() => this.setState({ visibleSection: undefined })}
+                >
+                    <FlatList
+                        data={classStructure[this.state.visibleSection]}
+                        renderItem={({ item, index }) => <TouchableOpacity
+                            style={{
+                                padding: 10,
+                                paddingHorizontal: 30
+                            }}
+                            onPress={() => {
+                                this.props.navigation.navigate('SubjectsDetailPage', {
+                                    classContext: { field: this.state.visibleSection, classIndex: index }
+                                })
+                                this.setState({ visibleSection: undefined })
+                            }}
+                        >
+                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{`Classe ${item.year}`}</Text>
+                        </TouchableOpacity>}
+                        keyExtractor={item => item.year}
+                    />
+                </Page>
+            </Modal>
         </ScrollableMainPage>
     }
 }

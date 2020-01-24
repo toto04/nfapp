@@ -40,7 +40,7 @@ class SurveysPage extends Component<NavigationProps & { login: LoginState }, { s
         }
     }
 
-    async componentWillMount() {
+    async componentDidMount() {
         let surveyElements = await this.fetchSurveys()
         this.setState({ surveyElements })
     }

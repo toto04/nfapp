@@ -29,7 +29,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
         }
     }
 
-    async componentWillMount() {
+    async componentDidMount() {
         let events = await this.fetchEvents()
         this.setState({ events })
     }

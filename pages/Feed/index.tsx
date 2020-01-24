@@ -82,7 +82,7 @@ export default class FeedPage extends Component<NavigationProps, { posts: JSX.El
         }
     }
 
-    async componentWillMount() {
+    async componentDidMount() {
         let els = await this.fetchPosts()
         this.setState({ posts: els })
     }

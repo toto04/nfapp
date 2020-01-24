@@ -8,6 +8,7 @@ let fieldSubjects = {
     scienzeApplicate: ['Fisica', 'Informatica', 'Arte', 'Scienze'],
     linguistico: ['Francese', 'Tedesco', 'Scienze'],
     scienzeUmane: ['Diritto - Economia', 'Scienze Umane'],
+    artistico: ['Scienze', 'Storia dell\'Arte']
 }
 
 export class Class {
@@ -15,75 +16,123 @@ export class Class {
         'Scientifico': [{
             year: '1^',
             sections: ['1AS'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scientifico]
+            subjects: [...defaultSubjects, ...fieldSubjects.scientifico].sort()
         }, {
             year: '2^',
             sections: ['2AS'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scientifico]
+            subjects: [...defaultSubjects, ...fieldSubjects.scientifico].sort()
         }, {
             year: '3^',
             sections: ['3AS'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scientifico, 'Filosofia']
+            subjects: [...defaultSubjects, ...fieldSubjects.scientifico, 'Filosofia'].sort()
         }, {
             year: '4^',
             sections: ['4AS'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scientifico, 'Filosofia']
+            subjects: [...defaultSubjects, ...fieldSubjects.scientifico, 'Filosofia'].sort()
         }, {
             year: '5^',
             sections: ['5AS', '5BS'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scientifico, 'Filosofia']
+            subjects: [...defaultSubjects, ...fieldSubjects.scientifico, 'Filosofia'].sort()
         }],
         'Scienze Applicate': [{
             year: '1^',
             sections: ['1ASA', '1BSA'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scienzeApplicate]
-        },{
+            subjects: [...defaultSubjects, ...fieldSubjects.scienzeApplicate].sort()
+        }, {
             year: '2^',
             sections: ['2ASA'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scienzeApplicate]
-        },{
+            subjects: [...defaultSubjects, ...fieldSubjects.scienzeApplicate].sort()
+        }, {
             year: '3^',
             sections: ['3ASA'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scienzeApplicate, 'Filosofia']
-        },{
+            subjects: [...defaultSubjects, ...fieldSubjects.scienzeApplicate, 'Filosofia'].sort()
+        }, {
             year: '4^',
             sections: ['4ASA'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scienzeApplicate, 'Filosofia']
+            subjects: [...defaultSubjects, ...fieldSubjects.scienzeApplicate, 'Filosofia'].sort()
         }, {
             year: '5^',
             sections: ['5ASA'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scienzeApplicate, 'Filosofia']
+            subjects: [...defaultSubjects, ...fieldSubjects.scienzeApplicate, 'Filosofia'].sort()
         }],
         'Linguistico': [{
             year: '1^',
             sections: ['1AL', '1BL'],
-            subjects: [...defaultSubjects, ...fieldSubjects.linguistico, 'Latino']
-        },{
+            subjects: [...defaultSubjects, ...fieldSubjects.linguistico, 'Latino'].sort()
+        }, {
             year: '2^',
             sections: ['2AL', '2BL'],
-            subjects: [...defaultSubjects, ...fieldSubjects.linguistico, 'Latino']
-        },{
+            subjects: [...defaultSubjects, ...fieldSubjects.linguistico, 'Latino'].sort()
+        }, {
             year: '3^',
             sections: ['3AL', '3BL'],
-            subjects: [...defaultSubjects, ...fieldSubjects.linguistico, 'Fisica', 'Arte', 'Filosofia']
-        },{
+            subjects: [...defaultSubjects, ...fieldSubjects.linguistico, 'Fisica', 'Arte', 'Filosofia'].sort()
+        }, {
             year: '4^',
             sections: ['4AL', '4BL', '4CL'],
-            subjects: [...defaultSubjects, ...fieldSubjects.linguistico, 'Fisica', 'Arte', 'Filosofia']
+            subjects: [...defaultSubjects, ...fieldSubjects.linguistico, 'Fisica', 'Arte', 'Filosofia'].sort()
         }, {
             year: '5^',
             sections: ['5AL', '5BL'],
-            subjects: [...defaultSubjects, ...fieldSubjects.linguistico, 'Fisica', 'Arte', 'Filosofia']
+            subjects: [...defaultSubjects, ...fieldSubjects.linguistico, 'Fisica', 'Arte', 'Filosofia'].sort()
         }],
         'Scienze Umane': [{
             year: '1^',
             sections: ['1ASU'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scienzeUmane, 'Scienze']
-        },{
+            subjects: [...defaultSubjects, ...fieldSubjects.scienzeUmane, 'Scienze'].sort()
+        }, {
             year: '2^',
             sections: ['2ASU'],
-            subjects: [...defaultSubjects, ...fieldSubjects.scienzeUmane, 'Scienze']
+            subjects: [...defaultSubjects, ...fieldSubjects.scienzeUmane, 'Scienze'].sort()
         },],
+        'Biennio Artistico': [{
+            year: '1^',
+            sections: ['1A', '1B', '1C'],
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+        }, {
+            year: '2^',
+            sections: ['2A', '2B', '2C'],
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+        }],
+        'Architettura': [{
+            year: '3^',
+            sections: ['3AA'],
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+        }, {
+            year: '4^',
+            sections: ['4AA'],
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+        }, {
+            year: '5^',
+            sections: ['5AA'],
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+        }],
+        'Arti Figurative': [{
+            year: '3^',
+            sections: ['3AF'],
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+        }, {
+            year: '4^',
+            sections: ['4AF'],
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+        }, {
+            year: '5^',
+            sections: ['5AF'],
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+        }],
+        'Grafica': [{
+            year: '3^',
+            sections: ['3AG'],
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+        }, {
+            year: '4^',
+            sections: ['4AG'],
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+        }, {
+            year: '5^',
+            sections: ['5AG'],
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+        }]
     }
     field: string
     yearIndex: number
