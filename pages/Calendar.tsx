@@ -29,14 +29,24 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
         }
     }
 
-    async refresh() {
-        this.setState({ refreshing: true })
+    async componentWillMount() {
+        let events = await this.fetchEvents()
+        this.setState({ events })
+    }
+
+    async fetchEvents() {
         let rows = await api.get('/api/events')
         let evt = {}
         for (const row of rows) {
             evt[row.date] = row.description
         }
-        this.setState({ events: rows, refreshing: false })
+        return rows
+    }
+
+    async refresh() {
+        this.setState({ refreshing: true })
+        let events = await this.fetchEvents()
+        this.setState({ events, refreshing: false })
     }
 
     render() {
@@ -73,7 +83,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                 style={{ backgroundColor: commonStyles.main.backgroundColor, flex: 1 }}
                 overrideStyles
                 contentContainerStyle={{ flexGrow: 1 }}
-                contentInset={{ bottom: -eventPaddingOffset }}
+                contentInset={{ bottom: -eventPaddingOffset, top: getStatusBarHeight() }}
                 stickyHeaderIndices={[0]}
             >
                 <View>

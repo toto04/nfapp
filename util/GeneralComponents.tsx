@@ -116,14 +116,14 @@ export class ScrollableMainPage extends Component<ScrollViewProps & NavigationPr
 }> {
     scrollView: any;
     componentDidMount() {
-        this.scrollView.scrollTo({ y: -getStatusBarHeight(), animated: false });
+        let first = true
         this.props.navigation.addListener('willFocus', () => {
             StatusBar.setBarStyle(this.props.statusBarStyle);
+            if (first) {
+                this.scrollView.scrollTo({ y: -getStatusBarHeight(), animated: false })
+                first = false
+            }
         });
-        if (this.props.refreshOptions)
-            this.props.refreshOptions.onRefresh().then(() => {
-                this.scrollView.scrollTo({ y: -getStatusBarHeight(), animated: true });
-            });
     }
     render() {
         let contentInset = { top: getStatusBarHeight() };

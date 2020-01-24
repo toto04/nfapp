@@ -40,8 +40,12 @@ class SurveysPage extends Component<NavigationProps & { login: LoginState }, { s
         }
     }
 
-    async refresh() {
-        this.setState({ refreshing: true })
+    async componentWillMount() {
+        let surveyElements = await this.fetchSurveys()
+        this.setState({ surveyElements })
+    }
+
+    async fetchSurveys() {
         let surveys = await api.get('/api/surveys')
         let surveyElements: JSX.Element[] = []
         for (let survey of surveys) {
@@ -49,6 +53,12 @@ class SurveysPage extends Component<NavigationProps & { login: LoginState }, { s
             surveyElements.push(<Survey key={surveys.indexOf(Survey)} name={survey.name} expiry={`Scadenza: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`} fields={survey.fields} refresh={() => this.refresh()} navigation={this.props.navigation} />)
         }
         if (surveyElements.length == 0) { surveyElements.push(<Text key={0} style={{ color: '#999', alignSelf: 'stretch', margin: 20, textAlign: 'center', fontSize: 18 }}>Non ci sono nuovi sondaggi</Text>) }
+        return surveyElements
+    }
+
+    async refresh() {
+        this.setState({ refreshing: true })
+        let surveyElements = await this.fetchSurveys()
         this.setState({ surveyElements, refreshing: false })
     }
 

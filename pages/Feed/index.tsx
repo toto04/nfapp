@@ -82,8 +82,12 @@ export default class FeedPage extends Component<NavigationProps, { posts: JSX.El
         }
     }
 
-    async refresh() {
-        this.setState({ refreshing: true })
+    async componentWillMount() {
+        let els = await this.fetchPosts()
+        this.setState({ posts: els })
+    }
+
+    async fetchPosts() {
         let posts: Post[] = await api.get('/api/posts')
         let els = []
         for (let post of posts) {
@@ -96,6 +100,12 @@ export default class FeedPage extends Component<NavigationProps, { posts: JSX.El
                 />
             )
         }
+        return els
+    }
+
+    async refresh() {
+        this.setState({ refreshing: true })
+        let els = await this.fetchPosts()
         this.setState({ refreshing: false, posts: els })
     }
 
