@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import { StatusBar, Platform, SafeAreaView, AsyncStorage, View, Dimensions } from 'react-native'
 import { createAppContainer, NavigationContainerComponent, NavigationActions } from 'react-navigation'
-import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs'
+import { createBottomTabNavigator, BottomTabBar, BottomTabBarProps } from 'react-navigation-tabs'
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { createStackNavigator } from 'react-navigation-stack';
-import { Provider } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { AppLoading, Notifications } from 'expo'
 import { Asset } from 'expo-asset'
 
 import { commonStyles, api, registerPushNotifications, ErrorModal, formatDate } from './util'
 import store from './redux/index';
 import { login, logout } from './redux/login'
+import { ThemeState } from './redux/theme';
 
 import images from './assets/fields/images'
 import Feed, { Post } from './pages/Feed'
@@ -24,6 +25,22 @@ import SchoolSharing from './pages/SchoolSharing'
 import SubjectsDetailPage from './pages/SchoolSharing/SubjectsDetailPage'
 import AddNotePage from './pages/SchoolSharing/AddNotePage'
 import { Notification } from 'expo/build/Notifications/Notifications.types';
+
+class TabBar extends Component<BottomTabBarProps & { theme: ThemeState }> {
+    render() {
+        return <BottomTabBar
+            {...this.props}
+            style={{
+                borderTopWidth: 0,
+                height: 50,
+                backgroundColor: this.props.theme.tabBar == 'light' ? 'white' : commonStyles.main.backgroundColor
+            }}
+            activeTintColor={commonStyles.main.color}
+            inactiveTintColor={this.props.theme.tabBar == 'light' ? '#7f7f7f' : '#8e8e93'}
+        />
+    }
+}
+let ConnectedTabBar = connect((state: { theme: ThemeState }) => ({ theme: state.theme }))(TabBar)
 
 /**
  * The app global Tab Navigator
@@ -65,7 +82,7 @@ let HomeNav = createBottomTabNavigator({
         tabBarLabel: () => { }
     }),
     tabBarComponent: props => {
-        return <BottomTabBar {...props} style={{ borderTopWidth: 0, height: 50 }} activeTintColor={commonStyles.main.color} />
+        return <ConnectedTabBar {...props} />
     }
 })
 

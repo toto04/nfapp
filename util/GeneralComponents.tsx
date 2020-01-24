@@ -4,6 +4,8 @@ import { View, Text, ScrollViewProps, RefreshControl, StatusBar, StatusBarStyle,
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import { getStatusBarHeight } from 'react-native-safe-area-view';
 import Icon from 'react-native-vector-icons/Ionicons';
+import store from '../redux/index';
+import { setTheme } from '../redux/theme';
 
 /**
  * Defines the standard *navigation* prop common to all components that
@@ -113,11 +115,13 @@ export class ScrollableMainPage extends Component<ScrollViewProps & NavigationPr
     };
     overrideStyles?: boolean;
     statusBarStyle: StatusBarStyle;
+    darkTabBar?: boolean
 }> {
     scrollView: any;
     componentDidMount() {
         let first = true
         this.props.navigation.addListener('willFocus', () => {
+            store.dispatch(setTheme({ tabBar: this.props.darkTabBar ? 'dark' : 'light' }))
             StatusBar.setBarStyle(this.props.statusBarStyle);
             if (first) {
                 this.scrollView.scrollTo({ y: -getStatusBarHeight(), animated: false })

@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
 import { Text, Image, Dimensions, Modal } from 'react-native'
-import Carousel from 'react-native-snap-carousel'
+import Carousel, { Pagination } from 'react-native-snap-carousel'
 import images from '../../assets/fields/images'
 import { FlatList, TouchableOpacity, TouchableHighlight } from 'react-native-gesture-handler'
 import { NavigationProps, commonStyles, ScrollableMainPage, Class, Page } from '../../util';
 const { classStructure } = Class
 
-export default class SchoolSharing extends Component<NavigationProps, { visibleSection?: string }> {
+export default class SchoolSharing extends Component<NavigationProps, { visibleSection?: string, slideIndex: number }> {
     state = {
-        visibleSection: undefined
+        visibleSection: undefined,
+        slideIndex: 0
     }
     constructor(props) {
         super(props)
@@ -36,6 +37,7 @@ export default class SchoolSharing extends Component<NavigationProps, { visibleS
             contentContainerStyle={{
                 margin: 0
             }}
+            darkTabBar
         >
             <Text style={{ fontWeight: 'bold', fontSize: 40, margin: 20, marginBottom: 0, color: commonStyles.main.color }}>School Sharing</Text>
             <Text style={{ alignSelf: 'center', textAlign: 'center', color: '#bbb', padding: 15, fontSize: 16, marginHorizontal: 20 }}>Condividi i tuoi appunti con altri studenti per guadagnare punti!</Text>
@@ -63,6 +65,13 @@ export default class SchoolSharing extends Component<NavigationProps, { visibleS
                 }}
                 sliderWidth={Dimensions.get('window').width}
                 itemWidth={300}
+                onSnapToItem={idx => this.setState({ slideIndex: idx })}
+            />
+            <Pagination
+                dotsLength={Object.keys(classStructure).length}
+                dotColor='white'
+                inactiveDotColor='white'
+                activeDotIndex={this.state.slideIndex}
             />
             <Modal
                 visible={!!this.state.visibleSection}

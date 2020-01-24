@@ -89,6 +89,9 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                 <View>
                     <Text style={{ fontWeight: 'bold', fontSize: 40, margin: 20, marginBottom: 0, color: commonStyles.main.color }}>Calendario</Text>
                     <Calendar
+                        style={{
+                            height: 360
+                        }}
                         theme={{
                             calendarBackground: commonStyles.main.backgroundColor,
                             textSectionTitleColor: commonStyles.main.color,
