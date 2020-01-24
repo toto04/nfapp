@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
-import Accordion from 'react-native-collapsible/Accordion'
+import { Text, Image, Dimensions, ImageBackground } from 'react-native'
+import Carousel from 'react-native-snap-carousel'
+import images from '../../assets/fields/images'
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler'
 import { NavigationProps, commonStyles, ScrollableMainPage, Class } from '../../util';
 const { classStructure } = Class
@@ -25,14 +26,36 @@ export default class SchoolSharing extends Component<NavigationProps, { activeSe
     }
 
     render() {
-        let fields = Object.keys(classStructure)
         return <ScrollableMainPage
             navigation={this.props.navigation}
-            statusBarStyle='dark-content'
+            statusBarStyle='light-content'
+            style={{
+                backgroundColor: commonStyles.main.backgroundColor
+            }}
+            contentContainerStyle={{
+                margin: 0
+            }}
         >
-            <Text style={{ fontWeight: 'bold', fontSize: 40 }}>School Sharing</Text>
-            <Text style={{ alignSelf: 'center', textAlign: 'center', color: '#777', padding: 15, fontSize: 16 }}>Condividi i tuoi appunti con altri studenti per guadagnare punti!</Text>
-            <Accordion
+            <Text style={{ fontWeight: 'bold', fontSize: 40, margin: 20, marginBottom: 0, color: commonStyles.main.color }}>School Sharing</Text>
+            <Text style={{ alignSelf: 'center', textAlign: 'center', color: '#bbb', padding: 15, fontSize: 16, marginHorizontal: 20 }}>Condividi i tuoi appunti con altri studenti per guadagnare punti!</Text>
+            <Carousel
+                data={Object.keys(classStructure)}
+                renderItem={({ item }) => {
+                    return <Image
+                        source={images[item]}
+                        style={{
+                            width: 300,
+                            height: 450,
+                            borderRadius: 10,
+                            overflow: 'hidden'
+                        }}
+                        resizeMode={'contain'}
+                    />
+                }}
+                sliderWidth={Dimensions.get('window').width}
+                itemWidth={300}
+            />
+            {/* <Accordion
                 activeSections={this.state.activeSections}
                 sections={fields}
                 renderContent={this.renderContent}
@@ -48,7 +71,7 @@ export default class SchoolSharing extends Component<NavigationProps, { activeSe
                     }
                 }}
                 onChange={(indexes) => { this.setState({ activeSections: indexes }) }}
-            />
+            /> */}
         </ScrollableMainPage>
     }
 }

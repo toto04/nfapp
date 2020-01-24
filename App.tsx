@@ -6,11 +6,13 @@ import IconComponent from 'react-native-vector-icons/Ionicons'
 import { createStackNavigator } from 'react-navigation-stack';
 import { Provider } from 'react-redux';
 import { AppLoading, Notifications } from 'expo'
+import { Asset } from 'expo-asset'
 
 import { commonStyles, api, registerPushNotifications, ErrorModal, formatDate } from './util'
 import store from './redux/index';
 import { login, logout } from './redux/login'
 
+import images from './assets/fields/images'
 import Feed, { Post } from './pages/Feed'
 import PostDetailPage from './pages/Feed/PostDetailPage'
 import Surveys from './pages/Surveys'
@@ -33,6 +35,7 @@ let HomeNav = createBottomTabNavigator({
     SchoolSharing,
     Profile
 }, {
+    lazy: false,
     initialRouteName: 'Profile',
     defaultNavigationOptions: ({ navigation }) => ({
         tabBarIcon: ({ tintColor, focused }) => {
@@ -108,6 +111,7 @@ export default class App extends Component<null, { isLoading: boolean }> {
     componentDidMount() {
         registerPushNotifications()
         Notifications.addListener(handleNotifications)
+        Asset.loadAsync(Object.entries(images).map(e => e[1]))
     }
 
     componentDidUpdate() {
