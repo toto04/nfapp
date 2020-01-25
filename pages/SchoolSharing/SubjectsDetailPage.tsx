@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { NavigationProps, Page, commonStyles, api, formatDate, Class, ShadowCard, serverUrl } from '../../util'
 import { ScrollView, TouchableHighlight, TouchableOpacity, FlatList } from 'react-native-gesture-handler'
-import { View, Text, Modal, RefreshControl, ImageBackground } from 'react-native'
+import { View, Text, Modal, RefreshControl, ImageBackground, ActivityIndicator } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { connect } from 'react-redux'
 import { LoginState } from '../../redux/login'
@@ -13,7 +13,7 @@ export interface Context {
     classIndex: number
 }
 
-interface Note {
+export interface Note {
     id: number,
     images: string[],
     author: string,
@@ -24,6 +24,7 @@ interface Note {
 
 interface SubjectState {
     refreshing: boolean,
+    loading: boolean,
     context: Context & { subject: string }
     error?: boolean,
     notes: Note[]
@@ -43,14 +44,14 @@ class SubjectsDetailPage extends Component<NavigationProps> {
                     ({ item, index }) => {
                         return <TouchableOpacity
                             onPress={() => {
-                                this.props.navigation.navigate('ConnectedNotesPage', { classContext: {...context, subject: item } })
+                                this.props.navigation.navigate('ConnectedNotesPage', { classContext: { ...context, subject: item } })
                             }}
                             style={{
                                 padding: 8,
                                 margin: 8,
                                 marginBottom: 0,
                                 borderRadius: 5,
-                                overflow: 'hidden', 
+                                overflow: 'hidden',
                                 backgroundColor: `hsla(${index * 36}, 70%, 20%, 1.0)`
                             }}
                         >
@@ -68,7 +69,15 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
     state: SubjectState = {
         context: this.props.navigation.getParam('classContext'),
         refreshing: false,
+        loading: false,
         notes: []
+    }
+
+    loadNote = async (noteID: number) => {
+        this.setState({ loading: true })
+        let note: Note = await api.get('/api/schoolsharing/note/' + noteID)
+        this.setState({ loading: false })
+        this.props.navigation.navigate('NoteDetailPage', { note })
     }
 
     refresh = async () => {
@@ -109,9 +118,14 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
                         alignContent: 'stretch'
                     }}
                     renderItem={({ item }) =>
-                        <ShadowCard style={{
-                            margin: 10
-                        }}>
+                        <ShadowCard
+                            onPress={() => {
+                                this.loadNote(item.id)
+                            }}
+                            style={{
+                                marginVertical: 10
+                            }}
+                        >
                             <ImageBackground
                                 source={{ uri: serverUrl + item.images[0] }}
                                 style={{ height: 200 }}
@@ -136,6 +150,26 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
                     onRefresh={this.refresh}
                 />
             }
+            <Modal
+                visible={this.state.loading}
+                animationType='fade'
+                onRequestClose={() => {
+                    // TODO: avoid stalling during loading
+                }}
+                transparent
+            >
+                <View style={{
+                    flex: 1,
+                    backgroundColor: '#000000aa',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <View>
+                        <ActivityIndicator color='white' size='large' />
+                        <Text style={{ color: 'white', fontSize: 20 }}>caricamento...</Text>
+                    </View>
+                </View>
+            </Modal>
         </Page>
     }
 }

@@ -23,6 +23,7 @@ import Login from './pages/login'
 import Profile from './pages/Profile'
 import SchoolSharing from './pages/SchoolSharing'
 import SubjectsDetailPage from './pages/SchoolSharing/SubjectsDetailPage'
+import NoteDetailPage from './pages/SchoolSharing/NoteDetailPage'
 import AddNotePage from './pages/SchoolSharing/AddNotePage'
 import { Notification } from 'expo/build/Notifications/Notifications.types';
 
@@ -94,6 +95,7 @@ let DetailNav = createStackNavigator({
     SurveyAnswerPage,
     PostDetailPage,
     SubjectsDetailPage,
+    NoteDetailPage,
     AddNotePage
 }, {
     headerMode: 'none'

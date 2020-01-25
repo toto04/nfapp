@@ -178,10 +178,6 @@ class Signup extends Component<NavigationProps, signupState> {
             </Page>
         )
     }
-
-    private newMethod() {
-        console.log('mail');
-    }
 }
 
 class Login extends Component<NavigationProps & { login: typeof login }, { usr: string, pwd: string, editable: boolean }> {

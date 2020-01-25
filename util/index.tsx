@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, Dimensions } from 'react-native'
+import { StyleSheet, Text, Dimensions, Image } from 'react-native'
 import Animated, { Easing } from 'react-native-reanimated'
 import { connect } from 'react-redux'
 import { ErrorState } from '../redux/error'
@@ -26,6 +26,21 @@ export function formatDate(inputDate: string) {
     if (mm.length == 1)
         mm = '0' + mm;
     return `${dd}/${MM}/${yyyy} ${hh}:${mm}`;
+}
+
+/**
+ * Promise wrapper for the Image.getSize() funcion of react native beCAUSE THESE MORONS STILL
+ * USE CALLBACKS WTF
+ * @param uri uri string as given to the Image component
+ */
+export let getImageSize = (uri: string): Promise<{ width: number, height: number }> => {
+    return new Promise((resolve, reject) => {
+        Image.getSize(uri, (width, height) => {
+            resolve({ width, height })
+        }, e => {
+            reject(e)
+        })
+    })
 }
 
 class ErrorModalComponent extends Component<{ message?: string }, { y: Animated.Value<number> }> {

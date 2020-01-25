@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, Button, Alert, ImageBackground } from 'react-native'
 import { NavigationProps, Page, api, commonStyles, Class, ShadowCard } from '../../util'
-import { TextInput, TouchableOpacity, FlatList } from 'react-native-gesture-handler'
+import { TextInput, TouchableOpacity, FlatList, TouchableHighlight } from 'react-native-gesture-handler'
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
 import { ImageInfo } from 'expo-image-picker/build/ImagePicker.types'
@@ -23,6 +23,7 @@ interface AddNoteState {
 }
 
 export default class AddNotePage extends Component<NavigationProps, AddNoteState> {
+    placeholder = placeholderTitles[Math.floor(Math.random() * placeholderTitles.length)]
     constructor(props) {
         super(props)
         this.state = {
@@ -60,7 +61,7 @@ export default class AddNotePage extends Component<NavigationProps, AddNoteState
             <Text style={styles.text}>Titolo</Text>
             <TextInput
                 onChangeText={title => this.setState({ title })}
-                placeholder={placeholderTitles[Math.floor(Math.random() * placeholderTitles.length)]}
+                placeholder={this.placeholder}
                 style={styles.input}
             />
             <Text style={styles.text}>Descrizione</Text>
@@ -89,11 +90,13 @@ export default class AddNotePage extends Component<NavigationProps, AddNoteState
                                 alignContent: 'center'
                             }}
                         >
-                            <IconComponent size={40} style={{ margin: 15 }} name='ios-remove-circle-outline' color='red' onPress={() => {
+                            <TouchableHighlight onPress={() => {
                                 let { images } = this.state
                                 images.splice(index, 1)
                                 this.setState({ images })
-                            }} />
+                            }} >
+                                <IconComponent size={40} style={{ margin: 15 }} name='ios-remove-circle-outline' color='red' />
+                            </TouchableHighlight>
                         </LinearGradient>
                     </ImageBackground>
                 </ShadowCard>}
