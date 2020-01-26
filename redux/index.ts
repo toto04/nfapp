@@ -1,11 +1,13 @@
 import { createStore, combineReducers } from 'redux'
 import { loginReducer } from './login'
 import { errorReducer } from './error'
+import { themeReducer } from './theme'
 
 /** Creates the combined reducer that will be used by the store */
 let rootReducer = combineReducers({
     login: loginReducer,
-    error: errorReducer
+    error: errorReducer,
+    theme: themeReducer
 })
 
 /**

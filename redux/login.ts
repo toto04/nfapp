@@ -4,6 +4,7 @@
 
 import { Action, Reducer } from 'redux'
 import { AsyncStorage } from 'react-native'
+import { Class } from '../util/Classes'
 
 /**
  * Global state, defines what the Redux store holds
@@ -12,12 +13,14 @@ export type LoginState = {
     loggedIn: true,
     username: string,
     password: string,
+    _class: Class,
     firstName?: string,
     lastName?: string
 } | {
     loggedIn: false,
     username?: undefined,
     password?: undefined,
+    _class?: undefined,
     firstName?: undefined,
     lastName?: undefined
 }
@@ -35,20 +38,32 @@ interface LoginAction extends Action<string> {
  * Also syncs data with the local storage to maintain access between sessions
  * @param username user's username
  * @param password user's password
+ * @param classname user's classname
  * @param firstName user's fisrt name
  * @param lastName user's last name
  */
-export function login(username: string, password: string, firstName: string, lastName: string): LoginAction {
-    AsyncStorage.setItem('logInfo', JSON.stringify({username, password, firstName, lastName}))
-    return {
-        type: 'LOGIN',
-        payload: {
-            loggedIn: true,
-            username,
-            password,
-            firstName,
-            lastName
+export function login(username: string, password: string, classname: string, firstName: string, lastName: string): LoginAction {
+    try {
+        // tries to create a new class, if the classname is invalid the contructor throws an error
+        let _class = new Class(classname)
+        AsyncStorage.setItem('logInfo', JSON.stringify({ username, password, classname, firstName, lastName }))
+        return {
+            type: 'LOGIN',
+            payload: {
+                loggedIn: true,
+                username,
+                password,
+                _class,
+                firstName,
+                lastName
+            }
         }
+    } catch (e) {
+        // if the classname is invalid an error is issued, also, this should never happen
+        (async () => {
+            require('../util/Api').api.post('/error/InvalidClass', { username, classname })
+        })()
+        return logout()
     }
 }
 
@@ -70,6 +85,7 @@ export let loginReducer: Reducer<LoginState, LoginAction> = (state = defaultStat
                 loggedIn: true,
                 username: action.payload.username,
                 password: action.payload.password,
+                _class: action.payload._class,
                 firstName: action.payload.firstName,
                 lastName: action.payload.lastName
             }

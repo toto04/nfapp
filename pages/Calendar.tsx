@@ -1,7 +1,7 @@
 import { LocaleConfig, Calendar } from 'react-native-calendars'
 import React, { Component } from 'react'
-import { NavigationProps, Page, commonStyles, api } from '../util'
-import { Text, RefreshControl, View } from 'react-native'
+import { NavigationProps, commonStyles, api, ScrollableMainPage, ShadowCard } from '../util'
+import { Text, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { getStatusBarHeight } from 'react-native-safe-area-view'
 LocaleConfig.locales['it'] = {
@@ -29,19 +29,24 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
         }
     }
 
-    componentDidMount() {
-        this.refresh()
+    async componentDidMount() {
+        let events = await this.fetchEvents()
+        this.setState({ events })
     }
 
-    refresh() {
+    async fetchEvents() {
+        let rows = await api.get('/api/events')
+        let evt = {}
+        for (const row of rows) {
+            evt[row.date] = row.description
+        }
+        return rows
+    }
+
+    async refresh() {
         this.setState({ refreshing: true })
-        api.get('/api/events').then(async rows => {
-            let evt = {}
-            for (const row of rows) {
-                evt[row.date] = row.description
-            }
-            this.setState({ events: rows, refreshing: false })
-        })
+        let events = await this.fetchEvents()
+        this.setState({ events, refreshing: false })
     }
 
     render() {
@@ -51,45 +56,52 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
             let date = event.date
             mkDates[date] = { marked: true }
             if (date == this.state.selectedDate) todayEventComponents.push(
-                <View key={this.state.events.indexOf(event)} style={{
+                <ShadowCard key={this.state.events.indexOf(event)} style={{
                     margin: 20,
                     marginBottom: 0,
-                    backgroundColor: commonStyles.backgroundColor,
-                    borderRadius: 10, padding: 20,
-                    shadowOpacity: 0.2,
-                    shadowOffset: { width: 0, height: 5 },
-                    shadowRadius: 5,
-                    elevation: 5
                 }}>
-                    <Text style={{ color: 'white', fontSize: 18 }}>{event.description}</Text>
-                </View>
+                    <View style={{
+                        backgroundColor: commonStyles.main.backgroundColor,
+                        padding: 20,
+                    }}>
+                        <Text style={{ color: 'white', fontSize: 18 }}>{event.description}</Text>
+                    </View>
+                </ShadowCard>
             )
         }
         mkDates[this.state.selectedDate] = Object.assign({ selected: true }, mkDates[this.state.selectedDate])
         let eventPaddingOffset = 300
         return (
-            <ScrollView
-                refreshControl={
-                    <RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()} tintColor={'white'} />
-                }
-                style={{ backgroundColor: commonStyles.backgroundColor, flex: 1, paddingTop: getStatusBarHeight() }}
+            <ScrollableMainPage
+                navigation={this.props.navigation}
+                refreshOptions={{
+                    refreshing: this.state.refreshing,
+                    onRefresh: this.refresh.bind(this),
+                    color: 'white'
+                }}
+                statusBarStyle='light-content'
+                style={{ backgroundColor: commonStyles.main.backgroundColor, flex: 1 }}
+                overrideStyles
                 contentContainerStyle={{ flexGrow: 1 }}
-                contentInset={{ bottom: -eventPaddingOffset }}
+                contentInset={{ bottom: -eventPaddingOffset, top: getStatusBarHeight() }}
                 stickyHeaderIndices={[0]}
             >
                 <View>
-                    <Text style={{ fontWeight: 'bold', fontSize: 40, margin: 20, marginBottom: 0, color: commonStyles.mainColor }}>Calendario</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 40, margin: 20, marginBottom: 0, color: commonStyles.main.color }}>Calendario</Text>
                     <Calendar
+                        style={{
+                            height: 360
+                        }}
                         theme={{
-                            calendarBackground: commonStyles.backgroundColor,
-                            textSectionTitleColor: commonStyles.mainColor,
-                            todayTextColor: commonStyles.mainColor,
+                            calendarBackground: commonStyles.main.backgroundColor,
+                            textSectionTitleColor: commonStyles.main.color,
+                            todayTextColor: commonStyles.main.color,
                             dayTextColor: 'white',
                             textDisabledColor: '#777',
-                            monthTextColor: commonStyles.mainColor,
-                            dotColor: commonStyles.mainColor,
-                            selectedDayBackgroundColor: commonStyles.mainColor,
-                            arrowColor: commonStyles.mainColor,
+                            monthTextColor: commonStyles.main.color,
+                            dotColor: commonStyles.main.color,
+                            selectedDayBackgroundColor: commonStyles.main.color,
+                            arrowColor: commonStyles.main.color,
                         }}
                         firstDay={1}
                         markedDates={mkDates}
@@ -100,7 +112,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                     <Text style={{ fontSize: 40, fontWeight: 'bold' }}>Eventi:</Text>
                     {todayEventComponents.length != 0 ? todayEventComponents : <Text style={{ alignSelf: 'center', fontSize: 25, color: '#aaa', margin: 20 }}>Nessun evento</Text>}
                 </View>
-            </ScrollView>
+            </ScrollableMainPage>
         )
     }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { NavigationProps, Page } from '../util';
-import { Post } from './Feed';
+import { NavigationProps, Page } from '../../util';
+import { Post } from '.';
 import { Text, Image, Dimensions, View } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer'
 import IconComponent from 'react-native-vector-icons/Ionicons'

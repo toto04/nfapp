@@ -1,25 +1,47 @@
 import React, { Component } from 'react';
-import { StatusBar, Platform, SafeAreaView, AsyncStorage, View } from 'react-native';
+import { StatusBar, Platform, SafeAreaView, AsyncStorage, View, Dimensions } from 'react-native'
 import { createAppContainer, NavigationContainerComponent, NavigationActions } from 'react-navigation'
-import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs'
+import { createBottomTabNavigator, BottomTabBar, BottomTabBarProps } from 'react-navigation-tabs'
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { createStackNavigator } from 'react-navigation-stack';
-import { Provider } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { AppLoading, Notifications } from 'expo'
+import { Asset } from 'expo-asset'
 
 import { commonStyles, api, registerPushNotifications, ErrorModal, formatDate } from './util'
 import store from './redux/index';
 import { login, logout } from './redux/login'
+import { ThemeState } from './redux/theme';
 
+import images from './assets/fields/images'
 import Feed, { Post } from './pages/Feed'
-import PostDetailPage from './pages/PostDetailPage'
+import PostDetailPage from './pages/Feed/PostDetailPage'
 import Surveys from './pages/Surveys'
-import SurveyAnswerPage from './pages/SurveyAnswerPage'
+import SurveyAnswerPage from './pages/Surveys/SurveyAnswerPage'
 import Calendar from './pages/Calendar'
 import Login from './pages/login'
 import Profile from './pages/Profile'
-import WIP from './pages/wip'
+import SchoolSharing from './pages/SchoolSharing'
+import SubjectsDetailPage from './pages/SchoolSharing/SubjectsDetailPage'
+import NoteDetailPage from './pages/SchoolSharing/NoteDetailPage'
+import AddNotePage from './pages/SchoolSharing/AddNotePage'
 import { Notification } from 'expo/build/Notifications/Notifications.types';
+
+class TabBar extends Component<BottomTabBarProps & { theme: ThemeState }> {
+    render() {
+        return <BottomTabBar
+            {...this.props}
+            style={{
+                borderTopWidth: 0,
+                height: 50,
+                backgroundColor: this.props.theme.tabBar == 'light' ? 'white' : commonStyles.main.backgroundColor
+            }}
+            activeTintColor={commonStyles.main.color}
+            inactiveTintColor={this.props.theme.tabBar == 'light' ? '#7f7f7f' : '#8e8e93'}
+        />
+    }
+}
+let ConnectedTabBar = connect((state: { theme: ThemeState }) => ({ theme: state.theme }))(TabBar)
 
 /**
  * The app global Tab Navigator
@@ -28,9 +50,10 @@ let HomeNav = createBottomTabNavigator({
     Feed,
     Surveys,
     Calendar,
-    SchoolSharing: WIP,
+    SchoolSharing,
     Profile
 }, {
+    lazy: false,
     initialRouteName: 'Profile',
     defaultNavigationOptions: ({ navigation }) => ({
         tabBarIcon: ({ tintColor, focused }) => {
@@ -47,7 +70,7 @@ let HomeNav = createBottomTabNavigator({
                     iconName = 'ios-calendar'
                     break
                 case 'SchoolSharing':
-                    iconName = 'ios-share'
+                    iconName = 'ios-book'
                     break
                 case 'Profile':
                     iconName = 'ios-contact'
@@ -60,7 +83,7 @@ let HomeNav = createBottomTabNavigator({
         tabBarLabel: () => { }
     }),
     tabBarComponent: props => {
-        return <BottomTabBar {...props} style={{ borderTopWidth: 0, height: 50 }} activeTintColor={commonStyles.mainColor} />
+        return <ConnectedTabBar {...props} />
     }
 })
 
@@ -70,7 +93,10 @@ let HomeNav = createBottomTabNavigator({
 let DetailNav = createStackNavigator({
     HomeNav,
     SurveyAnswerPage,
-    PostDetailPage
+    PostDetailPage,
+    SubjectsDetailPage,
+    NoteDetailPage,
+    AddNotePage
 }, {
     headerMode: 'none'
 })
@@ -104,6 +130,12 @@ export default class App extends Component<null, { isLoading: boolean }> {
     componentDidMount() {
         registerPushNotifications()
         Notifications.addListener(handleNotifications)
+        Asset.loadAsync(Object.entries(images).map(e => e[1]))
+    }
+
+    componentDidUpdate() {
+        // Useful for testing purposes
+        // rootNavRef.dispatch(NavigationActions.navigate({routeName: 'AddNotePage'}))
     }
 
     /**
@@ -113,11 +145,11 @@ export default class App extends Component<null, { isLoading: boolean }> {
     async checkLogin() {
         let info = await AsyncStorage.getItem('logInfo')
         if (!info) return
-        let { username, password, firstName, lastName } = JSON.parse(info)
-        store.dispatch(login(username, password, firstName, lastName))
+        let { username, password, classname, firstName, lastName } = JSON.parse(info)
+        store.dispatch(login(username, password, classname, firstName, lastName))
         api.post('/api/login', { usr: username, pwd: password }).then(async res => {
-            let { logged, username, firstName, lastName } = res
-            if (logged) store.dispatch(login(username, password, firstName, lastName))
+            let { logged, username, classname, firstName, lastName } = res
+            if (logged) store.dispatch(login(username, password, classname, firstName, lastName))
             else store.dispatch(logout())
         })
     }
@@ -127,7 +159,7 @@ export default class App extends Component<null, { isLoading: boolean }> {
         return (
             <Provider store={store}>
                 <ErrorModal />
-                <StatusBar barStyle='dark-content' backgroundColor={commonStyles.backgroundColor} />
+                <StatusBar barStyle='dark-content' backgroundColor={commonStyles.main.backgroundColor} />
                 <RootNavContainer ref={navigatorRef => { rootNavRef = navigatorRef }} />
             </Provider>
         );

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { NavigationProps, Page, commonStyles, api } from "../util";
+import { NavigationProps, Page, commonStyles, api } from "../../util";
 import { Text, View, TextInput, StyleSheet, Image } from 'react-native';
 import RadioForm from 'react-native-simple-radio-button'
 import CheckBox from 'react-native-check-box'
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { LoginState } from '../redux/login';
+import { LoginState } from '../../redux/login';
 
 interface FieldProps { description: string, onValueChange: (v: string) => void }
 interface OptionsProps extends FieldProps { options: string[] }
@@ -60,8 +60,8 @@ class RadioInputField extends Component<OptionsProps> {
                     style={{ marginTop: 10 }}
                     labelStyle={{ fontSize: 16, textAlignVertical: 'center' }}
                     radio_props={this.props.options.map((label, value) => ({ label, value }))}
-                    buttonColor={commonStyles.mainColor}
-                    selectedButtonColor={commonStyles.mainColor}
+                    buttonColor={commonStyles.main.color}
+                    selectedButtonColor={commonStyles.main.color}
                     buttonSize={15}
                     onPress={value => this.props.onValueChange(this.props.options[value])}
                 />
@@ -97,8 +97,8 @@ class CheckboxField extends Component<OptionsProps, { checks: boolean[] }> {
                     }}
                     isChecked={this.state.checks[i]}
                     rightTextView={<Text style={{ paddingLeft: 8, fontSize: 16, textAlignVertical: 'center' }}>{option}</Text>}
-                    checkedImage={<IconComponent size={32} name={'ios-checkbox'} color={commonStyles.mainColor} />}
-                    unCheckedImage={<IconComponent size={32} name={'md-square-outline'} color={commonStyles.mainColor} />}
+                    checkedImage={<IconComponent size={32} name={'ios-checkbox'} color={commonStyles.main.color} />}
+                    unCheckedImage={<IconComponent size={32} name={'md-square-outline'} color={commonStyles.main.color} />}
                 />
             )
         }
@@ -155,7 +155,7 @@ class SurveyAnswerPage extends Component<NavigationProps & { login: LoginState }
                 {fieldElements}
                 <TouchableOpacity
                     style={{
-                        backgroundColor: commonStyles.mainColor,
+                        backgroundColor: commonStyles.main.color,
                         justifyContent: 'center',
                         alignItems: 'center',
                         marginHorizontal: 20,
