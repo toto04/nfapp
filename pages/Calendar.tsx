@@ -19,6 +19,7 @@ interface calendarState {
 }
 
 export default class CalendarPage extends Component<NavigationProps, calendarState> {
+    ref: any
     constructor(props) {
         let date = new Date()
         super(props)
@@ -70,9 +71,10 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
             )
         }
         mkDates[this.state.selectedDate] = Object.assign({ selected: true }, mkDates[this.state.selectedDate])
-        let eventPaddingOffset = 300
+        let eventPaddingOffset = 400
         return (
             <ScrollableMainPage
+                ref={r => this.ref = r}
                 navigation={this.props.navigation}
                 refreshOptions={{
                     refreshing: this.state.refreshing,
@@ -80,14 +82,13 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                     color: 'white'
                 }}
                 statusBarStyle='light-content'
-                style={{ backgroundColor: commonStyles.main.backgroundColor, flex: 1 }}
-                overrideStyles
-                contentContainerStyle={{ flexGrow: 1 }}
-                contentInset={{ bottom: -eventPaddingOffset, top: getStatusBarHeight() }}
+                style={{ backgroundColor: commonStyles.main.backgroundColor }}
+                contentContainerStyle={{ margin: 0, marginTop: 20, padding: 0 }}
+                contentInset={{ bottom: -eventPaddingOffset }}
                 stickyHeaderIndices={[0]}
             >
                 <View>
-                    <Text style={{ fontWeight: 'bold', fontSize: 40, margin: 20, marginBottom: 0, color: commonStyles.main.color }}>Calendario</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 40, marginHorizontal: 20, color: commonStyles.main.color }}>Calendario</Text>
                     <Calendar
                         style={{
                             height: 360
@@ -105,10 +106,22 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                         }}
                         firstDay={1}
                         markedDates={mkDates}
-                        onDayPress={(day) => { this.setState({ selectedDate: day.dateString }) }}
+                        onDayPress={(day) => {
+                            this.setState({ selectedDate: day.dateString })
+                            this.ref.scrollView.scrollTo({ y: -10000, animated: true })
+                        }}
+                        onMonthChange={() => this.ref.scrollView.scrollTo({ y: -10000, animated: true })}
                     />
                 </View>
-                <View style={{ padding: 10, backgroundColor: '#fff', flex: 1, paddingBottom: eventPaddingOffset + 60, borderRadius: 10, zIndex: 1000 }}>
+                <View style={{
+                    padding: 10,
+                    minHeight: eventPaddingOffset + 500,
+                    backgroundColor: '#fff',
+                    flex: 1,
+                    paddingBottom: eventPaddingOffset + 60,
+                    borderRadius: 10,
+                    zIndex: 1000
+                }}>
                     <Text style={{ fontSize: 40, fontWeight: 'bold' }}>Eventi:</Text>
                     {todayEventComponents.length != 0 ? todayEventComponents : <Text style={{ alignSelf: 'center', fontSize: 25, color: '#aaa', margin: 20 }}>Nessun evento</Text>}
                 </View>

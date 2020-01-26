@@ -61,17 +61,23 @@ class ErrorModalComponent extends Component<{ message?: string }, { y: Animated.
                 transform: a,
                 zIndex: 2000,
                 margin: 20,
-                padding: 10,
-                width: Dimensions.get('screen').width - 40,
-                height: 80,
                 alignItems: 'stretch',
                 justifyContent: 'center'
             }}
         >
-            <ShadowCard style={{
-                zIndex: 2001,
-                backgroundColor: commonStyles.main.backgroundColor,
-            }}>
+            <ShadowCard
+                borderRadius={10}
+                style={{
+                    width: Dimensions.get('screen').width - 40,
+                    backgroundColor: commonStyles.main.backgroundColor
+                }}
+                contentContainerStyle={{
+                    minHeight: 80,
+                    padding: 15,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}
+            >
                 <Text style={{
                     zIndex: 2002,
                     color: 'white',

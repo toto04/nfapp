@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NavigationScreenProp, NavigationState, NavigationParams, NavigationActions } from 'react-navigation';
-import { View, Text, ScrollViewProps, RefreshControl, StatusBar, StatusBarStyle, StyleSheet, ViewProps, GestureResponderEvent } from 'react-native';
+import { View, Text, ScrollViewProps, RefreshControl, StatusBar, StatusBarStyle, StyleSheet, ViewProps, GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import { getStatusBarHeight } from 'react-native-safe-area-view';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -119,27 +119,34 @@ export class ScrollableMainPage extends Component<ScrollViewProps & NavigationPr
 }> {
     scrollView: any;
     componentDidMount() {
-        let first = true
         this.props.navigation.addListener('willFocus', () => {
             store.dispatch(setTheme({ tabBar: this.props.darkTabBar ? 'dark' : 'light' }))
             StatusBar.setBarStyle(this.props.statusBarStyle);
-            if (first) {
-                this.scrollView.scrollTo({ y: -getStatusBarHeight(), animated: false })
-                first = false
-            }
         });
     }
     render() {
         let contentInset = { top: getStatusBarHeight() };
         for (let key in this.props.contentInset)
             contentInset[key] = this.props.contentInset[key];
-        return <ScrollView ref={s => this.scrollView = s} refreshControl={this.props.refreshOptions ? <RefreshControl refreshing={this.props.refreshOptions.refreshing} onRefresh={() => this.props.refreshOptions.onRefresh()} tintColor={this.props.refreshOptions.color} colors={[this.props.refreshOptions.color]} /> : undefined} {...this.props} contentContainerStyle={this.props.overrideStyles ? this.props.contentContainerStyle : [{ margin: 20, paddingBottom: 50 }, this.props.contentContainerStyle]} contentInset={contentInset}>
+        return <ScrollView
+            ref={s => this.scrollView = s}
+            refreshControl={this.props.refreshOptions ? <RefreshControl
+                refreshing={this.props.refreshOptions.refreshing}
+                onRefresh={() => this.props.refreshOptions.onRefresh()}
+                tintColor={this.props.refreshOptions.color}
+                colors={[this.props.refreshOptions.color]}
+            /> : undefined}
+            {...this.props}
+            contentContainerStyle={this.props.overrideStyles ? this.props.contentContainerStyle : [{ margin: 20, paddingBottom: 50 }, this.props.contentContainerStyle]}
+            contentInset={contentInset}
+            contentOffset={{ y: -getStatusBarHeight(), x: 0 }}
+        >
             {this.props.children}
         </ScrollView>;
     }
 }
 
-export class ShadowCard extends Component<ViewProps & { borderRadius?: number, onPress?: (event: GestureResponderEvent) => void }> {
+export class ShadowCard extends Component<ViewProps & { borderRadius?: number, onPress?: (event: GestureResponderEvent) => void, contentContainerStyle?: StyleProp<ViewStyle> }> {
     render() {
         return <View {...this.props} style={[{
             shadowOpacity: 0.2,
@@ -149,11 +156,11 @@ export class ShadowCard extends Component<ViewProps & { borderRadius?: number, o
         }, this.props.style]} >
             <TouchableHighlight
                 onPress={this.props.onPress}
-                style={{
+                style={[{
                     flex: 1,
                     borderRadius: this.props.borderRadius == undefined ? 10 : this.props.borderRadius,
                     overflow: 'hidden'
-                }}
+                }, this.props.contentContainerStyle]}
             >
                 {this.props.children}
             </TouchableHighlight>
