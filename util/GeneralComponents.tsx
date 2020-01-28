@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NavigationScreenProp, NavigationState, NavigationParams, NavigationActions } from 'react-navigation';
-import { View, Text, ScrollViewProps, RefreshControl, StatusBar, StatusBarStyle, StyleSheet, ViewProps, GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
+import { View, Text, ScrollViewProps, RefreshControl, StatusBar, StatusBarStyle, StyleSheet, ViewProps, GestureResponderEvent, StyleProp, ViewStyle, Platform, Insets } from 'react-native';
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import { getStatusBarHeight } from 'react-native-safe-area-view';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -125,21 +125,25 @@ export class ScrollableMainPage extends Component<ScrollViewProps & NavigationPr
         });
     }
     render() {
-        let contentInset = { top: getStatusBarHeight() };
+        let contentInset: Insets = { top: getStatusBarHeight() };
         for (let key in this.props.contentInset)
             contentInset[key] = this.props.contentInset[key];
         return <ScrollView
-            ref={s => this.scrollView = s}
+            ref={s => { if (s) this.scrollView = s }}
             refreshControl={this.props.refreshOptions ? <RefreshControl
                 refreshing={this.props.refreshOptions.refreshing}
                 onRefresh={() => this.props.refreshOptions.onRefresh()}
                 tintColor={this.props.refreshOptions.color}
-                colors={[this.props.refreshOptions.color]}
+                colors={['black']}
             /> : undefined}
             {...this.props}
-            contentContainerStyle={this.props.overrideStyles ? this.props.contentContainerStyle : [{ margin: 20, paddingBottom: 50 }, this.props.contentContainerStyle]}
+            contentContainerStyle={this.props.overrideStyles ? this.props.contentContainerStyle : [{
+                margin: 20,
+                marginTop: 20 + (Platform.OS != "ios" ? getStatusBarHeight() : 0),
+                paddingBottom: contentInset.bottom ? 0 : 50
+            }, this.props.contentContainerStyle]}
             contentInset={contentInset}
-            contentOffset={{ y: -getStatusBarHeight(), x: 0 }}
+            contentOffset={{ y: Platform.OS == 'ios' ? -getStatusBarHeight() : 0, x: 0 }}
         >
             {this.props.children}
         </ScrollView>;

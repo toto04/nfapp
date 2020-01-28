@@ -30,6 +30,39 @@ interface SubjectState {
     notes: Note[]
 }
 
+class ClassSelection extends Component<NavigationProps, { visibleSection: string }> {
+    state = {
+        visibleSection: this.props.navigation.getParam('visibleSection')
+    }
+
+    render() {
+        return <Page
+            // TODO: questa va decisamente migliorata
+            title={this.state.visibleSection}
+            backButton
+            navigation={this.props.navigation}
+        >
+            <FlatList
+                data={classStructure[this.state.visibleSection]}
+                renderItem={({ item, index }) => <TouchableOpacity
+                    style={{
+                        padding: 10,
+                        paddingHorizontal: 30
+                    }}
+                    onPress={() => {
+                        this.props.navigation.navigate('SubjectsDetailPage', {
+                            classContext: { field: this.state.visibleSection, classIndex: index }
+                        })
+                    }}
+                >
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{`Classe ${item.year}`}</Text>
+                </TouchableOpacity>}
+                keyExtractor={item => item.year}
+            />
+        </Page>
+    }
+}
+
 class SubjectsDetailPage extends Component<NavigationProps> {
     render() {
         let context: Context = this.props.navigation.getParam('classContext')
@@ -176,8 +209,15 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
 
 let ConnectedNotesPage = connect((state: { login: LoginState }) => ({ login: state.login }))(NotePage)
 
+let nav = createStackNavigator({
+    ClassSelection,
+    SubjectsDetailPage
+}, {
+    headerMode: 'none',
+})
+
 export default createStackNavigator({
-    SubjectsDetailPage,
+    nav,
     ConnectedNotesPage
 }, {
     headerMode: 'none',

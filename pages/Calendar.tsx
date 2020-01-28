@@ -1,7 +1,7 @@
 import { LocaleConfig, Calendar } from 'react-native-calendars'
 import React, { Component } from 'react'
 import { NavigationProps, commonStyles, api, ScrollableMainPage, ShadowCard } from '../util'
-import { Text, View } from 'react-native'
+import { Text, View, Platform } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { getStatusBarHeight } from 'react-native-safe-area-view'
 LocaleConfig.locales['it'] = {
@@ -74,7 +74,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
         let eventPaddingOffset = 400
         return (
             <ScrollableMainPage
-                ref={r => this.ref = r}
+                ref={r => { if (r) this.ref = r }}
                 navigation={this.props.navigation}
                 refreshOptions={{
                     refreshing: this.state.refreshing,
@@ -83,15 +83,15 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                 }}
                 statusBarStyle='light-content'
                 style={{ backgroundColor: commonStyles.main.backgroundColor }}
-                contentContainerStyle={{ margin: 0, marginTop: 20, padding: 0 }}
+                overrideStyles
                 contentInset={{ bottom: -eventPaddingOffset }}
                 stickyHeaderIndices={[0]}
             >
-                <View>
+                <View style={{ paddingTop: 20 }}>
                     <Text style={{ fontWeight: 'bold', fontSize: 40, marginHorizontal: 20, color: commonStyles.main.color }}>Calendario</Text>
                     <Calendar
                         style={{
-                            height: 360
+                            minHeight: 360
                         }}
                         theme={{
                             calendarBackground: commonStyles.main.backgroundColor,
@@ -115,11 +115,13 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                 </View>
                 <View style={{
                     padding: 10,
-                    minHeight: eventPaddingOffset + 500,
+                    marginTop: Platform.OS == 'ios' ? 0 : 25,
+                    minHeight: Platform.OS == 'ios' ? 500 + eventPaddingOffset : 400,
                     backgroundColor: '#fff',
-                    flex: 1,
-                    paddingBottom: eventPaddingOffset + 60,
-                    borderRadius: 10,
+                    width: '100%',
+                    paddingBottom: 60 + (Platform.OS == 'ios' ? eventPaddingOffset : 0),
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
                     zIndex: 1000
                 }}>
                     <Text style={{ fontSize: 40, fontWeight: 'bold' }}>Eventi:</Text>

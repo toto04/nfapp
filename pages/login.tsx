@@ -1,5 +1,5 @@
 import React, { Component, } from 'react'
-import { Button, StyleSheet, TouchableOpacity, Text, Picker, Alert, TextComponent } from 'react-native';
+import { Button, StyleSheet, TouchableOpacity, Text, Picker, Alert, View } from 'react-native';
 import { NavigationProps, Page, commonStyles, api, Class } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -50,7 +50,7 @@ class Signup extends Component<NavigationProps, signupState> {
         let textReference: any = {}
 
         return (
-            <Page {...this.props} title='registrati' backButton>
+            <Page {...this.props} title='registrati' backButton contentContainerStyle={{ paddingTop: 10 }}>
                 <TextInput
                     style={styles.input}
                     placeholder='Nome'
@@ -78,16 +78,24 @@ class Signup extends Component<NavigationProps, signupState> {
                     autoCapitalize='none'
                     ref={r => textReference['email'] = r}
                 />
-                <TextInput
-                    style={styles.input}
-                    placeholder='Numero di telefono'
-                    onChangeText={(phone) => { this.setState({ phone }) }}
-                    autoCompleteType='tel'
-                    textContentType='telephoneNumber'
-                    autoCapitalize='none'
-                    ref={r => textReference['phone'] = r}
-                    keyboardType='numeric'
-                />
+                <View style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start'
+                }}>
+                    <Text style={{ marginLeft: 30, fontSize: 20 }}>+39</Text>
+                    <TextInput
+                        style={[styles.input, { marginLeft: 10, flex: 1 }]}
+                        placeholder='Numero di telefono'
+                        onChangeText={(phone) => { this.setState({ phone }) }}
+                        autoCompleteType='tel'
+                        textContentType='telephoneNumber'
+                        autoCapitalize='none'
+                        ref={r => textReference['phone'] = r}
+                        keyboardType='phone-pad'
+                    />
+                </View>
                 <TextInput
                     style={styles.input}
                     placeholder='user'
@@ -118,6 +126,7 @@ class Signup extends Component<NavigationProps, signupState> {
                     ref={r => textReference['pwd'] = r}
                 />
                 <Picker
+                    // TODO: fix the picker, uniformity between ios and android
                     mode={'dialog'}
                     selectedValue={this.state.cls}
                     onValueChange={(cls, idx) => {
@@ -191,7 +200,7 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
 
     render() {
         return (
-            <Page {...this.props} title='log in' downButton>
+            <Page {...this.props} title='log in' downButton contentContainerStyle={{ paddingTop: 10 }}>
                 <TextInput
                     style={styles.input}
                     editable={this.state.editable}
@@ -221,10 +230,12 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
                     }}>
                     <Text style={{ color: '#fff', fontSize: 20 }}>Log in</Text>
                 </TouchableOpacity>
-                <Button title='Non hai un account? Registrati' onPress={() => {
+                <TouchableOpacity style={{ padding: 10 }} onPress={() => {
                     this.props.navigation.navigate('Signup')
                     this.setState({ editable: false })
-                }} />
+                }}>
+                    <Text style={{ color: 'rgba(30, 80, 234, 1)', fontSize: 15, textAlign: 'center' }}>Non hai un account? Registrati</Text>
+                </TouchableOpacity>
             </Page>
         )
     }
@@ -275,8 +286,8 @@ const styles = StyleSheet.create({
     input: {
         backgroundColor: '#ddd',
         marginHorizontal: 30,
+        marginVertical: 5,
         padding: 4,
-        marginTop: 10,
         height: 35,
         fontSize: 15,
         borderRadius: 3

@@ -68,15 +68,20 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
 class ProfileLoggedOutPage extends Component<NavigationProps> {
     render() {
         return (
-            <View style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: 20
-            }}>
+            <ScrollableMainPage
+                scrollEnabled={false}
+                navigation={this.props.navigation}
+                statusBarStyle='light-content'
+                contentContainerStyle={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 20
+                }}
+            >
                 <Text style={{ fontSize: 26, textAlign: 'center' }}>Effettua il login per accedere al profilo</Text>
                 <Button title='login' onPress={() => this.props.navigation.navigate('Login')} />
-            </View>
+            </ScrollableMainPage>
         )
     }
 }

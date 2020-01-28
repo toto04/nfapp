@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
-import { Text, Image, Dimensions, Modal } from 'react-native'
+import { Text, Image, Dimensions, Platform } from 'react-native'
 import Carousel, { Pagination } from 'react-native-snap-carousel'
 import images from '../../assets/fields/images'
 import { FlatList, TouchableOpacity, TouchableHighlight } from 'react-native-gesture-handler'
+import { getStatusBarHeight } from 'react-native-safe-area-view';
 import { NavigationProps, commonStyles, ScrollableMainPage, Class, Page } from '../../util';
 const { classStructure } = Class
 
-export default class SchoolSharing extends Component<NavigationProps, { visibleSection?: string, slideIndex: number }> {
+export default class SchoolSharing extends Component<NavigationProps, { slideIndex: number }> {
     state = {
-        visibleSection: undefined,
         slideIndex: 0
     }
     constructor(props) {
@@ -29,36 +29,47 @@ export default class SchoolSharing extends Component<NavigationProps, { visibleS
 
     render() {
         return <ScrollableMainPage
+            scrollEnabled={false}
             navigation={this.props.navigation}
             statusBarStyle='light-content'
             style={{
+                flex: 1,
                 backgroundColor: commonStyles.main.backgroundColor
             }}
             contentContainerStyle={{
-                margin: 0
+                flex: 1,
+                marginTop: Platform.OS != "ios" ? getStatusBarHeight() : 0,
+                paddingBottom: Platform.OS == 'ios' ? 50 : 0
             }}
+            overrideStyles
             darkTabBar
         >
             <Text style={{ fontWeight: 'bold', fontSize: 40, margin: 20, marginBottom: 0, color: commonStyles.main.color }}>School Sharing</Text>
             <Text style={{ alignSelf: 'center', textAlign: 'center', color: '#bbb', padding: 15, fontSize: 16, marginHorizontal: 20 }}>Condividi i tuoi appunti con altri studenti per guadagnare punti!</Text>
             <Carousel
+                containerCustomStyle={{
+                    flex: 1
+                }}
                 data={Object.keys(classStructure)}
                 renderItem={({ item }) => {
                     return <TouchableHighlight
                         style={{
-                            width: 300,
-                            height: 450,
+                            height: '100%',
+                            backgroundColor: 'white',
                             borderRadius: 10,
                             overflow: 'hidden'
                         }}
                         onPress={() => {
-                            if (this.state.visibleSection) this.setState({ visibleSection: undefined }, () => this.setState({ visibleSection: item }))
-                            else this.setState({ visibleSection: item })
+                            this.props.navigation.navigate('ClassSelection', { visibleSection: item })
                         }}
                     >
                         <Image
                             source={images[item]}
-                            style={{ width: 300, height: 450 }}
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                backgroundColor: 'white'
+                            }}
                             resizeMode={'contain'}
                         />
                     </TouchableHighlight>
@@ -73,38 +84,7 @@ export default class SchoolSharing extends Component<NavigationProps, { visibleS
                 inactiveDotColor='white'
                 activeDotIndex={this.state.slideIndex}
             />
-            <Modal
-                visible={!!this.state.visibleSection}
-                animationType='slide'
-                onRequestClose={() => this.setState({ visibleSection: undefined })}
-            >
-                {/* TODO: questa va decisamente migliorata */}
-                <Page
-                    title={this.state.visibleSection}
-                    downButton
-                    navigation={this.props.navigation}
-                    customAction={() => this.setState({ visibleSection: undefined })}
-                >
-                    <FlatList
-                        data={classStructure[this.state.visibleSection]}
-                        renderItem={({ item, index }) => <TouchableOpacity
-                            style={{
-                                padding: 10,
-                                paddingHorizontal: 30
-                            }}
-                            onPress={() => {
-                                this.props.navigation.navigate('SubjectsDetailPage', {
-                                    classContext: { field: this.state.visibleSection, classIndex: index }
-                                })
-                                this.setState({ visibleSection: undefined })
-                            }}
-                        >
-                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{`Classe ${item.year}`}</Text>
-                        </TouchableOpacity>}
-                        keyExtractor={item => item.year}
-                    />
-                </Page>
-            </Modal>
+
         </ScrollableMainPage>
     }
 }
