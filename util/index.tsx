@@ -8,6 +8,7 @@ import { getStatusBarHeight } from 'react-native-safe-area-view'
 export * from './GeneralComponents'
 export * from './Classes'
 export * from './Api'
+export * from './savedNotes'
 import { commonStyles, ShadowCard } from './GeneralComponents'
 
 export function formatDate(inputDate: string) {

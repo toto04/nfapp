@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar, Platform, SafeAreaView, AsyncStorage, View, Dimensions } from 'react-native'
+import { StatusBar, AsyncStorage } from 'react-native'
 import { createAppContainer, NavigationContainerComponent, NavigationActions } from 'react-navigation'
 import { createBottomTabNavigator, BottomTabBar, BottomTabBarProps } from 'react-navigation-tabs'
 import IconComponent from 'react-native-vector-icons/Ionicons'
@@ -7,6 +7,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { Provider, connect } from 'react-redux';
 import { AppLoading, Notifications } from 'expo'
 import { Asset } from 'expo-asset'
+import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 
 import { commonStyles, api, registerPushNotifications, ErrorModal, formatDate } from './util'
 import store from './redux/index';
@@ -21,6 +22,7 @@ import SurveyAnswerPage from './pages/Surveys/SurveyAnswerPage'
 import Calendar from './pages/Calendar'
 import Login from './pages/login'
 import Profile from './pages/Profile'
+import SavedNotes from './pages/Profile/SavedNotes'
 import SchoolSharing from './pages/SchoolSharing'
 import SubjectsDetailPage from './pages/SchoolSharing/SubjectsDetailPage'
 import NoteDetailPage from './pages/SchoolSharing/NoteDetailPage'
@@ -96,7 +98,8 @@ let DetailNav = createStackNavigator({
     PostDetailPage,
     SubjectsDetailPage,
     NoteDetailPage,
-    AddNotePage
+    AddNotePage,
+    SavedNotes
 }, {
     headerMode: 'none'
 })
@@ -160,7 +163,9 @@ export default class App extends Component<null, { isLoading: boolean }> {
             <Provider store={store}>
                 <ErrorModal />
                 <StatusBar barStyle='dark-content' backgroundColor={commonStyles.main.backgroundColor} />
-                <RootNavContainer ref={navigatorRef => { rootNavRef = navigatorRef }} />
+                <ActionSheetProvider>
+                    <RootNavContainer ref={navigatorRef => { rootNavRef = navigatorRef }} />
+                </ActionSheetProvider>
             </Provider>
         );
     }

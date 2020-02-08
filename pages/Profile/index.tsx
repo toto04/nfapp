@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import { Image, Text, View, Button, StyleSheet } from 'react-native'
-import { NavigationProps, Page, commonStyles, api, ScrollableMainPage, ShadowCard } from '../util';
-import { TouchableHighlight, ScrollView } from 'react-native-gesture-handler';
-import { LoginState, logout } from '../redux/login';
-import { Connect, connect } from 'react-redux';
-import { getStatusBarHeight } from 'react-native-safe-area-view';
+import { NavigationProps, commonStyles, api, ScrollableMainPage, ShadowCard } from '../../util';
+import { LoginState, logout } from '../../redux/login';
+import {  connect } from 'react-redux';
 
 class Preview extends Component<{ title: string, onPress?: () => void }> {
     render() {
@@ -46,7 +44,7 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
                     </View>
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <Image
-                            source={require('../assets/default-avatar.png')}
+                            source={require('../../assets/default-avatar.png')}
                             style={{
                                 width: 100,
                                 height: 100,
@@ -58,7 +56,7 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
                 </View>
                 <Button title='logout' onPress={this.props.logout} />
                 <Preview title='Appunti pubblicati' />
-                <Preview title='Appunti salvati' />
+                <Preview title='Appunti salvati' onPress={() => this.props.navigation.navigate('SavedNotes')} />
                 <Preview title='Eventi attesi' />
             </ScrollableMainPage>
         )

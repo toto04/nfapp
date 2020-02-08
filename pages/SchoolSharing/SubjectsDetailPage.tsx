@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { NavigationProps, Page, commonStyles, api, formatDate, Class, ShadowCard, serverUrl } from '../../util'
+import { NavigationProps, Page, commonStyles, api, formatDate, Class, ShadowCard, serverUrl, Note } from '../../util'
 import { ScrollView, TouchableHighlight, TouchableOpacity, FlatList } from 'react-native-gesture-handler'
 import { View, Text, Modal, RefreshControl, ImageBackground, ActivityIndicator } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -11,15 +11,6 @@ const { classStructure } = Class
 export interface Context {
     field: string,
     classIndex: number
-}
-
-export interface Note {
-    id: number,
-    images: string[],
-    author: string,
-    title: string,
-    description: string,
-    postingdate: string
 }
 
 interface SubjectState {

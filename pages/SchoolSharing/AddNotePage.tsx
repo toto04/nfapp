@@ -41,7 +41,7 @@ export default class AddNotePage extends Component<NavigationProps, AddNoteState
             allowsMultipleSelection: true,
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             base64: true,
-            quality: 0
+            quality: 0.7
         })
         if (!image.cancelled) {
             let data = 'data:image/jpeg;base64,' + image.base64

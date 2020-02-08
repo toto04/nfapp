@@ -7,6 +7,7 @@ import IconComponent from 'react-native-vector-icons/Ionicons'
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
 import { NavigationActions } from 'react-navigation';
+import { getStatusBarHeight } from 'react-native-safe-area-view';
 
 class PostDetailPage extends Component<NavigationProps, { postObject: Post, imageSize: { width: number, height: number } }> {
     ref: React.RefObject<PostDetailPage>
@@ -57,7 +58,6 @@ class ImageModal extends Component<NavigationProps, { header: boolean }> {
                 position: 'relative'
             }}>
                 <ImageViewer
-                    style={{ paddingTop: -20 }}
                     renderIndicator={() => null}
                     onClick={() => this.setState({ header: !this.state.header })}
                     enableSwipeDown
@@ -72,7 +72,7 @@ class ImageModal extends Component<NavigationProps, { header: boolean }> {
                 <IconComponent
                     style={{
                         position: 'absolute',
-                        top: 20,
+                        top: 10 + getStatusBarHeight(),
                         left: 30
                     }}
                     size={55}

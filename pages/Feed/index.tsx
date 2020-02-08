@@ -14,13 +14,16 @@ export interface Post {
     body?: string,
     image?: string,
     time: string,
+    likes: number,
     liked?: boolean
 }
 
-class PostComponent extends Component<NavigationProps & { postObject: Post, login: LoginState }, { liked?: boolean }> {
+class PostComponent extends Component<NavigationProps & { postObject: Post, login: LoginState }, { liked?: boolean, likes: number }> {
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = {
+            likes: this.props.postObject.likes
+        }
     }
 
     render() {
@@ -37,14 +40,14 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
         if (this.state.liked != undefined) liked = this.state.liked
         let onLike = this.props.login.loggedIn ? () => {
             const url = '/api/' + (liked ? 'dislike/' : 'like/') + this.props.postObject.id
-            this.setState({ liked: !liked })
+            this.setState({ liked: !liked, likes: this.state.likes - (liked ? 1 : -1) })
             api.post(url, {}).then(async res => {
                 if (res.success) this.setState({ liked: !liked })
             })
         } : () => this.props.navigation.navigate('Login')
         let like = liked ?
-            <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} onPress={onLike} name='ios-heart' color={commonStyles.main.color} /> :
-            <IconComponent style={{ marginTop: 8, marginHorizontal: 16 }} size={30} onPress={onLike} name='ios-heart-empty' />
+            <IconComponent style={{ marginTop: 8, marginRight: 16 }} size={30} onPress={onLike} name='ios-heart' color={commonStyles.main.color} /> :
+            <IconComponent style={{ marginTop: 8, marginRight: 16 }} size={30} onPress={onLike} name='ios-heart-empty' />
 
         return (
             <View style={{ marginTop: 15 }}>
@@ -63,7 +66,8 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
                         {image}
                     </View>
                 </ShadowCard>
-                <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ marginLeft: 8 }}>{this.state.likes ? `Piace a ${this.state.likes} ${this.state.likes == 1 ? 'persona' : 'persone'}` : `Nessuno mi piace, sii il primo!`}</Text>
                     {like}
                 </View>
             </View>
