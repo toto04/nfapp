@@ -18,7 +18,9 @@ interface SubjectState {
     loading: boolean,
     context: Context & { subject: string }
     error?: boolean,
-    notes: Note[]
+    notes: Note[],
+    page: number,
+    rockbottom: boolean
 }
 
 class ClassSelection extends Component<NavigationProps, { visibleSection: string }> {
@@ -90,11 +92,14 @@ class SubjectsDetailPage extends Component<NavigationProps> {
 }
 
 class NotePage extends Component<NavigationProps & { login: LoginState }, SubjectState> {
+    loadingMore = false
     state: SubjectState = {
         context: this.props.navigation.getParam('classContext'),
         refreshing: false,
         loading: false,
-        notes: []
+        notes: [],
+        page: 0,
+        rockbottom: false
     }
 
     loadNote = async (noteID: number) => {
@@ -104,11 +109,21 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
         this.props.navigation.navigate('NoteDetailPage', { note })
     }
 
+    fetchNotes = async (page: number = 0) => {
+        let res: any = await api.get(`/api/schoolsharing/notes/${this.state.context.field}/${this.state.context.classIndex}/${this.state.context.subject}/${page}`)
+        if (res.success === false) {
+            this.setState({ error: true })
+            return []
+        } else {
+            let notes: Note[] = res
+            return notes
+        }
+    }
+
     refresh = async () => {
         this.setState({ refreshing: true })
-        let res = await api.get(`/api/schoolsharing/notes/${this.state.context.field}/${this.state.context.classIndex}/${this.state.context.subject}`)
-        if (res.success === false) this.setState({ error: true })
-        this.setState({ refreshing: false, notes: res })
+        let notes = await this.fetchNotes()
+        this.setState({ refreshing: false, notes })
     }
 
     componentDidMount = () => {
@@ -133,6 +148,21 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
                 tintColor='black'
                 colors={['black']}
             />}
+            scrollEventThrottle={400}
+            onScroll={this.state.rockbottom ? undefined : async ({ nativeEvent }) => {
+                const pixelsFromBottom = 200
+                if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - pixelsFromBottom) {
+                    if (this.loadingMore) return
+                    if (!nativeEvent.layoutMeasurement.height) return
+                    if (this.state.rockbottom) return
+
+                    this.loadingMore = true
+                    let page = this.state.page + 1
+                    let newNotes = await this.fetchNotes(page)
+                    if (newNotes.length < 10) this.setState({ rockbottom: true })
+                    this.setState({ notes: [...this.state.notes, ...newNotes], page }, () => { this.loadingMore = false })
+                }
+            }}
         >
             {this.state.error ? <Text>C'è stato un errore, riprova più tardi</Text>
                 : <FlatList

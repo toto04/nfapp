@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, RefreshControl, View, Image } from 'react-native'
 import { NavigationProps, api, commonStyles, formatDate, ScrollableMainPage, ShadowCard } from '../../util';
-import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
+import { ScrollView, TouchableHighlight, FlatList } from 'react-native-gesture-handler';
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { connect } from 'react-redux';
 import { LoginState } from '../../redux/login';
@@ -67,7 +67,7 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
                     </View>
                 </ShadowCard>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={{ marginLeft: 8 }}>{this.state.likes ? `Piace a ${this.state.likes} ${this.state.likes == 1 ? 'persona' : 'persone'}` : `Nessuno mi piace, sii il primo!`}</Text>
+                    <Text style={{ marginLeft: 8 }}>{this.state.likes != 0 ? `Piace a ${this.state.likes} ${this.state.likes == 1 ? 'persona' : 'persone'}` : `Nessuno mi piace, sii il primo!`}</Text>
                     {like}
                 </View>
             </View>
@@ -77,12 +77,15 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
 
 let ConnectedPostComponent = connect((state: { login: LoginState }) => ({ login: state.login }))(PostComponent)
 
-export default class FeedPage extends Component<NavigationProps, { posts: JSX.Element[], refreshing: boolean }> {
+export default class FeedPage extends Component<NavigationProps, { posts: Post[], refreshing: boolean, page: number, rockbottom: boolean }> {
+    loadingMore = false
     constructor(props) {
         super(props)
         this.state = {
             posts: [],
-            refreshing: false
+            refreshing: false,
+            page: 0,
+            rockbottom: false
         }
     }
 
@@ -91,26 +94,15 @@ export default class FeedPage extends Component<NavigationProps, { posts: JSX.El
         this.setState({ posts: els })
     }
 
-    async fetchPosts() {
-        let posts: Post[] = await api.get('/api/posts')
-        let els = []
-        for (let post of posts) {
-            post.time = formatDate(post.time)
-            els.push(
-                <ConnectedPostComponent
-                    key={post.id}
-                    navigation={this.props.navigation}
-                    postObject={post}
-                />
-            )
-        }
-        return els
+    async fetchPosts(page: number = 0) {
+        let posts: Post[] = await api.get('/api/posts/' + page)
+        return posts
     }
 
     async refresh() {
         this.setState({ refreshing: true })
         let els = await this.fetchPosts()
-        this.setState({ refreshing: false, posts: els })
+        this.setState({ refreshing: false, posts: els, rockbottom: false })
     }
 
     render() {
@@ -123,9 +115,35 @@ export default class FeedPage extends Component<NavigationProps, { posts: JSX.El
                     color: 'black'
                 }}
                 statusBarStyle='dark-content'
+                scrollEventThrottle={400}
+                onScroll={this.state.rockbottom ? undefined : async ({ nativeEvent }) => {
+                    const pixelsFromBottom = 200
+                    if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - pixelsFromBottom) {
+                        if (this.loadingMore) return
+                        if (!nativeEvent.layoutMeasurement.height) return
+                        if (this.state.rockbottom) return
+
+                        this.loadingMore = true
+                        let page = this.state.page + 1
+                        let newPosts = await this.fetchPosts(page)
+                        if (newPosts.length < 10) this.setState({ rockbottom: true })
+                        this.setState({ posts: [...this.state.posts, ...newPosts], page }, () => { this.loadingMore = false })
+                    }
+                }}
             >
-                <Text style={{ fontWeight: 'bold', fontSize: 40 }}>Bacheca</Text>
-                {this.state.posts}
+                <FlatList
+                    style={{ flex: 1 }}
+                    ListHeaderComponent={<Text style={{ fontWeight: 'bold', fontSize: 40 }}>Bacheca</Text>}
+                    data={this.state.posts}
+                    renderItem={({ item }) => {
+                        item.time = formatDate(item.time)
+                        return <ConnectedPostComponent
+                            navigation={this.props.navigation}
+                            postObject={item}
+                        />
+                    }}
+                    keyExtractor={post => post.id.toString()}
+                />
             </ScrollableMainPage>
         )
     }
