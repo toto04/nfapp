@@ -39,7 +39,7 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
         let liked = this.props.postObject.liked
         if (this.state.liked != undefined) liked = this.state.liked
         let onLike = this.props.login.loggedIn ? () => {
-            const url = '/api/' + (liked ? 'dislike/' : 'like/') + this.props.postObject.id
+            const url = '/api/posts/' + (liked ? 'dislike/' : 'like/') + this.props.postObject.id
             this.setState({ liked: !liked, likes: this.state.likes - (liked ? 1 : -1) })
             api.post(url, {}).then(async res => {
                 if (res.success) this.setState({ liked: !liked })
@@ -95,7 +95,8 @@ export default class FeedPage extends Component<NavigationProps, { posts: Post[]
     }
 
     async fetchPosts(page: number = 0) {
-        let posts: Post[] = await api.get('/api/posts/' + page)
+        let res = await api.get('/api/posts/' + page)
+        let posts: Post[] = res.data
         return posts
     }
 

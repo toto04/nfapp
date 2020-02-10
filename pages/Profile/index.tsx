@@ -27,7 +27,7 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
         super(props)
         this.state = { class: 'attendo server...' }
         api.get(`/api/user/${this.props.login.username}`).then(async res => {
-            this.setState({ class: res.class })
+            this.setState({ class: res.classname })
         })
     }
 

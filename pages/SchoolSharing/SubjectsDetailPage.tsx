@@ -104,20 +104,20 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
 
     loadNote = async (noteID: number) => {
         this.setState({ loading: true })
-        let note: Note = await api.get('/api/schoolsharing/note/' + noteID)
+        let response = await api.get('/api/schoolsharing/note/' + noteID)
+        if (response.success) {
+            let note: Note = response.data
+            this.props.navigation.navigate('NoteDetailPage', { note })
+        }
         this.setState({ loading: false })
-        this.props.navigation.navigate('NoteDetailPage', { note })
     }
 
     fetchNotes = async (page: number = 0) => {
-        let res: any = await api.get(`/api/schoolsharing/notes/${this.state.context.field}/${this.state.context.classIndex}/${this.state.context.subject}/${page}`)
+        let res: { success: boolean, data: Note[] } = await api.get(`/api/schoolsharing/notes/${this.state.context.field}/${this.state.context.classIndex}/${this.state.context.subject}/${page}`)
         if (res.success === false) {
             this.setState({ error: true })
             return []
-        } else {
-            let notes: Note[] = res
-            return notes
-        }
+        } else return res.data
     }
 
     refresh = async () => {

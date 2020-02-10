@@ -36,7 +36,8 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
     }
 
     async fetchEvents() {
-        let rows = await api.get('/api/events')
+        let result = await api.get('/api/events')
+        let rows = result.data
         let evt = {}
         for (const row of rows) {
             evt[row.date] = row.description

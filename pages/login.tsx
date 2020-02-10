@@ -179,6 +179,7 @@ class Signup extends Component<NavigationProps, signupState> {
                         cls: this.state.cls
                     })
 
+                    //TODO: dispatch the login on success
                     let { success, error } = res
                     alert(success ? 'utente creato!' : error)
                 }}>
@@ -220,12 +221,12 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
                     onPress={() => {
                         let password = this.state.pwd
                         api.post('/api/login', { usr: this.state.usr, pwd: password }).then(async res => {
-                            let { logged, username, classname, firstName, lastName } = res
-                            if (logged) {
+                            if (res.success) {
+                                let { username, classname, firstName, lastName } = res.data
                                 this.props.login(username, password, classname, firstName, lastName)
                                 this.props.navigation.dispatch(NavigationActions.back())
                             }
-                            alert(logged ? 'Login effettuato!' : 'Elia smettila')
+                            alert(res.success ? 'Login effettuato!' : 'Elia smettila')
                         })
                     }}>
                     <Text style={{ color: '#fff', fontSize: 20 }}>Log in</Text>

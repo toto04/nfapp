@@ -151,9 +151,10 @@ export default class App extends Component<null, { isLoading: boolean }> {
         let { username, password, classname, firstName, lastName } = JSON.parse(info)
         store.dispatch(login(username, password, classname, firstName, lastName))
         api.post('/api/login', { usr: username, pwd: password }).then(async res => {
-            let { logged, username, classname, firstName, lastName } = res
-            if (logged) store.dispatch(login(username, password, classname, firstName, lastName))
-            else store.dispatch(logout())
+            if (res.success) {
+                let { username, classname, firstName, lastName } = res.data
+                store.dispatch(login(username, password, classname, firstName, lastName))
+            } else store.dispatch(logout())
         })
     }
 
@@ -175,13 +176,13 @@ async function handleNotifications(notification: Notification) {
     if (notification.origin != 'selected') return
     switch (notification.data.type) {
         case 'newPost':
-            let res: Post | { success: false } = await api.get('/api/post/' + notification.data.postID)
-            let post = res as Post
-            if (post.id) {
+            let res: { success: boolean, data: Post } = await api.get('/api/posts/postDetail/' + notification.data.postID)
+            if (res.success) {
+                let post = res.data
                 post.time = formatDate(post.time)
                 rootNavRef.dispatch(NavigationActions.navigate({
                     routeName: 'PostDetailPage',
-                    params: { postObject: res }
+                    params: { postObject: post }
                 }))
             }
             break
