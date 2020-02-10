@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Text, Image, Dimensions, Platform } from 'react-native'
 import Carousel, { Pagination } from 'react-native-snap-carousel'
+import * as Haptics from 'expo-haptics'
 import images from '../../assets/fields/images'
 import { FlatList, TouchableOpacity, TouchableHighlight } from 'react-native-gesture-handler'
 import { getStatusBarHeight } from 'react-native-safe-area-view';
@@ -76,7 +77,10 @@ export default class SchoolSharing extends Component<NavigationProps, { slideInd
                 }}
                 sliderWidth={Dimensions.get('window').width}
                 itemWidth={300}
-                onSnapToItem={idx => this.setState({ slideIndex: idx })}
+                onSnapToItem={idx => {
+                    this.setState({ slideIndex: idx })
+                    Haptics.selectionAsync()
+                }}
             />
             <Pagination
                 dotsLength={Object.keys(classStructure).length}
