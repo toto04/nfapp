@@ -117,6 +117,7 @@ export default class FeedPage extends Component<NavigationProps, { posts: Post[]
                 }}
                 statusBarStyle='dark-content'
                 scrollEventThrottle={400}
+                contentContainerStyle={{ margin: 0 }}
                 onScroll={this.state.rockbottom ? undefined : async ({ nativeEvent }) => {
                     const pixelsFromBottom = 200
                     if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - pixelsFromBottom) {
@@ -144,6 +145,7 @@ export default class FeedPage extends Component<NavigationProps, { posts: Post[]
                         />
                     }}
                     keyExtractor={post => post.id.toString()}
+                    contentContainerStyle={{ marginHorizontal: 20 }}
                 />
             </ScrollableMainPage>
         )

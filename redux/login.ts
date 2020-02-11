@@ -14,6 +14,7 @@ export type LoginState = {
     username: string,
     password: string,
     _class: Class,
+    profilepic?: string,
     firstName?: string,
     lastName?: string
 } | {
@@ -21,6 +22,7 @@ export type LoginState = {
     username?: undefined,
     password?: undefined,
     _class?: undefined,
+    profilepic?: undefined,
     firstName?: undefined,
     lastName?: undefined
 }
@@ -42,11 +44,11 @@ interface LoginAction extends Action<string> {
  * @param firstName user's fisrt name
  * @param lastName user's last name
  */
-export function login(username: string, password: string, classname: string, firstName: string, lastName: string): LoginAction {
+export function login(username: string, password: string, classname: string, firstName: string, lastName: string, profilepic?: string): LoginAction {
     try {
         // tries to create a new class, if the classname is invalid the contructor throws an error
         let _class = new Class(classname)
-        AsyncStorage.setItem('logInfo', JSON.stringify({ username, password, classname, firstName, lastName }))
+        AsyncStorage.setItem('logInfo', JSON.stringify({ username, password, classname, firstName, lastName, profilepic }))
         return {
             type: 'LOGIN',
             payload: {
@@ -55,7 +57,8 @@ export function login(username: string, password: string, classname: string, fir
                 password,
                 _class,
                 firstName,
-                lastName
+                lastName,
+                profilepic
             }
         }
     } catch (e) {
@@ -86,6 +89,7 @@ export let loginReducer: Reducer<LoginState, LoginAction> = (state = defaultStat
                 username: action.payload.username,
                 password: action.payload.password,
                 _class: action.payload._class,
+                profilepic: action.payload.profilepic ?? undefined,
                 firstName: action.payload.firstName,
                 lastName: action.payload.lastName
             }

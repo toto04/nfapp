@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
-import { Image, Text, View, Button, StyleSheet } from 'react-native'
+import { Image, Text, View, Button, StyleSheet, AsyncStorage } from 'react-native'
+import * as ImagePicker from 'expo-image-picker'
+import * as Permissions from 'expo-permissions'
 import { NavigationProps, commonStyles, api, ScrollableMainPage, ShadowCard } from '../../util';
 import { LoginState, logout } from '../../redux/login';
-import {  connect } from 'react-redux';
+import { connect } from 'react-redux';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 class Preview extends Component<{ title: string, onPress?: () => void }> {
     render() {
@@ -22,13 +25,32 @@ class Preview extends Component<{ title: string, onPress?: () => void }> {
     }
 }
 
-class ProfilePage extends Component<NavigationProps & { login: LoginState, logout: () => void }, { class: string }> {
+class ProfilePage extends Component<NavigationProps & { login: LoginState, logout: () => void }, { class: string, newProfilePic?: string }> {
     constructor(props) {
         super(props)
         this.state = { class: 'attendo server...' }
-        api.get(`/api/user/${this.props.login.username}`).then(async res => {
+        api.get(`/api/user/info/${this.props.login.username}`).then(async res => {
             this.setState({ class: res.classname })
         })
+    }
+
+    pickImage = async () => {
+        let permission = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+        if (permission.status != 'granted') return
+        let image: any = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            base64: true,
+            quality: 0.6
+        })
+        if (!image.cancelled) {
+            let data = 'data:image/jpeg;base64,' + image.base64
+            this.setState({ newProfilePic: data })
+
+            AsyncStorage.getItem('logInfo').then(info => AsyncStorage.setItem('logInfo', JSON.stringify({ ...JSON.parse(info), profilepic: data })))
+            api.post('/api/user/profilepic', { profilepic: data })
+        }
     }
 
     render() {
@@ -43,15 +65,22 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
                         <Text style={styles.profileText}>{this.state.class}</Text>
                     </View>
                     <View style={{ flex: 1, alignItems: 'center' }}>
-                        <Image
-                            source={require('../../assets/default-avatar.png')}
+                        <TouchableHighlight
+                            onPress={() => {
+                                this.pickImage()
+                            }}
                             style={{
                                 width: 100,
                                 height: 100,
                                 borderRadius: 50,
                                 overflow: 'hidden'
                             }}
-                        />
+                        >
+                            <Image
+                                source={this.state.newProfilePic ? { uri: this.state.newProfilePic } : this.props.login.profilepic ? { uri: this.props.login.profilepic } : require('../../assets/default-avatar.png')}
+                                style={{ width: '100%', height: '100%' }}
+                            />
+                        </TouchableHighlight>
                     </View>
                 </View>
                 <Button title='logout' onPress={this.props.logout} />
