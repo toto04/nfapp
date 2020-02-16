@@ -6,7 +6,9 @@ export interface Note {
     author: string,
     title: string,
     description: string,
-    postingdate: string
+    postingdate: string,
+    points: number,
+    vote?: boolean
 }
 
 export let isSaved: (note: Note) => Promise<boolean> = async (note) => {

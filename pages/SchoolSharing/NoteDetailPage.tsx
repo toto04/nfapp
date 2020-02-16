@@ -1,20 +1,23 @@
 import React, { Component, } from 'react'
 import { Text, Image, Dimensions, View } from 'react-native'
-import { NavigationProps, Page, getImageSize, Note, isSaved, saveNote, removeNote } from '../../util';
+import { NavigationProps, Page, getImageSize, Note, isSaved, saveNote, removeNote, api } from '../../util';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { NavigationActions } from 'react-navigation';
 import { getStatusBarHeight } from 'react-native-safe-area-view';
-import IconComponent from 'react-native-vector-icons/Ionicons'
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connectActionSheet, ActionSheetProps } from '@expo/react-native-action-sheet'
+import { isIphoneX } from 'react-native-iphone-x-helper'
+import Icon from 'react-native-vector-icons/Ionicons';
 
-class NoteDetailPage extends Component<NavigationProps, { note: Note, images: JSX.Element[], saved?: boolean }> {
+class NoteDetailPage extends Component<NavigationProps, { note: Note, images: JSX.Element[], saved?: boolean, vote?: boolean }> {
     constructor(props) {
         super(props)
+        let note: Note = this.props.navigation.getParam('note')
         this.state = {
-            note: this.props.navigation.getParam('note'),
-            images: []
+            note,
+            images: [],
+            vote: note.vote
         }
     }
 
@@ -48,6 +51,38 @@ class NoteDetailPage extends Component<NavigationProps, { note: Note, images: JS
             navigation={this.props.navigation}
             title='appunti'
             backButton
+            fixedChildren={<View style={{
+                backgroundColor: 'white',
+                position: 'absolute',
+                bottom: 0,
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
+                alignItems: 'center',
+                width: '100%',
+                height: 50 + (isIphoneX() ? 34 : 0),
+                paddingBottom: isIphoneX() ? 34 : 0,
+                paddingHorizontal: 30,
+            }}>
+                <TouchableOpacity onPress={() => {
+                    let newVote = this.state.vote ? undefined : true
+                    api.post('/api/schoolsharing/vote/' + this.state.note.id, { vote: newVote })
+                    this.setState({ vote: newVote })
+                }}>
+                    <Icon name="ios-arrow-up" size={30} color={this.state.vote ? 'red' : 'grey'} />
+                </TouchableOpacity>
+                <Text style={{ fontSize: 20, color: this.state.vote ? 'red' : this.state.vote === false ? 'blue' : 'grey' }}>{
+                    this.state.note.points -
+                    (this.state.note.vote ? 1 : this.state.note.vote === false ? -1 : 0) +
+                    (this.state.vote ? 1 : this.state.vote === false ? -1 : 0)
+                }</Text>
+                <TouchableOpacity onPress={() => {
+                    let newVote = this.state.vote === false ? undefined : false
+                    api.post('/api/schoolsharing/vote/' + this.state.note.id, { vote: newVote })
+                    this.setState({ vote: newVote })
+                }}>
+                    <Icon name="ios-arrow-down" size={30} color={this.state.vote === false ? 'blue' : 'grey'} />
+                </TouchableOpacity>
+            </View>}
             rightButton={{
                 // TODO: change icons
                 name: this.state.saved ? 'cloud-done' : 'cloud-download',
@@ -57,7 +92,7 @@ class NoteDetailPage extends Component<NavigationProps, { note: Note, images: JS
             }}
             contentContainerStyle={{
                 padding: 10,
-                paddingBottom: 50
+                paddingBottom: 60 + (isIphoneX() ? 34 : 0)
             }}
         >
             <Text style={{ fontSize: 35, fontWeight: 'bold' }}>{this.state.note.title}</Text>
@@ -104,7 +139,7 @@ class _NoteImageModal extends Component<NavigationProps & ActionSheetProps, { he
                     })
                 }}
             />
-            <IconComponent
+            <Icon
                 style={{
                     position: 'absolute',
                     top: 10 + getStatusBarHeight(),

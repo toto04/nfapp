@@ -39,13 +39,14 @@ interface HeaderProps {
 /**
  * Page component, with an Header, navigation buttons and a scrollview
  */
-export class Page extends Component<NavigationProps & HeaderProps & ScrollViewProps> {
+export class Page extends Component<NavigationProps & HeaderProps & ScrollViewProps & { fixedChildren?: React.ReactNode }> {
     render() {
         return (<View style={{ flex: 1, backgroundColor: '#fff' }}>
             <Header {...this.props} />
             <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 50 }} {...this.props}>
                 {this.props.children}
             </ScrollView>
+            {this.props.fixedChildren}
         </View>);
     }
 }
