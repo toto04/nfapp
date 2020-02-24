@@ -5,7 +5,7 @@ import * as Permissions from 'expo-permissions'
 import { NavigationProps, commonStyles, api, ScrollableMainPage, ShadowCard } from '../../util';
 import { LoginState, logout } from '../../redux/login';
 import { connect } from 'react-redux';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 
 class Preview extends Component<{ title: string, onPress?: () => void }> {
     render() {
@@ -30,7 +30,7 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
         super(props)
         this.state = { class: 'attendo server...' }
         api.get(`/api/user/info/${this.props.login.username}`).then(async res => {
-            this.setState({ class: res.classname })
+            this.setState({ class: res.data.classname })
         })
     }
 
@@ -59,10 +59,13 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
                 navigation={this.props.navigation}
                 statusBarStyle='dark-content'
             >
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row', marginBottom: 15 }}>
                     <View style={{ flex: 2 }}>
                         <Text style={[styles.profileText, { fontWeight: 'bold', fontSize: 34 }]}>{`${this.props.login.firstName} ${this.props.login.lastName}`}</Text>
                         <Text style={styles.profileText}>{this.state.class}</Text>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('SettingsPage')}>
+                            <Text style={[styles.profileText, { color: commonStyles.main.color }]}>impostazioni</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <TouchableHighlight
@@ -83,7 +86,6 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
                         </TouchableHighlight>
                     </View>
                 </View>
-                <Button title='logout' onPress={this.props.logout} />
                 <Preview title='Appunti pubblicati' onPress={() => this.props.navigation.navigate('PostedNotes', { user: this.props.login.username })} />
                 <Preview title='Appunti salvati' onPress={() => this.props.navigation.navigate('SavedNotes')} />
                 <Preview title='Eventi attesi' />

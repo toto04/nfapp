@@ -20,7 +20,7 @@ class Survey extends Component<NavigationProps & { name: string, expiry: string,
                 })
             }}>
                 <View style={{
-                    backgroundColor: commonStyles.main.backgroundColor,
+                    backgroundColor: commonStyles.main.color,
                     padding: 20
                 }}>
                     <Text style={{ color: 'white' }}>{this.props.expiry}</Text>

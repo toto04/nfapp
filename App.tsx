@@ -20,6 +20,8 @@ import PostDetailPage from './pages/Feed/PostDetailPage'
 import Surveys from './pages/Surveys'
 import SurveyAnswerPage from './pages/Surveys/SurveyAnswerPage'
 import Calendar from './pages/Calendar'
+
+import SettingsPage from './pages/Settings'
 import Login from './pages/login'
 import Profile from './pages/Profile'
 import PostedNotes from './pages/Profile/PostedNotes'
@@ -28,6 +30,7 @@ import SchoolSharing from './pages/SchoolSharing'
 import SubjectsDetailPage from './pages/SchoolSharing/SubjectsDetailPage'
 import NoteDetailPage from './pages/SchoolSharing/NoteDetailPage'
 import AddNotePage from './pages/SchoolSharing/AddNotePage'
+
 import { Notification } from 'expo/build/Notifications/Notifications.types';
 
 class TabBar extends Component<BottomTabBarProps & { theme: ThemeState }> {
@@ -101,7 +104,8 @@ let DetailNav = createStackNavigator({
     NoteDetailPage,
     AddNotePage,
     PostedNotes,
-    SavedNotes
+    SavedNotes,
+    SettingsPage
 }, {
     headerMode: 'none'
 })
@@ -140,7 +144,7 @@ export default class App extends Component<null, { isLoading: boolean }> {
 
     componentDidUpdate() {
         // Useful for testing purposes
-        // rootNavRef.dispatch(NavigationActions.navigate({routeName: 'AddNotePage'}))
+        // rootNavRef.dispatch(NavigationActions.navigate({ routeName: 'ClassSelection', params: { visibleSection: 'Scienze Applicate' } }))
     }
 
     /**
@@ -178,7 +182,7 @@ async function handleNotifications(notification: Notification) {
     if (notification.origin != 'selected') return
     switch (notification.data.type) {
         case 'newPost':
-            let res: { success: boolean, data: Post } = await api.get('/api/posts/postDetail/' + notification.data.postID)
+            let res: { success: boolean, data?: Post } = await api.get('/api/posts/postDetail/' + notification.data.postID)
             if (res.success) {
                 let post = res.data
                 post.time = formatDate(post.time)

@@ -25,8 +25,14 @@ function retryApiRequest(endpoint: string, options: {}, resolve: (value: any) =>
     }).catch(e => setTimeout(() => retryApiRequest(endpoint, options, resolve), 5000)); // ritenta ogni 5 secondi
 }
 
+export interface ApiResponse {
+    success: boolean,
+    error?: string,
+    data?: any
+}
+
 export const api = {
-    get: (endpoint: string) => new Promise<any>(async (resolve, reject) => {
+    get: (endpoint: string) => new Promise<ApiResponse>(async (resolve, reject) => {
         let log = store.getState().login;
         let headers = log.loggedIn ? { 'x-nfapp-username': log.username, 'x-nfapp-password': log.password } : {};
         let options = { headers };
@@ -35,7 +41,7 @@ export const api = {
             retryApiRequest(endpoint, options, resolve);
         });
     }),
-    post: (endpoint: string, body: {}) => new Promise<any>(async (resolve, reject) => {
+    post: (endpoint: string, body: {}) => new Promise<ApiResponse>(async (resolve, reject) => {
         let log = store.getState().login;
         let headers = log.loggedIn ? {
             'x-nfapp-username': log.username,

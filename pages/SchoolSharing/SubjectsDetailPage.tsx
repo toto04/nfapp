@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { NavigationProps, Page, commonStyles, api, formatDate, Class, ShadowCard, serverUrl, Note } from '../../util'
-import { ScrollView, TouchableHighlight, TouchableOpacity, FlatList } from 'react-native-gesture-handler'
-import { View, Text, Modal, RefreshControl, ImageBackground, ActivityIndicator } from 'react-native'
+import { TouchableOpacity, FlatList } from 'react-native-gesture-handler'
+import { View, Text, Modal, RefreshControl, ImageBackground, ActivityIndicator, Dimensions, Easing } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { connect } from 'react-redux'
 import { LoginState } from '../../redux/login'
 import { createStackNavigator } from 'react-navigation-stack'
+import SVG, { Path, Circle, Defs, LinearGradient as SVGLinearGradient, Stop } from 'react-native-svg'
 const { classStructure } = Class
 
 export interface Context {
@@ -23,38 +24,98 @@ interface SubjectState {
     rockbottom: boolean
 }
 
-class ClassSelection extends Component<NavigationProps, { visibleSection: string }> {
+const coords = [.6, .3, .75, .25, .55]
+const colors = Array(5).fill(1).map((c, i) => `hsl(34, 100%, ${60 - i * 5}%)`)
+class ClassNumber extends Component<{ index: number, onPress?: () => void, text: string, usersClass?: boolean }> {
+    render = () => {
+        let offset = 60
+        let heigth = 120
+        let radius = this.props.usersClass ? offset : offset - 10
+        let x1 = Dimensions.get('window').width * (coords[this.props.index - 1] ?? .5)
+        let x2 = Dimensions.get('window').width * coords[this.props.index]
+        return <View style={{
+            top: -offset * (this.props.index + 1),
+            left: 0,
+            right: 0,
+            width: Dimensions.get('window').width,
+            height: heigth + offset,
+            zIndex: 5 - this.props.index,
+        }}>
+            <SVG
+                height="100%"
+                width="100%"
+            >
+                <Circle
+                    cx={coords[this.props.index] * 100 + '%'}
+                    cy={heigth}
+                    r={radius}
+                    fill={colors[this.props.index]}
+                />
+                <Path
+                    d={`M${x1} 0 L${x2} ${heigth - 10} Z`}
+                    strokeWidth={10}
+                    stroke="url(#grad)"
+                />
+                <Defs>
+                    <SVGLinearGradient id="grad" x1={x1 / Math.max(x1, x2) * 100 + '%'} y1={0} x2={x2 / Math.max(x1, x2) * 100 + '%'} y2="100%">
+                        <Stop offset="0.2" stopColor={colors[this.props.index - 1] ?? 'hsl(34, 100%, 65%)'} />
+                        <Stop offset="0.8" stopColor={colors[this.props.index]} />
+                    </SVGLinearGradient>
+                </Defs>
+            </SVG>
+            <View
+                style={{
+                    position: 'absolute',
+                    borderRadius: radius,
+                    overflow: 'hidden',
+                    width: radius * 2,
+                    height: radius * 2,
+                    top: heigth - radius,
+                    left: x2 - radius,
+                }}
+            >
+                <TouchableOpacity style={{
+                    width: '100%',
+                    height: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }} onPress={this.props.onPress}>
+                    <Text style={{ color: 'white', fontSize: 40, paddingLeft: 5 }}>{this.props.text}</Text>
+                </TouchableOpacity>
+            </View>
+        </View >
+    }
+}
+
+class _ClassSelection extends Component<NavigationProps & { class: Class }, { visibleSection: string }> {
     state = {
         visibleSection: this.props.navigation.getParam('visibleSection')
     }
 
     render() {
         return <Page
-            // TODO: questa va decisamente migliorata
+            scrollEnabled={false}
             title={this.state.visibleSection}
             backButton
             navigation={this.props.navigation}
+            style={{
+                backgroundColor: commonStyles.main.backgroundColor
+            }}
         >
-            <FlatList
-                data={classStructure[this.state.visibleSection]}
-                renderItem={({ item, index }) => <TouchableOpacity
-                    style={{
-                        padding: 10,
-                        paddingHorizontal: 30
-                    }}
-                    onPress={() => {
-                        this.props.navigation.navigate('SubjectsDetailPage', {
-                            classContext: { field: this.state.visibleSection, classIndex: index }
-                        })
-                    }}
-                >
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{`Classe ${item.year}`}</Text>
-                </TouchableOpacity>}
-                keyExtractor={item => item.year}
-            />
+            {classStructure[this.state.visibleSection].map((item, index) => <ClassNumber
+                key={item.year}
+                index={index}
+                text={item.year}
+                usersClass={item == classStructure[this.state.visibleSection][this.props.class.yearIndex]}
+                onPress={() => this.props.navigation.navigate('SubjectsDetailPage', {
+                    classContext: { field: this.state.visibleSection, classIndex: index }
+                })
+                }
+            />)}
         </Page>
     }
 }
+let ClassSelection = connect((state: { login: LoginState }) => ({ class: state.login._class }))(_ClassSelection)
 
 class SubjectsDetailPage extends Component<NavigationProps> {
     render() {
@@ -113,7 +174,7 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
     }
 
     fetchNotes = async (page: number = 0) => {
-        let res: { success: boolean, data: Note[] } = await api.get(`/api/schoolsharing/notes/${this.state.context.field}/${this.state.context.classIndex}/${this.state.context.subject}/${page}`)
+        let res: { success: boolean, data?: Note[] } = await api.get(`/api/schoolsharing/notes/${this.state.context.field}/${this.state.context.classIndex}/${this.state.context.subject}/${page}`)
         if (res.success === false) {
             this.setState({ error: true })
             return []
