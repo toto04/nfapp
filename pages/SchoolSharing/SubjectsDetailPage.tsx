@@ -87,9 +87,10 @@ class ClassNumber extends Component<{ index: number, onPress?: () => void, text:
     }
 }
 
-class _ClassSelection extends Component<NavigationProps & { class: Class }, { visibleSection: string }> {
+class ClassSelection extends Component<NavigationProps, { visibleSection: string, class: Class }> {
     state = {
-        visibleSection: this.props.navigation.getParam('visibleSection')
+        visibleSection: this.props.navigation.getParam('visibleSection'),
+        class: this.props.navigation.getParam('userClass')
     }
 
     render() {
@@ -106,7 +107,7 @@ class _ClassSelection extends Component<NavigationProps & { class: Class }, { vi
                 key={item.year}
                 index={index}
                 text={item.year}
-                usersClass={item == classStructure[this.state.visibleSection][this.props.class.yearIndex]}
+                usersClass={item == classStructure[this.state.visibleSection][this.state.class.yearIndex]}
                 onPress={() => this.props.navigation.navigate('SubjectsDetailPage', {
                     classContext: { field: this.state.visibleSection, classIndex: index }
                 })
@@ -115,7 +116,6 @@ class _ClassSelection extends Component<NavigationProps & { class: Class }, { vi
         </Page>
     }
 }
-let ClassSelection = connect((state: { login: LoginState }) => ({ class: state.login._class }))(_ClassSelection)
 
 class SubjectsDetailPage extends Component<NavigationProps> {
     render() {

@@ -6,9 +6,11 @@ import images from '../../assets/fields/images'
 import { FlatList, TouchableOpacity, TouchableHighlight } from 'react-native-gesture-handler'
 import { getStatusBarHeight } from 'react-native-safe-area-view';
 import { NavigationProps, commonStyles, ScrollableMainPage, Class, Page } from '../../util';
+import { connect } from 'react-redux'
+import { LoginState } from '../../redux/login'
 const { classStructure } = Class
 
-export default class SchoolSharing extends Component<NavigationProps, { slideIndex: number }> {
+class _SchoolSharing extends Component<NavigationProps & { state: { login: LoginState } }, { slideIndex: number }> {
     state = {
         slideIndex: 0
     }
@@ -61,7 +63,8 @@ export default class SchoolSharing extends Component<NavigationProps, { slideInd
                             overflow: 'hidden'
                         }}
                         onPress={() => {
-                            this.props.navigation.navigate('ClassSelection', { visibleSection: item })
+                            if (this.props.state.login.loggedIn) this.props.navigation.navigate('ClassSelection', { visibleSection: item, userClass: this.props.state.login._class })
+                            else this.props.navigation.navigate('Login', { loginText: 'Effettua il login per accedere allo school sharing' })
                         }}
                     >
                         <Image
@@ -92,3 +95,4 @@ export default class SchoolSharing extends Component<NavigationProps, { slideInd
         </ScrollableMainPage>
     }
 }
+export default connect((state: { login: LoginState }) => ({ state }))(_SchoolSharing)

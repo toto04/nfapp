@@ -4,6 +4,7 @@ import { StyleSheet, Text, StyleProp, TextStyle, Alert, Linking } from 'react-na
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import { logout, login, LoginState } from '../../redux/login'
+import Constants from 'expo-constants'
 
 class Option extends Component<{ onPress?: () => void, style?: StyleProp<TextStyle> }> {
     render = () => <TouchableOpacity onPress={this.props.onPress}>
@@ -23,6 +24,7 @@ class _SettingsPage extends Component<NavigationProps & { state: { login: LoginS
             paddingHorizontal: 13
         }}
     >
+        <Text style={{paddingTop: 10, opacity: 0.5}}>{'versione del bundle: ' + Constants.manifest.version}</Text>
         <Text style={styles.section}>Privacy</Text>
         <Option>Segnala</Option>
         <Option>Modifica nome e cognome</Option>

@@ -75,9 +75,22 @@ class SurveysPage extends Component<NavigationProps & { login: LoginState }, { s
                 statusBarStyle='dark-content'
             >
                 <Text style={{ fontWeight: 'bold', fontSize: 40 }}>Sondaggi</Text>
-                {this.props.login.loggedIn ? this.state.surveyElements : <Button title='Login' onPress={() => {
-                    this.props.navigation.navigate('Login')
-                }} />}
+                {this.props.login.loggedIn ? this.state.surveyElements : <View
+                    style={{
+                        height: 500,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: 20
+                    }}
+                >
+                    <Text style={{ fontSize: 26, textAlign: 'center' }}>Effettua il login per accedere ai sondaggi</Text>
+                    <Button
+                        title='Login'
+                        onPress={() => {
+                            this.props.navigation.navigate('Login', { loginText: 'Effettua il login per accedere ai sondaggi' })
+                        }}
+                    />
+                </View>}
             </ScrollableMainPage>
         )
     }

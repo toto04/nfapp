@@ -120,7 +120,7 @@ class _Signup extends Component<NavigationProps & { login: typeof login }, signu
                     placeholder='conferma password'
                     onChangeText={(pwd) => { this.setState({ pwd }) }}
                     autoCompleteType='password'
-                    textContentType='password'
+                    textContentType='newPassword'
                     autoCapitalize='none'
                     secureTextEntry
                     ref={r => textReference['pwd'] = r}
@@ -212,46 +212,57 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
     }
 
     render() {
-        return (
-            <Page {...this.props} title='log in' downButton contentContainerStyle={{ paddingTop: 10 }}>
-                <TextInput
-                    style={styles.input}
-                    editable={this.state.editable}
-                    placeholder='user'
-                    onChangeText={(usr) => { this.setState({ usr }) }}
-                    autoCompleteType='username'
-                />
-                <TextInput
-                    style={styles.input}
-                    editable={this.state.editable}
-                    placeholder='password'
-                    onChangeText={(pwd) => { this.setState({ pwd }) }} autoCompleteType='password'
-                    secureTextEntry
-                />
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => {
-                        let password = this.state.pwd
-                        api.post('/api/login', { usr: this.state.usr, pwd: password }).then(async res => {
-                            if (res.success) {
-                                // TODO: for some reason, profile pic doesn't get loaded
-                                let { username, classname, firstName, lastName, profilepic } = res.data
-                                this.props.login(username, password, classname, firstName, lastName, profilepic)
-                                this.props.navigation.navigate('Profile')
-                            }
-                            alert(res.success ? 'Login effettuato!' : 'Nome utente o password sbagliati')
-                        })
-                    }}>
-                    <Text style={{ color: '#fff', fontSize: 20 }}>Log in</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{ padding: 10 }} onPress={() => {
-                    this.props.navigation.navigate('Signup')
-                    this.setState({ editable: false })
+        let loginText: string | undefined = this.props.navigation.getParam('loginText')
+        return <Page {...this.props} title='log in' downButton contentContainerStyle={{ paddingTop: 10 }}>
+            {loginText ? <View style={{
+                height: 50,
+                margin: 5,
+                marginHorizontal: 30,
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+                <Text style={{
+                    fontSize: 20,
+                    textAlign: 'center'
+                }}>{loginText}</Text>
+            </View> : undefined}
+            <TextInput
+                style={styles.input}
+                editable={this.state.editable}
+                placeholder='user'
+                onChangeText={(usr) => { this.setState({ usr }) }}
+                autoCompleteType='username'
+            />
+            <TextInput
+                style={styles.input}
+                editable={this.state.editable}
+                placeholder='password'
+                onChangeText={(pwd) => { this.setState({ pwd }) }} autoCompleteType='password'
+                secureTextEntry
+            />
+            <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                    let password = this.state.pwd
+                    api.post('/api/login', { usr: this.state.usr, pwd: password }).then(async res => {
+                        if (res.success) {
+                            // TODO: for some reason, profile pic doesn't get loaded
+                            let { username, classname, firstName, lastName, profilepic } = res.data
+                            this.props.login(username, password, classname, firstName, lastName, profilepic)
+                            this.props.navigation.navigate('Profile')
+                        }
+                        alert(res.success ? 'Login effettuato!' : 'Nome utente o password sbagliati')
+                    })
                 }}>
-                    <Text style={{ color: 'rgba(30, 80, 234, 1)', fontSize: 15, textAlign: 'center' }}>Non hai un account? Registrati</Text>
-                </TouchableOpacity>
-            </Page>
-        )
+                <Text style={{ color: '#fff', fontSize: 20 }}>Log in</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ padding: 10 }} onPress={() => {
+                this.props.navigation.navigate('Signup')
+                this.setState({ editable: false })
+            }}>
+                <Text style={{ color: 'rgba(30, 80, 234, 1)', fontSize: 15, textAlign: 'center' }}>Non hai un account? Registrati</Text>
+            </TouchableOpacity>
+        </Page>
     }
 }
 
