@@ -26,7 +26,7 @@ for (let field in Class.classStructure) {
     }
 }
 
-class Signup extends Component<NavigationProps, signupState> {
+class _Signup extends Component<NavigationProps & { login: typeof login }, signupState> {
     constructor(props) {
         super(props)
         this.state = {
@@ -181,7 +181,13 @@ class Signup extends Component<NavigationProps, signupState> {
 
                     //TODO: dispatch the login on success
                     let { success, error } = res
-                    alert(success ? 'utente creato!' : error)
+                    if (success) {
+                        this.props.login(this.state.usr, this.state.pwd, this.state.cls, this.state.fstName, this.state.lstName)
+                        this.props.navigation.navigate('Profile')
+                        Alert.alert('Grazie!', 'Il tuo account è appena stato creato!')
+                    } else {
+                        Alert.alert('C\'è stato un errore durante la creazione dell\'account', error)
+                    }
                 }}>
                     <Text style={{ color: '#fff', fontSize: 20 }}>Registrati</Text>
                 </TouchableOpacity>
@@ -189,6 +195,12 @@ class Signup extends Component<NavigationProps, signupState> {
         )
     }
 }
+
+let Signup = connect(null, (dispatch) => {
+    return {
+        login: (username: string, password: string, classname: string, firstName: string, lastName: string) => dispatch(login(username, password, classname, firstName, lastName))
+    }
+})(_Signup)
 
 class Login extends Component<NavigationProps & { login: typeof login }, { usr: string, pwd: string, editable: boolean }> {
     constructor(props) {
@@ -222,11 +234,12 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
                         let password = this.state.pwd
                         api.post('/api/login', { usr: this.state.usr, pwd: password }).then(async res => {
                             if (res.success) {
-                                let { username, classname, firstName, lastName } = res.data
-                                this.props.login(username, password, classname, firstName, lastName)
-                                this.props.navigation.dispatch(NavigationActions.back())
+                                // TODO: for some reason, profile pic doesn't get loaded
+                                let { username, classname, firstName, lastName, profilepic } = res.data
+                                this.props.login(username, password, classname, firstName, lastName, profilepic)
+                                this.props.navigation.navigate('Profile')
                             }
-                            alert(res.success ? 'Login effettuato!' : 'Elia smettila')
+                            alert(res.success ? 'Login effettuato!' : 'Nome utente o password sbagliati')
                         })
                     }}>
                     <Text style={{ color: '#fff', fontSize: 20 }}>Log in</Text>
