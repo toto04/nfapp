@@ -1,9 +1,59 @@
 import React, { Component } from 'react'
-import { NavigationProps, Page, ShadowCard, formatDate, Note, api, serverUrl } from '../../util'
-import { FlatList, ImageBackground, Text, Modal, View, ActivityIndicator } from 'react-native'
+import { NavigationProps, Page, ShadowCard, formatDate, Note, api, serverUrl, Class } from '../../util'
+import { FlatList, ImageBackground, Text, Modal, View, ActivityIndicator, TouchableOpacity } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
+import { Context } from '../SchoolSharing/SubjectsDetailPage'
+import { createStackNavigator } from 'react-navigation-stack'
+import { LoginState } from '../../redux/login'
+import { connect } from 'react-redux'
+const { classStructure } = Class
 
-export default class PostedNotes extends Component<NavigationProps, { user: string, notes?: Note[], refreshing: boolean, loading: boolean }> {
+class NewSubjectSelection extends Component<NavigationProps> {
+    render() {
+        let context: Context = this.props.navigation.getParam('classContext')
+        return <Page
+            navigation={this.props.navigation}
+            backButton
+            title='pubbllica appunti'
+        >
+            <Text style={{
+                margin: 8,
+                fontWeight: 'bold',
+                fontSize: 26,
+            }}>Per quale materia vuoi pubblicare i tuoi appunti?</Text>
+            <Text style={{
+                marginHorizontal: 8,
+                marginBottom: 8,
+                fontSize: 16
+            }}>{'Una volta pubblicati gli altri utenti potranno trovarli in SchoolSharing > ' + context.field + ' > Classe ' + (context.classIndex + 1) + '^'}</Text>
+            <FlatList
+                data={classStructure[context.field][context.classIndex].subjects}
+                renderItem={
+                    ({ item, index }) => {
+                        return <TouchableOpacity
+                            onPress={() => {
+                                this.props.navigation.navigate('AddNotePage', { classContext: { ...context, subject: item } })
+                            }}
+                            style={{
+                                padding: 8,
+                                margin: 8,
+                                marginBottom: 0,
+                                borderRadius: 5,
+                                overflow: 'hidden',
+                                backgroundColor: `hsla(${index * 36}, 70%, 20%, 1.0)`
+                            }}
+                        >
+                            <Text style={{ fontSize: 20, color: 'white' }}>{item}</Text>
+                        </TouchableOpacity>
+                    }
+                }
+                keyExtractor={item => item}
+            />
+        </Page>
+    }
+}
+
+class _PostedNotes extends Component<NavigationProps & { state: { login: LoginState } }, { user: string, notes?: Note[], refreshing: boolean, loading: boolean }> {
     constructor(props) {
         super(props)
         this.state = {
@@ -34,8 +84,12 @@ export default class PostedNotes extends Component<NavigationProps, { user: stri
 
     render = () => <Page
         navigation={this.props.navigation}
-        title='appunti pubblicati'
+        title='i tuoi appunti'
         backButton
+        rightButton={this.props.state.login.loggedIn ? {
+            name: 'add',
+            action: () => this.props.navigation.navigate('NewSubjectSelection', { classContext: { field: this.props.state.login._class.field, classIndex: this.props.state.login._class.yearIndex } })
+        } : undefined}
     >
         <FlatList
             data={this.state.notes}
@@ -94,3 +148,11 @@ export default class PostedNotes extends Component<NavigationProps, { user: stri
         </Modal>
     </Page>
 }
+let PostedNotes = connect(state => ({ state }))(_PostedNotes)
+
+export default createStackNavigator({
+    PostedNotes,
+    NewSubjectSelection
+}, {
+    headerMode: 'none'
+})

@@ -86,7 +86,7 @@ class ProfilePage extends Component<NavigationProps & { login: LoginState, logou
                         </TouchableHighlight>
                     </View>
                 </View>
-                <Preview title='Appunti pubblicati' onPress={() => this.props.navigation.navigate('PostedNotes', { user: this.props.login.username })} />
+                <Preview title='I tuoi appunti' onPress={() => this.props.navigation.navigate('PostedNotes', { user: this.props.login.username })} />
                 <Preview title='Appunti salvati' onPress={() => this.props.navigation.navigate('SavedNotes')} />
                 <Preview title='Eventi attesi' />
             </ScrollableMainPage>
