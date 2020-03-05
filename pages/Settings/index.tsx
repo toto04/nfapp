@@ -5,6 +5,10 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import { logout, login, LoginState } from '../../redux/login'
 import Constants from 'expo-constants'
+import { createStackNavigator } from 'react-navigation-stack'
+
+import ChangeName from './ChangeName'
+import ChangeClass from './ChangeClass'
 
 class Option extends Component<{ onPress?: () => void, style?: StyleProp<TextStyle> }> {
     render = () => <TouchableOpacity onPress={this.props.onPress}>
@@ -24,11 +28,15 @@ class _SettingsPage extends Component<NavigationProps & { state: { login: LoginS
             paddingHorizontal: 13
         }}
     >
-        <Text style={{paddingTop: 10, opacity: 0.5}}>{'versione del bundle: ' + Constants.manifest.version}</Text>
+        <Text style={{ paddingTop: 10, opacity: 0.5 }}>{'versione del bundle: ' + Constants.manifest.version}</Text>
         <Text style={styles.section}>Privacy</Text>
         <Option>Segnala</Option>
-        <Option>Modifica nome e cognome</Option>
-        <Option>Modifica classe</Option>
+        <Option onPress={() => {
+            this.props.navigation.navigate('ChangeName')
+        }}>Modifica nome e cognome</Option>
+        <Option onPress={() => {
+            this.props.navigation.navigate('ChangeClass')
+        }}>Modifica classe</Option>
         <Option onPress={async () => {
             let res = await api.post('/api/user/removeProfilepic', {})
             this.props.login(this.props.state.login.username, this.props.state.login.password, this.props.state.login._class.className, this.props.state.login.firstName, this.props.state.login.lastName)
@@ -52,10 +60,18 @@ class _SettingsPage extends Component<NavigationProps & { state: { login: LoginS
     </Page>
 }
 
-export default connect((state: { login: LoginState }) => ({ state }), (dispatch) => ({
+let SettingsPage = connect((state: { login: LoginState }) => ({ state }), (dispatch) => ({
     login: (username: string, password: string, classname: string, firstName: string, lastName: string, profilepic?: string) => dispatch(login(username, password, classname, firstName, lastName, profilepic)),
     logout: () => dispatch(logout())
 }))(_SettingsPage)
+
+export default createStackNavigator({
+    SettingsPage,
+    ChangeName,
+    ChangeClass
+}, {
+    headerMode: 'none'
+})
 
 let styles = StyleSheet.create({
     section: {
