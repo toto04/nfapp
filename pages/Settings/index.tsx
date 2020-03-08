@@ -59,9 +59,18 @@ class _SettingsPage extends Component<NavigationProps & { state: { login: LoginS
             Alert.alert('Contattaci', 'Puoi contattare i Rappresentati di Istituto o gli Sviluppatori dell\'applicazione via Whatsapp o email ai recapiti che trovi in fondo alla Politica della Privacy', [{ text: 'Vai ai recapiti', onPress: () => Linking.openURL('https://nfapp-server.herokuapp.com/privacy') }, { text: 'Annulla', style: 'cancel' }])
         }}>Contattaci</Option>
         <Option onPress={() => {
-            this.props.logout()
-            this.props.navigation.navigate('Profile')
-            Alert.alert('Logout', 'Probabilmente te ne sei accorto ma hai effettuato il logout')
+            Alert.alert('Logout', 'Sei sicuro di voler fare il logout? Potrai rifare il login quando vuoi', [
+                {
+                    text: 'Procedi', onPress: () => {
+                        this.props.logout()
+                        this.props.navigation.navigate('Profile')
+                        Alert.alert('Logout', 'logout effettuato, a presto!')
+                    }
+                }, {
+                    text: 'Annulla',
+                    style: 'cancel'
+                }
+            ])
         }} style={{ color: 'red' }}>Logout</Option>
     </Page>
 }
