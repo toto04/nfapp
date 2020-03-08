@@ -232,6 +232,7 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
                 placeholder='user'
                 onChangeText={(usr) => { this.setState({ usr }) }}
                 autoCompleteType='username'
+                autoCapitalize="none"
             />
             <TextInput
                 style={styles.input}
@@ -239,6 +240,7 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
                 placeholder='password'
                 onChangeText={(pwd) => { this.setState({ pwd }) }} autoCompleteType='password'
                 secureTextEntry
+                autoCapitalize="none"
             />
             <TouchableOpacity
                 style={styles.button}

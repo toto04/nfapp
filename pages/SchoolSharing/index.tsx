@@ -12,7 +12,7 @@ const { classStructure } = Class
 
 class _SchoolSharing extends Component<NavigationProps & { state: { login: LoginState } }, { slideIndex: number }> {
     state = {
-        slideIndex: 0
+        slideIndex: this.props.state.login.loggedIn ? Object.keys(classStructure).indexOf(this.props.state.login._class.field) : 0
     }
     constructor(props) {
         super(props)
@@ -54,6 +54,8 @@ class _SchoolSharing extends Component<NavigationProps & { state: { login: Login
                     flex: 1
                 }}
                 data={Object.keys(classStructure)}
+                loop
+                firstItem={this.state.slideIndex}
                 renderItem={({ item }) => {
                     return <TouchableHighlight
                         style={{

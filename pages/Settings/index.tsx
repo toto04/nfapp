@@ -9,6 +9,8 @@ import { createStackNavigator } from 'react-navigation-stack'
 
 import ChangeName from './ChangeName'
 import ChangeClass from './ChangeClass'
+import ChangePassword from './ChangePassword'
+import ChangeEmail from './ChangeEmail'
 
 class Option extends Component<{ onPress?: () => void, style?: StyleProp<TextStyle> }> {
     render = () => <TouchableOpacity onPress={this.props.onPress}>
@@ -46,8 +48,12 @@ class _SettingsPage extends Component<NavigationProps & { state: { login: LoginS
             Alert.alert('Sei veramente sicuro di eliminare di voler eliminare il tuo account?', 'Questa azione è irreversibile e avrà effetto immediato. Verrano automaticamente eliminati tutti i tuoi dati e gli appunti che hai pubblicato')
         }}>Elimina account</Option>
         <Text style={styles.section}>Sicurezza</Text>
-        <Option>Cambia password</Option>
-        <Option>Cambia indirizzo email</Option>
+        <Option onPress={() => {
+            this.props.navigation.navigate('ChangePassword')
+        }}>Cambia password</Option>
+        <Option onPress={() => {
+            this.props.navigation.navigate('ChangeEmail')
+        }}>Cambia indirizzo email</Option>
         <Text style={styles.section}>Altro</Text>
         <Option onPress={() => {
             Alert.alert('Contattaci', 'Puoi contattare i Rappresentati di Istituto o gli Sviluppatori dell\'applicazione via Whatsapp o email ai recapiti che trovi in fondo alla Politica della Privacy', [{ text: 'Vai ai recapiti', onPress: () => Linking.openURL('https://nfapp-server.herokuapp.com/privacy') }, { text: 'Annulla', style: 'cancel' }])
@@ -68,7 +74,9 @@ let SettingsPage = connect((state: { login: LoginState }) => ({ state }), (dispa
 export default createStackNavigator({
     SettingsPage,
     ChangeName,
-    ChangeClass
+    ChangeClass,
+    ChangePassword,
+    ChangeEmail
 }, {
     headerMode: 'none'
 })

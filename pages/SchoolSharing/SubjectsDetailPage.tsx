@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { NavigationProps, Page, commonStyles, api, formatDate, Class, ShadowCard, serverUrl, Note } from '../../util'
 import { TouchableOpacity, FlatList } from 'react-native-gesture-handler'
-import { View, Text, Modal, RefreshControl, ImageBackground, ActivityIndicator, Dimensions, Easing } from 'react-native'
+import { View, Text, Modal, RefreshControl, ImageBackground, ActivityIndicator, Dimensions, Platform } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { connect } from 'react-redux'
 import { LoginState } from '../../redux/login'
 import { createStackNavigator } from 'react-navigation-stack'
 import SVG, { Path, Circle, Defs, LinearGradient as SVGLinearGradient, Stop } from 'react-native-svg'
+import { getStatusBarHeight } from 'react-native-iphone-x-helper'
 const { classStructure } = Class
 
 export interface Context {
@@ -28,8 +29,8 @@ const coords = [.6, .3, .75, .25, .55]
 const colors = Array(5).fill(1).map((c, i) => `hsl(34, 100%, ${60 - i * 5}%)`)
 class ClassNumber extends Component<{ index: number, onPress?: () => void, text: string, usersClass?: boolean }> {
     render = () => {
-        let offset = 60
-        let heigth = 120
+        let offset = Dimensions.get("window").width / 6
+        let heigth = (Dimensions.get("window").height - 200) / 5
         let radius = this.props.usersClass ? offset : offset - 10
         let x1 = Dimensions.get('window').width * (coords[this.props.index - 1] ?? .5)
         let x2 = Dimensions.get('window').width * coords[this.props.index]
@@ -101,6 +102,9 @@ class ClassSelection extends Component<NavigationProps, { visibleSection: string
             navigation={this.props.navigation}
             style={{
                 backgroundColor: commonStyles.main.backgroundColor
+            }}
+            contentContainerStyle={{
+                paddingTop: Platform.OS == "android" ? getStatusBarHeight() : 0,
             }}
         >
             {classStructure[this.state.visibleSection].map((item, index) => <ClassNumber
