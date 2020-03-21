@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar, AsyncStorage } from 'react-native'
+import { StatusBar, AsyncStorage, Linking } from 'react-native'
 import { createAppContainer, NavigationContainerComponent, NavigationActions } from 'react-navigation'
 import { createBottomTabNavigator, BottomTabBar, BottomTabBarProps } from 'react-navigation-tabs'
 import IconComponent from 'react-native-vector-icons/Ionicons'
@@ -134,6 +134,8 @@ export default class App extends Component<null, { isLoading: boolean }> {
     constructor(props) {
         super(props)
         this.state = { isLoading: true }
+        Linking.getInitialURL().then(url => { if (url) handleDeepLinking(url) })
+        Linking.addEventListener('url', e => handleDeepLinking(e.url))
     }
 
     componentDidMount() {
@@ -175,6 +177,24 @@ export default class App extends Component<null, { isLoading: boolean }> {
                 </ActionSheetProvider>
             </Provider>
         );
+    }
+}
+
+async function handleDeepLinking(url: string) {
+    let uri = url.split('://')[1].split('?')
+    let path = uri[0]
+    let query: { [key: string]: string | boolean } = {}
+    uri[1].split('&').forEach(param => query[param.split('=')[0]] = param.split('=')[1] ?? true)
+    if (path.startsWith('/post')) {
+        let res: { success: boolean, data?: Post } = await api.get('/api/posts/postDetail/' + query.id)
+        if (res.success) {
+            let post = res.data
+            post.time = formatDate(post.time)
+            rootNavRef.dispatch(NavigationActions.navigate({
+                routeName: 'PostDetailPage',
+                params: { postObject: post }
+            }))
+        }
     }
 }
 

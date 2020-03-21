@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import { Text, RefreshControl, View, Image } from 'react-native'
+import { Text, View, Image, Share } from 'react-native'
 import { NavigationProps, api, commonStyles, formatDate, ScrollableMainPage, ShadowCard } from '../../util';
-import { ScrollView, TouchableHighlight, FlatList } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 import IconComponent from 'react-native-vector-icons/Ionicons'
 import { connect } from 'react-redux';
 import { LoginState } from '../../redux/login';
-import { getStatusBarHeight } from 'react-native-safe-area-view';
 
 export interface Post {
     id: number,
@@ -26,7 +25,7 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
         }
     }
 
-    render() {
+    render = () => {
         let body = this.props.postObject.body ? <Text style={{ color: '#bbb', fontSize: 14 }} numberOfLines={4}>{this.props.postObject.body}</Text> : undefined
         let image = this.props.postObject.image ? <Image style={{
             flex: 1,
@@ -49,29 +48,35 @@ class PostComponent extends Component<NavigationProps & { postObject: Post, logi
             <IconComponent style={{ marginTop: 8, marginRight: 16 }} size={30} onPress={onLike} name='ios-heart' color={commonStyles.main.color} /> :
             <IconComponent style={{ marginTop: 8, marginRight: 16 }} size={30} onPress={onLike} name='ios-heart-empty' />
 
-        return (
-            <View style={{ marginTop: 15 }}>
-                <ShadowCard
-                    onPress={() => {
-                        this.props.navigation.navigate('PostDetailPage', { postObject: this.props.postObject })
-                    }}
-                >
-                    <View
-                        style={{ backgroundColor: commonStyles.main.backgroundColor }}>
-                        <View style={{ margin: 15 }}>
-                            <Text style={{ color: '#aaa', fontSize: 12 }}>{'@' + this.props.postObject.author + ' - ' + this.props.postObject.time}</Text>
-                            <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>{this.props.postObject.title}</Text>
-                            {body}
-                        </View>
-                        {image}
+        return <View style={{ marginTop: 15 }}>
+            <ShadowCard
+                onPress={() => {
+                    this.props.navigation.navigate('PostDetailPage', { postObject: this.props.postObject })
+                }}
+            >
+                <View
+                    style={{ backgroundColor: commonStyles.main.backgroundColor }}>
+                    <View style={{ margin: 15 }}>
+                        <Text style={{ color: '#aaa', fontSize: 12 }}>{'@' + this.props.postObject.author + ' - ' + this.props.postObject.time}</Text>
+                        <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>{this.props.postObject.title}</Text>
+                        {body}
                     </View>
-                </ShadowCard>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={{ marginLeft: 8 }}>{this.state.likes != 0 ? `Piace a ${this.state.likes} ${this.state.likes == 1 ? 'persona' : 'persone'}` : `Nessuno mi piace, sii il primo!`}</Text>
+                    {image}
+                </View>
+            </ShadowCard>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ marginLeft: 8 }}>{this.state.likes != 0 ? `Piace a ${this.state.likes} ${this.state.likes == 1 ? 'persona' : 'persone'}` : `Nessuno mi piace, sii il primo!`}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <IconComponent style={{ marginTop: 8, marginRight: 16 }} size={30} onPress={() => {
+                        Share.share({
+                            message: this.props.postObject.title + '\nhttps://nfapp-server.herokuapp.com/redirect?post=' + this.props.postObject.id,
+                            url: 'https://nfapp-server.herokuapp.com/redirect?post=' + this.props.postObject.id
+                        })
+                    }} name='ios-share-alt' />
                     {like}
                 </View>
             </View>
-        )
+        </View>
     }
 }
 
