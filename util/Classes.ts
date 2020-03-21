@@ -8,7 +8,8 @@ let fieldSubjects = {
     scienzeApplicate: ['Fisica', 'Informatica', 'Arte', 'Scienze'],
     linguistico: ['Francese', 'Tedesco', 'Scienze'],
     scienzeUmane: ['Diritto - Economia', 'Scienze Umane'],
-    artistico: ['Scienze', 'Storia dell\'Arte']
+    artistico: ['Scienze', 'Storia dell\'Arte'],
+    artisticoTriennio: ['Filosofia', 'Fisica']
 }
 
 export class Class {
@@ -88,50 +89,50 @@ export class Class {
         'Biennio Artistico': [{
             year: '1^',
             sections: ['1A', '1B', '1C'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, 'Discipline Grafiche e Pittoriche', 'Discipline Geometriche', 'Discipline Plastiche e Scultoree'].sort()
         }, {
             year: '2^',
             sections: ['2A', '2B', '2C'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, 'Discipline Grafiche e Pittoriche', 'Discipline Geometriche', 'Discipline Plastiche e Scultoree'].sort()
         }],
         'Architettura': [{
             year: '3^',
             sections: ['3AA'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Progettuali'].sort()
         }, {
             year: '4^',
             sections: ['4AA'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Progettuali'].sort()
         }, {
             year: '5^',
             sections: ['5AA'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Progettuali'].sort()
         }],
         'Arti Figurative': [{
             year: '3^',
             sections: ['3AF'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Plastiche/Pittoriche'].sort()
         }, {
             year: '4^',
             sections: ['4AF'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Plastiche/Pittoriche'].sort()
         }, {
             year: '5^',
             sections: ['5AF'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Plastiche/Pittoriche'].sort()
         }],
         'Grafica': [{
             year: '3^',
             sections: ['3AG'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Grafiche'].sort()
         }, {
             year: '4^',
             sections: ['4AG'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Grafiche'].sort()
         }, {
             year: '5^',
             sections: ['5AG'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Grafiche'].sort()
         }]
     }
     field: string
