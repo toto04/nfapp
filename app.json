@@ -10,7 +10,7 @@
       "android",
       "web"
     ],
-    "version": "0.1.5",
+    "version": "0.1.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -29,6 +29,7 @@
       "supportsTablet": false
     },
     "android": {
+      "versionCode": 2,
       "package": "com.tommasomorganti.nfapp",
       "permissions": [
         "CAMERA",

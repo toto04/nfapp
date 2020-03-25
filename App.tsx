@@ -184,18 +184,20 @@ async function handleDeepLinking(url: string) {
     let uri = url.split('://')[1].split('?')
     let path = uri[0]
     let query: { [key: string]: string | boolean } = {}
-    uri[1].split('&').forEach(param => query[param.split('=')[0]] = param.split('=')[1] ?? true)
-    if (path.startsWith('/post')) {
-        let res: { success: boolean, data?: Post } = await api.get('/api/posts/postDetail/' + query.id)
-        if (res.success) {
-            let post = res.data
-            post.time = formatDate(post.time)
-            rootNavRef.dispatch(NavigationActions.navigate({
-                routeName: 'PostDetailPage',
-                params: { postObject: post }
-            }))
+    try {
+        uri[1].split('&').forEach(param => query[param.split('=')[0]] = param.split('=')[1] ?? true)
+        if (path.startsWith('/post')) {
+            let res: { success: boolean, data?: Post } = await api.get('/api/posts/postDetail/' + query.id)
+            if (res.success) {
+                let post = res.data
+                post.time = formatDate(post.time)
+                rootNavRef.dispatch(NavigationActions.navigate({
+                    routeName: 'PostDetailPage',
+                    params: { postObject: post }
+                }))
+            }
         }
-    }
+    } catch (e) { }  
 }
 
 async function handleNotifications(notification: Notification) {

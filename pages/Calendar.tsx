@@ -1,9 +1,9 @@
-import { LocaleConfig, Calendar } from 'react-native-calendars'
+import { LocaleConfig, Calendar, DotMarking } from 'react-native-calendars'
 import React, { Component } from 'react'
-import { NavigationProps, commonStyles, api, ScrollableMainPage, ShadowCard } from '../util'
+import { NavigationProps, commonStyles, api, ScrollableMainPage, ShadowCard, formatDate } from '../util'
 import { Text, View, Platform } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
-import { getStatusBarHeight } from 'react-native-safe-area-view'
+import Icon from 'react-native-vector-icons/Ionicons'
+
 LocaleConfig.locales['it'] = {
     monthNames: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
     monthNamesShort: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
@@ -12,66 +12,105 @@ LocaleConfig.locales['it'] = {
 }
 LocaleConfig.defaultLocale = 'it'
 
+interface Event {
+    id: number,
+    start: Date,
+    end: Date,
+    title: string,
+    body: string
+}
+
 interface calendarState {
     refreshing: boolean,
     selectedDate: string,
-    events: { date: string, description: string }[]
+    events: { [date: string]: Event[] },
+    markedDates: { [date: string]: DotMarking }
+}
+
+class EventComponent extends Component<{ event: Event }> {
+    render = () => <ShadowCard style={{
+        margin: 20,
+        marginBottom: 0,
+    }}>
+        <View style={{
+            backgroundColor: commonStyles.main.backgroundColor,
+            padding: 10,
+        }}>
+            <View style={{
+                width: '100%',
+                flexDirection: 'row',
+                justifyContent: 'space-between'
+            }}>
+                <View style={{ paddingBottom: 10 }}>
+                    <Text style={{
+                        color: 'white',
+                        fontSize: 20,
+                        fontWeight: 'bold'
+                    }}>{this.props.event.title}</Text>
+                    <Text style={{
+                        color: '#fffb',
+                        fontSize: 16,
+                        // fontWeight: 'bold'
+                    }}>{formatDate(this.props.event.start.toISOString())}</Text>
+                </View>
+                <Icon style={{ marginRight: 5 }} color={commonStyles.main.color} name="ios-star-outline" size={35} />
+            </View>
+            <Text style={{ color: 'white', fontSize: 16 }}>{this.props.event.body}</Text>
+        </View>
+    </ShadowCard>
 }
 
 export default class CalendarPage extends Component<NavigationProps, calendarState> {
     ref: any
     constructor(props) {
-        let date = new Date()
         super(props)
+        let date = new Date()
         this.state = {
             refreshing: false,
-            selectedDate: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
-            events: []
+            selectedDate: new Date().toISOString().split('T')[0],
+            events: {},
+            markedDates: {}
         }
     }
 
     async componentDidMount() {
-        let events = await this.fetchEvents()
-        this.setState({ events })
+        this.setState(await this.fetchEvents())
     }
 
     async fetchEvents() {
         let result = await api.get('/api/events')
-        let rows = result.data
-        let evt = {}
-        for (const row of rows) {
-            evt[row.date] = row.description
+        let events = {}
+        let markedDates: { [date: string]: DotMarking } = {}
+        if (result.success) {
+            let evts = result.data.map(e => {
+                e.start = new Date(e.start)
+                e.end = new Date(e.end)
+                return e
+            })
+            for (const event of evts) {
+                let key = event.start.toISOString().split('T')[0]
+                markedDates[key] = { marked: true }
+                if (events[key]) events[key].push(event)
+                else events[key] = [event]
+            }
         }
-        return rows
+        return { events, markedDates }
     }
 
     async refresh() {
         this.setState({ refreshing: true })
-        let events = await this.fetchEvents()
-        this.setState({ events, refreshing: false })
+        let newState = await this.fetchEvents()
+        this.setState({ ...newState, refreshing: false })
+    }
+
+    private renderEvents = () => {
+        return this.state.events[this.state.selectedDate]?.map((event, i) => <EventComponent key={'event' + i} event={event} />)
     }
 
     render() {
-        let mkDates = {}
-        let todayEventComponents = []
-        for (const event of this.state.events) {
-            let date = event.date
-            mkDates[date] = { marked: true }
-            if (date == this.state.selectedDate) todayEventComponents.push(
-                <ShadowCard key={this.state.events.indexOf(event)} style={{
-                    margin: 20,
-                    marginBottom: 0,
-                }}>
-                    <View style={{
-                        backgroundColor: commonStyles.main.backgroundColor,
-                        padding: 20,
-                    }}>
-                        <Text style={{ color: 'white', fontSize: 18 }}>{event.description}</Text>
-                    </View>
-                </ShadowCard>
-            )
-        }
-        mkDates[this.state.selectedDate] = Object.assign({ selected: true }, mkDates[this.state.selectedDate])
+        let todayEventComponents = this.renderEvents()
+        let markedDates = { ...this.state.markedDates }
+        markedDates[this.state.selectedDate] = Object.assign({ selected: true }, markedDates[this.state.selectedDate])
         let eventPaddingOffset = 400
         return (
             <ScrollableMainPage
@@ -106,7 +145,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                             arrowColor: commonStyles.main.color,
                         }}
                         firstDay={1}
-                        markedDates={mkDates}
+                        markedDates={markedDates}
                         onDayPress={(day) => {
                             this.setState({ selectedDate: day.dateString })
                             this.ref.scrollView.scrollTo({ y: -10000, animated: true })
@@ -126,7 +165,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                     zIndex: 1000
                 }}>
                     <Text style={{ fontSize: 40, fontWeight: 'bold' }}>Eventi:</Text>
-                    {todayEventComponents.length != 0 ? todayEventComponents : <Text style={{ alignSelf: 'center', fontSize: 25, color: '#aaa', margin: 20 }}>Nessun evento</Text>}
+                    {todayEventComponents ?? <Text style={{ alignSelf: 'center', fontSize: 25, color: '#aaa', margin: 20 }}>Nessun evento</Text>}
                 </View>
             </ScrollableMainPage>
         )
