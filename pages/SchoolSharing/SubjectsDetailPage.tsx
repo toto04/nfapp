@@ -89,15 +89,18 @@ class ClassNumber extends Component<{ index: number, onPress?: () => void, text:
 }
 
 class ClassSelection extends Component<NavigationProps, { visibleSection: string, class: Class }> {
-    state = {
-        visibleSection: this.props.navigation.getParam('visibleSection'),
-        class: this.props.navigation.getParam('userClass')
+    constructor(props) {
+        super(props)
+        this.state = {
+            visibleSection: this.props.navigation.getParam('visibleSection'),
+            class: this.props.navigation.getParam('userClass')
+        }
     }
 
     render() {
         return <Page
             scrollEnabled={false}
-            title={this.state.visibleSection}
+            title={this.state.visibleSection.toLowerCase()}
             backButton
             navigation={this.props.navigation}
             style={{
@@ -199,7 +202,7 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
     render() {
         return <Page
             downButton
-            title={this.state.context.subject}
+            title={this.state.context.subject.toLowerCase()}
             navigation={this.props.navigation}
             rightButton={(this.props.login._class.field == this.state.context.field && this.props.login._class.yearIndex == this.state.context.classIndex) ? {
                 name: 'add',
