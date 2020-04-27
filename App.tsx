@@ -26,6 +26,7 @@ import Login from './pages/login'
 import Profile from './pages/Profile'
 import PostedNotes from './pages/Profile/PostedNotes'
 import SavedNotes from './pages/Profile/SavedNotes'
+import AttendedEvents from './pages/Profile/AttendedEvents'
 import SchoolSharing from './pages/SchoolSharing'
 import SubjectsDetailPage from './pages/SchoolSharing/SubjectsDetailPage'
 import NoteDetailPage from './pages/SchoolSharing/NoteDetailPage'
@@ -105,6 +106,7 @@ let DetailNav = createStackNavigator({
     AddNotePage,
     PostedNotes,
     SavedNotes,
+    AttendedEvents,
     SettingsPage
 }, {
     headerMode: 'none'

@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { NavigationProps, commonStyles, api, ScrollableMainPage, ShadowCard, formatDate } from '../util'
 import { Text, View, Platform } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 LocaleConfig.locales['it'] = {
     monthNames: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
@@ -12,12 +13,13 @@ LocaleConfig.locales['it'] = {
 }
 LocaleConfig.defaultLocale = 'it'
 
-interface Event {
+export interface Event {
     id: number,
     start: Date,
     end: Date,
     title: string,
-    body: string
+    body: string,
+    partecipates?: boolean
 }
 
 interface calendarState {
@@ -27,7 +29,14 @@ interface calendarState {
     markedDates: { [date: string]: DotMarking }
 }
 
-class EventComponent extends Component<{ event: Event }> {
+export class EventComponent extends Component<{ event: Event }, { partecipates: boolean }> {
+    constructor(props) {
+        super(props)
+        this.state = {
+            partecipates: this.props.event.partecipates
+        }
+    }
+
     render = () => <ShadowCard style={{
         margin: 20,
         marginBottom: 0,
@@ -53,7 +62,27 @@ class EventComponent extends Component<{ event: Event }> {
                         // fontWeight: 'bold'
                     }}>{formatDate(this.props.event.start.toISOString())}</Text>
                 </View>
-                <Icon style={{ marginRight: 5 }} color={commonStyles.main.color} name="ios-star-outline" size={35} />
+                <TouchableOpacity
+                    style={{
+                        marginRight: 5,
+                        paddingLeft: 5,
+                        width: 35,
+                        height: 35,
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                    onPress={async () => {
+                        api.post('/api/events/setPartecipation/' + this.props.event.id, { partecipates: !this.state.partecipates })
+                        this.setState({ partecipates: !this.state.partecipates })
+                    }}
+                >
+                    <Icon
+                        color={commonStyles.main.color}
+                        name={'ios-star' + (this.state.partecipates ? '' : '-outline')}
+                        size={35}
+                    />
+                </TouchableOpacity>
             </View>
             <Text style={{ color: 'white', fontSize: 16 }}>{this.props.event.body}</Text>
         </View>

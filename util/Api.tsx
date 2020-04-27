@@ -25,10 +25,10 @@ function retryApiRequest(endpoint: string, options: {}, resolve: (value: any) =>
     }).catch(e => setTimeout(() => retryApiRequest(endpoint, options, resolve), 5000)); // ritenta ogni 5 secondi
 }
 
-export interface ApiResponse {
+export interface ApiResponse<T = any> {
     success: boolean,
     error?: string,
-    data?: any
+    data?: T
 }
 
 export const api = {
