@@ -12,7 +12,7 @@
     ],
     "version": "0.2.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon/full.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -29,12 +29,18 @@
       "supportsTablet": false
     },
     "android": {
-      "versionCode": 2,
+      "versionCode": 5,
       "package": "com.tommasomorganti.nfapp",
+      "icon":"./assets/icon/rounded.png",
       "permissions": [
-        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
         "VIBRATE"
-      ]
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon/adaptive/foreground.png",
+        "backgroundImage": "./assets/icon/adaptive/background.png"
+      }
     }
   }
 }

@@ -36,7 +36,10 @@ export default class AddNotePage extends Component<NavigationProps, AddNoteState
 
     pickImage = async () => {
         let permission = await Permissions.askAsync(Permissions.CAMERA_ROLL)
-        if (permission.status != 'granted') return
+        if (permission.status != 'granted') {
+            Alert.alert('C\'è stato un errore', 'Devi dare il permesso per accedere al tuo rullino foto')
+            return
+        }
         let image: any = await ImagePicker.launchImageLibraryAsync({
             allowsMultipleSelection: true,
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
