@@ -60,15 +60,34 @@ export const api = {
     })
 };
 
-export async function registerPushNotifications() {
-    const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-    let s = status;
+async function registerPushNotifications() {
+    const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS)
+    let s = status
     if (status != 'granted') {
-        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-        s = status;
+        const { status: newStatus } = await Permissions.askAsync(Permissions.NOTIFICATIONS)
+        s = newStatus
     }
-    if (s != 'granted')
-        return;
-    let token = await Notifications.getExpoPushTokenAsync();
-    api.post('/api/registertoken', { token });
+    if (s == 'granted') {
+        let token = await Notifications.getExpoPushTokenAsync()
+        api.post('/api/user/registertoken', { token })
+    } else {
+        const { username, password } = store.getState().login
+        api.post('/api/user/unregistertoken', { username, password })
+    }
 }
+
+let prevusr = ''
+let prevpwd = ''
+store.subscribe(() => {
+    let { loggedIn, username, password } = store.getState().login
+    if (loggedIn) {
+        prevusr = username
+        prevpwd = password
+        registerPushNotifications()
+    } else {
+        api.post('/api/user/unregistertoken', {
+            username: prevusr,
+            password: prevpwd
+        })
+    }
+})

@@ -9,7 +9,7 @@ import { AppLoading, Notifications } from 'expo'
 import { Asset } from 'expo-asset'
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 
-import { commonStyles, api, registerPushNotifications, ErrorModal, formatDate } from './util'
+import { commonStyles, api, ErrorModal, formatDate } from './util'
 import store from './redux/index';
 import { login, logout } from './redux/login'
 import { ThemeState } from './redux/theme';
@@ -141,7 +141,6 @@ export default class App extends Component<null, { isLoading: boolean }> {
     }
 
     componentDidMount() {
-        registerPushNotifications()
         Notifications.addListener(handleNotifications)
         Asset.loadAsync(Object.entries(images).map(e => e[1]))
     }

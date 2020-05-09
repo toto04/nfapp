@@ -11,6 +11,7 @@ import ChangeName from './ChangeName'
 import ChangeClass from './ChangeClass'
 import ChangePassword from './ChangePassword'
 import ChangeEmail from './ChangeEmail'
+import DeleteAccount from './DeleteAccount'
 
 class Option extends Component<{ onPress?: () => void, style?: StyleProp<TextStyle> }> {
     render = () => <TouchableOpacity onPress={this.props.onPress}>
@@ -45,7 +46,17 @@ class _SettingsPage extends Component<NavigationProps & { state: { login: LoginS
             res.success ? Alert.alert('Foto profilo rimossa', 'La tua foto profilo è stat rimossa, puoi cambiarla in qualsiasi momento dal profilo') : Alert.alert('Qualcosa è andato storto', res.error)
         }}>Rimuovi foto profilo</Option>
         <Option style={{ color: 'red' }} onPress={() => {
-            Alert.alert('Sei veramente sicuro di eliminare di voler eliminare il tuo account?', 'Questa azione è irreversibile e avrà effetto immediato. Verrano automaticamente eliminati tutti i tuoi dati e gli appunti che hai pubblicato')
+            Alert.alert('Sei veramente sicuro di eliminare di voler eliminare il tuo account?', 'Questa azione è irreversibile e avrà effetto immediato. Verrano automaticamente eliminati tutti i tuoi dati e gli appunti che hai pubblicato', [
+                {
+                    text: 'Sono sicuro',
+                    style: 'destructive',
+                    onPress: () => this.props.navigation.navigate('DeleteAccount')
+                },
+                {
+                    text: 'Annulla',
+                    style: 'cancel'
+                }
+            ])
         }}>Elimina account</Option>
         <Text style={styles.section}>Sicurezza</Text>
         <Option onPress={() => {
@@ -61,7 +72,8 @@ class _SettingsPage extends Component<NavigationProps & { state: { login: LoginS
         <Option onPress={() => {
             Alert.alert('Logout', 'Sei sicuro di voler fare il logout? Potrai rifare il login quando vuoi', [
                 {
-                    text: 'Procedi', onPress: () => {
+                    text: 'Procedi',
+                    onPress: () => {
                         this.props.logout()
                         this.props.navigation.navigate('Profile')
                         Alert.alert('Logout', 'logout effettuato, a presto!')
@@ -85,7 +97,8 @@ export default createStackNavigator({
     ChangeName,
     ChangeClass,
     ChangePassword,
-    ChangeEmail
+    ChangeEmail,
+    DeleteAccount
 }, {
     headerMode: 'none'
 })

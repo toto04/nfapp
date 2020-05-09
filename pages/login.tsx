@@ -1,5 +1,5 @@
 import React, { Component, } from 'react'
-import { Button, StyleSheet, TouchableOpacity, Text, Picker, Alert, View } from 'react-native';
+import { Button, StyleSheet, TouchableOpacity, Text, Picker, Alert, View, Linking } from 'react-native';
 import { NavigationProps, Page, commonStyles, api, Class } from '../util'
 import { TextInput, ScrollView } from 'react-native-gesture-handler';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -135,6 +135,7 @@ class _Signup extends Component<NavigationProps & { login: typeof login }, signu
                 >
                     {classItems}
                 </Picker>
+                <Text style={{ textAlign: 'center' }}>Cliccando su "Registrati" accetti la nostra <Text style={{ color: commonStyles.main.color }} onPress={() => Linking.openURL('https://nfapp-server.herokuapp.com/privacy')}>Politica sulla Privacy</Text></Text>
                 <TouchableOpacity style={styles.button} onPress={async () => {
 
                     let completed = true
