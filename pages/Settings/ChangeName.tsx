@@ -17,7 +17,7 @@ class _ChangeName extends Component<NavigationProps & { state: { login: LoginSta
             Hai fatto qualche errore di battitura durante la registrazione?
             Vuoi essere conosciuto per qualcosa di diverso?
         </Text>
-        <Text style={{ fontSize: 20, marginVertical: 3 }}>
+        <Text style={{ fontSize: 20, marginVertical: 5 }}>
             Sei venuto nel posto giusto, qua puoi decidere come gli altri ti
             vedranno (ma non puoi cambiare chi sei in realtà)
         </Text>
