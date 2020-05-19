@@ -135,7 +135,18 @@ class _Signup extends Component<NavigationProps & { login: typeof login }, signu
                 >
                     {classItems}
                 </Picker>
-                <Text style={{ textAlign: 'center' }}>Cliccando su "Registrati" accetti la nostra <Text style={{ color: commonStyles.main.color }} onPress={() => Linking.openURL('https://nfapp-server.herokuapp.com/privacy')}>Politica sulla Privacy</Text></Text>
+                <Text style={{ textAlign: 'center' }}>
+                    Cliccando su "Registrati" accetti la nostra
+                    <Text
+                        style={{ color: commonStyles.main.color }}
+                        onPress={() => Linking.openURL('https://nfapp-server.herokuapp.com/privacy')}
+                    > Politica sulla Privacy </Text>
+                    e i nostri
+                    <Text
+                        style={{ color: commonStyles.main.color }}
+                        onPress={() => Linking.openURL('https://nfapp-server.herokuapp.com/terms')}
+                    > Termini di servizio </Text>
+                </Text>
                 <TouchableOpacity style={styles.button} onPress={async () => {
 
                     let completed = true
@@ -263,7 +274,12 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
                 this.props.navigation.navigate('Signup')
                 this.setState({ editable: false })
             }}>
-                <Text style={{ color: 'rgba(30, 80, 234, 1)', fontSize: 15, textAlign: 'center' }}>Non hai un account? Registrati</Text>
+                <Text style={{ color: commonStyles.main.color, fontSize: 18, textAlign: 'center' }}>Non hai un account? Registrati</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ paddingHorizontal: 10 }} onPress={() => {
+                Linking.openURL('https://nfapp-server.herokuapp.com/privacy')
+            }}>
+                <Text style={{ color: 'rgba(0, 0, 0, 0.6)', fontSize: 15, textAlign: 'center' }}>Problemi di accesso? Contatta gli sviluppatori</Text>
             </TouchableOpacity>
         </Page>
     }

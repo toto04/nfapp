@@ -11,13 +11,13 @@ class Preview extends Component<{ title: string, onPress?: () => void }> {
     render() {
         return (
             <View style={{ alignSelf: 'stretch', paddingHorizontal: 10 }}>
-                <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{this.props.title}</Text>
+                {/* <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{this.props.title}</Text> */}
                 <ShadowCard onPress={this.props.onPress} style={{ marginVertical: 20 }}>
                     <View style={{
                         backgroundColor: commonStyles.main.backgroundColor,
                         padding: 20
                     }}>
-                        <Text style={{ color: 'white', fontSize: 40 }}>{'  '}</Text>
+                        <Text style={{ color: 'white', fontSize: 30, fontWeight: 'bold' }}>{this.props.title}</Text>
                     </View>
                 </ShadowCard>
             </View>
