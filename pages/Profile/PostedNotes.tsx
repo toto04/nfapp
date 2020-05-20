@@ -87,7 +87,7 @@ class _PostedNotes extends Component<NavigationProps & { state: { login: LoginSt
         title='i tuoi appunti'
         backButton
         rightButton={this.props.state.login.loggedIn ? {
-            name: 'add',
+            name: 'plus-a',
             action: () => this.props.navigation.navigate('NewSubjectSelection', { classContext: { field: this.props.state.login._class.field, classIndex: this.props.state.login._class.yearIndex } })
         } : undefined}
     >

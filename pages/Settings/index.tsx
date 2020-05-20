@@ -96,7 +96,7 @@ class _SettingsPage extends Component<NavigationProps & { state: { login: LoginS
             ])
         }} style={{ color: 'red' }}>Logout</Option>
         <Option onPress={() => Linking.openURL('https://nfapp-server.herokuapp.com/privacy')}>Politica sulla Privacy</Option>
-        <Option onPress={() => Linking.openURL('https://nfapp-server.herokuapp.com/terminiecondizioni')}>Termini e Condizioni</Option>
+        <Option onPress={() => Linking.openURL('https://nfapp-server.herokuapp.com/terms')}>Termini e Condizioni</Option>
     </Page>
 }
 

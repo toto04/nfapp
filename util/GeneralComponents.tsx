@@ -3,7 +3,7 @@ import { NavigationScreenProp, NavigationState, NavigationParams, NavigationActi
 import { View, Text, ScrollViewProps, RefreshControl, StatusBar, StatusBarStyle, StyleSheet, ViewProps, GestureResponderEvent, StyleProp, ViewStyle, Platform, Insets } from 'react-native';
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import { getStatusBarHeight } from 'react-native-safe-area-view';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Fontisto';
 import store from '../redux/index';
 import { setTheme } from '../redux/theme';
 
@@ -87,8 +87,8 @@ class Header extends Component<NavigationProps & HeaderProps> {
             }}>{this.props.title}</Text>
             {this.props.rightButton ? <Icon
                 style={{ alignSelf: 'center', marginLeft: 'auto', padding: 10, marginRight: 10 }}
-                size={50}
-                name={'ios-' + this.props.rightButton.name}
+                size={30}
+                name={this.props.rightButton.name}
                 color={commonStyles.main.color}
                 onPress={this.props.rightButton.action}
             /> : undefined}

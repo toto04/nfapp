@@ -85,7 +85,7 @@ class NoteDetailPage extends Component<NavigationProps, { note: Note, images: JS
             </View>}
             rightButton={{
                 // TODO: change icons
-                name: this.state.saved ? 'cloud-done' : 'cloud-download',
+                name: this.state.saved ? 'bookmark-alt' : 'bookmark',
                 action: this.state.saved
                     ? () => removeNote(this.state.note).then(() => this.setState({ saved: false }))
                     : () => saveNote(this.state.note).then(() => this.setState({ saved: true }))

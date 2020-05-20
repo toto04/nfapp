@@ -4,13 +4,12 @@
     "slug": "nfapp",
     "scheme": "nfapp",
     "privacy": "public",
-    "sdkVersion": "35.0.0",
     "platforms": [
       "ios",
       "android",
       "web"
     ],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon/full.png",
     "splash": {
@@ -31,7 +30,7 @@
     "android": {
       "versionCode": 5,
       "package": "com.tommasomorganti.nfapp",
-      "icon":"./assets/icon/rounded.png",
+      "icon": "./assets/icon/rounded.png",
       "permissions": [
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",

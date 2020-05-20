@@ -205,7 +205,7 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
             title={this.state.context.subject.toLowerCase()}
             navigation={this.props.navigation}
             rightButton={(this.props.login._class.field == this.state.context.field && this.props.login._class.yearIndex == this.state.context.classIndex) ? {
-                name: 'add',
+                name: 'plus-a',
                 action: () => {
                     this.props.navigation.navigate('AddNotePage', { classContext: this.state.context })
                 }
