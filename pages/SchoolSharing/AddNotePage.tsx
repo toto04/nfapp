@@ -120,7 +120,7 @@ export default class AddNotePage extends Component<NavigationProps, AddNoteState
                 onPress={async () => {
                     let { title, description, images } = this.state
                     if (title.length < 1) {
-                        Alert.alert('Errore', 'Devi inserire un titlo!')
+                        Alert.alert('Devi inserire un titolo!', 'Inserisci qualcosa di bello così che gli altri possano sapere subito di cosa si tratta')
                         return
                     }
 
@@ -131,7 +131,7 @@ export default class AddNotePage extends Component<NavigationProps, AddNoteState
                         Alert.alert('Grazie', `I tuoi appunti sono stati pubblicati nella classe ${Class.classStructure[context.field][context.classIndex].year} ${context.field} per la materia ${context.subject}`)
                         this.props.navigation.goBack()
                     } else {
-                        Alert.alert('Errore', 'C\'è stato un errore sconosciuto, riprova più tardi')
+                        Alert.alert('Errore', 'C\'è stato un errore sconosciuto, riprova più tardi\n' + (res.error ?? ''))
                     }
                 }}
             >

@@ -4,6 +4,7 @@
     "slug": "nfapp",
     "scheme": "nfapp",
     "privacy": "public",
+    "sdkVersion": "35.0.0",
     "platforms": [
       "ios",
       "android",
@@ -25,7 +26,11 @@
     ],
     "ios": {
       "bundleIdentifier": "com.tommasomorganti.nfapp",
-      "supportsTablet": false
+      "buildNumber": "4",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "NFApp richiede l'accesso alle tue foto per poter condividere immagini da allegare agli appunti che vuoi condividere"
+      }
     },
     "android": {
       "versionCode": 5,
