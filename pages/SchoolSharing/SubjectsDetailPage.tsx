@@ -232,7 +232,13 @@ class NotePage extends Component<NavigationProps & { login: LoginState }, Subjec
                 }
             }}
         >
-            {this.state.error ? <Text>C'è stato un errore, riprova più tardi</Text>
+            {this.state.error ? <Text style={{
+                textAlign: "center",
+                width: '100%',
+                margin: 10,
+                fontSize: 18,
+                color: '#000a'
+            }}>C'è stato un errore, riprova più tardi</Text>
                 : <FlatList
                     data={this.state.notes}
                     contentContainerStyle={{

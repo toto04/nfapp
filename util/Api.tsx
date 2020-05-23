@@ -6,21 +6,21 @@ import { spawnError } from '../redux/error';
 
 /** backend server's URL */
 export let serverUrl = __DEV__ ? env.API_HOST : 'https://nfapp-server.herokuapp.com';
-async function parseApiResponse(res: Response, resolve: (value: any) => void) {
+async function parseApiResponse(endpoint: string, options: object, res: Response, resolve: (value: any) => void) {
     try {
         let obj = await res.json();
         resolve(obj);
-    }
-    catch {
-        resolve({ success: false, error: 'could not parse json' });
+    } catch {
+        retryApiRequest(endpoint, options, resolve)
+        handleApiRejection(new Error('could not parse json'))
     }
 }
-function handleApiRejection(error: any, reject: (reason?: any) => void) {
-    store.dispatch(spawnError('Impossibile connettersi al server, riprova più tardi'));
+function handleApiRejection(error: any, reject?: (reason?: any) => void) {
+    store.dispatch(spawnError('Impossibile connettersi al server, verifica la tua connessione'));
 }
-function retryApiRequest(endpoint: string, options: {}, resolve: (value: any) => void) {
+function retryApiRequest(endpoint: string, options: object, resolve: (value: any) => void) {
     fetch(serverUrl + endpoint, options).then(res => {
-        parseApiResponse(res, resolve);
+        parseApiResponse(endpoint, options, res, resolve);
         store.dispatch(spawnError('Connessione ristabilita'));
     }).catch(e => setTimeout(() => retryApiRequest(endpoint, options, resolve), 5000)); // ritenta ogni 5 secondi
 }
@@ -36,7 +36,7 @@ export const api = {
         let log = store.getState().login;
         let headers = log.loggedIn ? { 'x-nfapp-username': log.username, 'x-nfapp-password': log.password } : {};
         let options = { headers };
-        fetch(serverUrl + endpoint, options).then(res => parseApiResponse(res, resolve)).catch(e => {
+        fetch(serverUrl + endpoint, options).then(res => parseApiResponse(endpoint, options, res, resolve)).catch(e => {
             handleApiRejection(e, reject);
             retryApiRequest(endpoint, options, resolve);
         });
@@ -53,7 +53,7 @@ export const api = {
             headers,
             body: JSON.stringify(body)
         };
-        fetch(serverUrl + endpoint, options).then(res => parseApiResponse(res, resolve)).catch(e => {
+        fetch(serverUrl + endpoint, options).then(res => parseApiResponse(endpoint, options, res, resolve)).catch(e => {
             handleApiRejection(e, reject);
             retryApiRequest(endpoint, options, resolve);
         });

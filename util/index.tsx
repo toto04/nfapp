@@ -46,11 +46,12 @@ export let getImageSize = (uri: string): Promise<{ width: number, height: number
 
 class ErrorModalComponent extends Component<{ message?: string }, { y: Animated.Value<number> }> {
     state = { message: '', y: new Animated.Value(Dimensions.get('screen').height) }
+    timeout?: number
 
     render() {
         if (this.props.message) {
             Animated.timing(this.state.y, { toValue: Dimensions.get('screen').height - 170, duration: 300, easing: Easing.inOut(Easing.ease) }).start(() => {
-                setTimeout(() => {
+                this.timeout = setTimeout(() => {
                     Animated.timing(this.state.y, { toValue: Dimensions.get('screen').height, duration: 300, easing: Easing.inOut(Easing.ease) }).start()
                 }, 5000)
             })
@@ -77,6 +78,13 @@ class ErrorModalComponent extends Component<{ message?: string }, { y: Animated.
                     padding: 15,
                     justifyContent: 'center',
                     alignItems: 'center'
+                }}
+                onPress={() => {
+                    if (this.timeout) {
+                        clearTimeout(this.timeout)
+                        this.timeout = undefined
+                    }
+                    Animated.timing(this.state.y, { toValue: Dimensions.get('screen').height, duration: 300, easing: Easing.inOut(Easing.ease) }).start()
                 }}
             >
                 <Text style={{
