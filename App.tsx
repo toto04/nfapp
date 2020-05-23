@@ -198,7 +198,7 @@ async function handleDeepLinking(url: string) {
                 }))
             }
         }
-    } catch (e) { }  
+    } catch (e) { }
 }
 
 async function handleNotifications(notification: Notification) {
@@ -220,5 +220,11 @@ async function handleNotifications(notification: Notification) {
                 routeName: 'Surveys'
             }))
             break
+        case 'newEvent': {
+            rootNavRef.dispatch(NavigationActions.navigate({
+                routeName: 'Calendar',
+                params: { eventDate: notification.data.eventDate }
+            }))
+        }
     }
 }

@@ -93,13 +93,19 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
     ref: any
     constructor(props) {
         super(props)
-        let date = new Date()
         this.state = {
             refreshing: false,
-            selectedDate: new Date().toISOString().split('T')[0],
+            selectedDate: this.props.navigation.state.params?.eventDate ?? new Date().toISOString().split('T')[0],
             events: {},
             markedDates: {}
         }
+        this.props.navigation.addListener('didFocus', () => {
+            let evtDate = this.props.navigation.state.params?.eventDate
+            if (evtDate) {
+                this.setState({ selectedDate: evtDate })
+                this.refresh()
+            }
+        })
     }
 
     async componentDidMount() {
@@ -159,6 +165,7 @@ export default class CalendarPage extends Component<NavigationProps, calendarSta
                 <View style={{ paddingTop: 20 }}>
                     <Text style={{ fontWeight: 'bold', fontSize: 40, marginHorizontal: 20, color: commonStyles.main.color }}>Calendario</Text>
                     <Calendar
+                        current={this.state.selectedDate}
                         style={{
                             minHeight: 360
                         }}
