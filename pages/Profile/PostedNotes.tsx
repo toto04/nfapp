@@ -25,7 +25,7 @@ class NewSubjectSelection extends Component<NavigationProps> {
                 marginHorizontal: 8,
                 marginBottom: 8,
                 fontSize: 16
-            }}>{'Una volta pubblicati gli altri utenti potranno trovarli in SchoolSharing > ' + context.field + ' > Classe ' + (context.classIndex + 1) + '^'}</Text>
+            }}>{'Una volta pubblicati gli altri utenti potranno trovarli in SchoolSharing > ' + context.field + ' > Classe ' + classStructure[context.field][context.classIndex].year}</Text>
             <FlatList
                 data={classStructure[context.field][context.classIndex].subjects}
                 renderItem={

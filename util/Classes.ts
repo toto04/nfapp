@@ -7,7 +7,7 @@ let fieldSubjects = {
     scientifico: ['Latino', 'Fisica', 'Arte', 'Scienze'],
     scienzeApplicate: ['Fisica', 'Informatica', 'Arte', 'Scienze'],
     linguistico: ['Francese', 'Tedesco', 'Scienze'],
-    scienzeUmane: ['Diritto - Economia', 'Scienze Umane'],
+    scienzeUmane: ['Diritto - Economia', 'Scienze Umane', 'Latino'],
     artistico: ['Scienze', 'Storia dell\'Arte'],
     artisticoTriennio: ['Filosofia', 'Fisica']
 }
@@ -111,15 +111,15 @@ export class Class {
         'Arti Figurative': [{
             year: '3^',
             sections: ['3AF'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Plastiche/Pittoriche'].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Plastiche e Pittoriche'].sort()
         }, {
             year: '4^',
             sections: ['4AF'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Plastiche/Pittoriche'].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Plastiche e Pittoriche'].sort()
         }, {
             year: '5^',
             sections: ['5AF'],
-            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Plastiche/Pittoriche'].sort()
+            subjects: [...defaultSubjects, ...fieldSubjects.artistico, ...fieldSubjects.artisticoTriennio, 'Discipline Plastiche e Pittoriche'].sort()
         }],
         'Grafica': [{
             year: '3^',

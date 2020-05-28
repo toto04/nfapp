@@ -143,10 +143,11 @@ export default class FeedPage extends Component<NavigationProps, { posts: Post[]
                     ListHeaderComponent={<Text style={{ fontWeight: 'bold', fontSize: 40 }}>Bacheca</Text>}
                     data={this.state.posts}
                     renderItem={({ item }) => {
-                        item.time = formatDate(item.time)
+                        let p = Object.assign({}, item)
+                        p.time = formatDate(p.time)
                         return <ConnectedPostComponent
                             navigation={this.props.navigation}
-                            postObject={item}
+                            postObject={p}
                         />
                     }}
                     keyExtractor={post => post.id.toString()}

@@ -182,7 +182,7 @@ class _Signup extends Component<NavigationProps & { login: typeof login }, signu
                     }
 
                     let res = await api.post('/api/signup', {
-                        usr: this.state.usr,
+                        usr: this.state.usr.trim(),
                         pwd: this.state.pwd,
                         email: this.state.email,
                         fstName: this.state.fstName,
@@ -258,7 +258,7 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
                 style={styles.button}
                 onPress={() => {
                     let password = this.state.pwd
-                    api.post('/api/login', { usr: this.state.usr, pwd: password }).then(async res => {
+                    api.post('/api/login', { usr: this.state.usr.trim(), pwd: password }).then(async res => {
                         if (res.success) {
                             // TODO: for some reason, profile pic doesn't get loaded
                             let { username, classname, firstName, lastName, profilepic } = res.data
