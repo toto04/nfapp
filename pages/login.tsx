@@ -277,9 +277,14 @@ class Login extends Component<NavigationProps & { login: typeof login }, { usr: 
                 <Text style={{ color: commonStyles.main.color, fontSize: 18, textAlign: 'center' }}>Non hai un account? Registrati</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{ paddingHorizontal: 10 }} onPress={() => {
+                Linking.openURL('https://nfapp-server.herokuapp.com/recover')
+            }}>
+                <Text style={{ color: 'rgba(0, 0, 0, 0.6)', fontSize: 15, textAlign: 'center' }}>Recupera password</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ margin: 10 }} onPress={() => {
                 Linking.openURL('https://nfapp-server.herokuapp.com/privacy')
             }}>
-                <Text style={{ color: 'rgba(0, 0, 0, 0.6)', fontSize: 15, textAlign: 'center' }}>Problemi di accesso? Contatta gli sviluppatori</Text>
+                <Text style={{ color: 'rgba(0, 0, 0, 0.6)', fontSize: 15, textAlign: 'center' }}>Altri problemi di accesso? Contatta gli sviluppatori</Text>
             </TouchableOpacity>
         </Page>
     }
